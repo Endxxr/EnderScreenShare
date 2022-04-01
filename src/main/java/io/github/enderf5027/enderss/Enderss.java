@@ -1,16 +1,10 @@
-/*
-    TODO LIST:
-     / Add more comments
-     -> Auto-updating config [For 0.2]
-*/
-
 package io.github.enderf5027.enderss;
 
 import io.github.enderf5027.enderss.commands.EnderSsCommand.EnderSsCommand;
 import io.github.enderf5027.enderss.commands.blatant.BlatantCommand;
 import io.github.enderf5027.enderss.commands.clean.CleanCommand;
-import io.github.enderf5027.enderss.commands.ss.SsCommand;
 import io.github.enderf5027.enderss.commands.clean.PlayerSwitchEvent;
+import io.github.enderf5027.enderss.commands.ss.SsCommand;
 import io.github.enderf5027.enderss.events.ProxyJoinQuitEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;

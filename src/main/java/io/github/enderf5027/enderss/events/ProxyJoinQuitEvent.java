@@ -36,6 +36,10 @@ public class ProxyJoinQuitEvent implements Listener {
         ProxiedPlayer staff = session.getStaffer();
         removeSession(p);
         if (session.isFrozen()) {
+            if (config.banonquit){
+                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), config.quit.replace("%SUSPECT%", p.getName()));
+            }
+
             for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
                 if (getSession(player).isStaff()) {
                     player.sendMessage(format(config.playerquit, staff, p));

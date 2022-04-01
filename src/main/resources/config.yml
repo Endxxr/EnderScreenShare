@@ -1,6 +1,10 @@
 #EnderSS by Endxxr
 #Ver 0.1
 
+#Coming in v0.2
+#-> Time elapsed through the command or placeholder
+#-> Command Blocker
+
 #Server Configuration
 ScreenShareServer: SS
 FallbackServer: Lobby
@@ -15,6 +19,7 @@ FallBackStaff: true
 sendAnydesk: true
 sendDiscord: false
 sendTeamspeak: false
+
 #Clears the chat when the player joins
 clearChat: true
 #Send the title you set before (title & subtitle)
@@ -90,3 +95,6 @@ bancommand:
     hack: /ban %SUSPECT% 30d Cheating (SS) -s
     admission: /ban %SUSPECT% 14d Cheat Admission -s
     blatant: /ban %SUSPECT% 30d Blatant Cheating -s
+
+#Should we instantly ban the player when they leave the proxy?
+banonquit: true

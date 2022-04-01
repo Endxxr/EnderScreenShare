@@ -55,6 +55,7 @@ public class config  {
     public static String refuse;
     public static String quit;
     public static String blatant;
+    public static boolean banonquit;
 
 
     static  {
@@ -107,5 +108,6 @@ public class config  {
         refuse = cfg.getString("bancommand.refuse");
         quit = cfg.getString("bancommand.quit");
         blatant = cfg.getString("bancommand.blatant");
+        banonquit = cfg.getBoolean("banonquit");
     }
 }
