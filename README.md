@@ -12,18 +12,18 @@ This is my first public plugin, so I hope you will like it!
 
 `For report a bug or info: https://discord.gg/PhMbS3jtAJ // ! Ender#0069`
 
-##Getting Started
+## Getting Started
 
-###Requirements
+### Requirements
 - Last Version of Bungeecord/Waterfall [1.18]
 - A ScreenShare server and a Lobby/Hub server
 
-###Installation
+### Installation
 - Put the ```.jar``` file in the plugin folder of your Bungeecord/Waterfall server 
 - Restart your server
 - Enjoy!
 
-##Commands
+## Commands
 SS | ScreenShare | Freeze | Control
 ````
 /ss <player> - enderss.staff - Control a player
@@ -41,8 +41,8 @@ Blatant
 /blatant <player> - enderss.staff - Directly ban a player for blatant cheating
 ````
 
-##Known Issues
+## Known Issues
 - The clean command/button won't work if the SS server is both the "join server" and the unique server the player has been playing since they joined [WON'T FIX]
 
-##Report a bug
+## Report a bug
 - Join my discord at https://discord.gg/PhMbS3jtAJ or PM (! Ender#0069)
