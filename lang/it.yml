@@ -1,0 +1,92 @@
+#EnderSS by Endxxr
+#Ver 0.1
+#Italian Configuration
+
+#Server Configuration
+ScreenShareServer: SS
+FallbackServer: Lobby
+
+#Should we fall back the player in the lobby or in the last connected server they were on?
+LastConnectedServer: true
+
+#Fall back the staff when the control ends
+FallBackStaff: true
+
+#Should we send the last three messages when the player joins?
+sendAnydesk: true
+sendDiscord: false
+sendTeamspeak: false
+#Clears the chat when the player joins
+clearChat: true
+#Send the title you set before (title & subtitle)
+sendTitle: true
+
+
+#Messages
+prefix: "" #This string will be used for %PREFIX% placeholder
+noperm: "&cPermessi insufficienti"
+nocommand: "&cQuesto comando non esiste!"
+noplayer: "&cSpecifica un giocatore"
+console: "&cLa console non può eseguire questo comando"
+
+anydesk: "&fDevi scaricare anydesk per continuare: &chttps://anydesk.com/en/downloads" #Link for download AnyDesk
+discord: "&fEntra nel nostro server discord per continuare col controllo: &dhttps://discord.yourserver.example" #Link for join Discord
+teamspeak: "&fEntra nel nostro server TeamSpeak per continuare col controllo: &bhttps://ts.yourserver.example" #Link for join Teamspeak
+
+#For these strings you can use the placeholder %SUSPECT%
+playeroffline: "&cGiocatore offline"
+alreadyinss: "&cQuesta giocatore è già sotto controllo hack"
+staffinss: "&cPuoi controllare solo un giocatore alla volta"
+alreadyssplayer: "&cStai già controllando questo giocatore"
+suspectnotinss: "&cQuesto giocaore non è sotto controllo hack"
+
+playerquit: "%PREFIX% &f%SUSPECT% è uscito durante il controllo hack"
+cantcontrolyourself: "&cBannati direttamente"
+cantcontrolstaff: "&cNon puoi controllare un membro dello staff"
+
+cleanplayer: "&2Controllo terminato, grazie per la pazienza."
+playercleaned: "&aIl controllo su %SUSPECT%  è terminato"
+notcontrolling: "&cNon stai controllando questo giocatore"
+
+# You can use both %STAFF% and %SUSPECT%.
+# These values MUST be Strings List, so they have to look like this:
+# message:
+# - "hey im a string in a list"
+# - "you have to write something like this!"
+#
+# if you wish to set a one line message, don't use value:"message" but set a list with only one string
+ssmessage:
+    - ""
+    - "&cSei sotto controllo hack"
+    - "&cNon uscire e ascolta lo staff (%STAFF%)"
+    - ""
+staffmessage:
+    - ""
+    - "%PREFIX% &f%SUSPECT% è ora sotto controllo hack (%STAFF%)"
+    - ""
+
+title: "&4&lControllo Hack"
+subtitle: "&cNon uscire"
+#20 = 1 Second
+fadein: 15
+stay: 50
+fadeout: 15
+
+buttons:
+    hack: "&4[&c&lCHEAT TROVATI&4]"
+    admission: "&a[&2&lAMMISSIONE&a]"
+    refuse: "&e[&6&lRIFIUTO&e]"
+    quit: "&d[&5&lSLOG&d]"
+    clean: "&a[&2&lPULITO&a]"
+    confirm: "&2[&a&lCONFERMA&a]"
+#The ban commands will be executed directly instead of suggest the command
+confirmButtons: false
+
+#The only available placeholder here is %SUSPECT%
+#Litebans need to be installed on the proxy in order to work
+bancommand:
+    refuse: /ban %SUSPECT% 30d Rifiuto Controllo hack -s
+    quit: /ban %SUSPECT% 30d Slog durante controllo -s
+    hack: /ban %SUSPECT% 30d Cheating (ScreenShare) -s
+    admission: /ban %SUSPECT% 14d Ammissione Cheat -s
+    blatant: /ban %SUSPECT% 30d Cheating Blatant -s
