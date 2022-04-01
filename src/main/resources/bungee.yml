@@ -1,0 +1,21 @@
+name: EnderSS
+version: '${project.version}'
+main: io.github.enderf5027.enderss.Enderss
+description: Screenshare plugin made by Endxxr @EnderF5027 Telegram
+author: Endxxr
+commands:
+  ss:
+    aliases: [control, controllo, screenshare, freeze]
+    description: Freeze a person and start an Hack Control
+    usage: '&c/ss <player>'
+    permission: enderss.staff
+  enderss:
+    description: Main command
+    usage: '&c/enderss <version|help|info>'
+    permission: enderss.help
+  clean:
+    description: Does what the button "clean" does, easy
+    permission: enderss.staff
+  blatant:
+    description: Directly ban a player for Blatant Cheating
+    permission: enderss.staff
