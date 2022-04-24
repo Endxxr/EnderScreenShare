@@ -14,7 +14,7 @@ import static io.github.enderf5027.enderss.utils.ChatUtils.format;
 
 public class EnderSsCommand extends Command{
 
-    private ArrayList<SubCommand> subcommands = new ArrayList<>();
+    private final ArrayList<SubCommand> subcommands = new ArrayList<>();
 
     public EnderSsCommand() {
         super("enderss", "enderss.admin", "ssconfig");
@@ -63,11 +63,7 @@ public class EnderSsCommand extends Command{
         for (int i = 0; i < getSubcommands().size(); i++) {
             cmdNames.add(getSubcommands().get(i).getName());
         }
-        if (cmdNames.contains(command)) {
-            return true;
-        } else {
-            return false;
-        }
+        return cmdNames.contains(command);
     }
 
 }

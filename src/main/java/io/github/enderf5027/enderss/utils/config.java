@@ -20,12 +20,13 @@ public class config  {
     public static String anydesk;
     public static String discord;
     public static String teamspeak;
+    public static String cantexecute;
+    public static String commandBlocked;
     public static String playeroffline;
     public static String alreadyinss;
     public static String staffinss;
     public static String alreadyssplayer;
     public static String suspectnotinss;
-    public static String playerjoin;
     public static String playerquit;
     public static String cleanplayer;
     public static String playercleaned;
@@ -41,8 +42,13 @@ public class config  {
     public static boolean sendAnydesk;
     public static boolean sendDiscord;
     public static boolean sendTeamspeak;
+    public static boolean blockCommands;
+    public static List<String> whitelistedCommands;
     public static boolean clearchat;
     public static boolean sendTitle;
+    public static String hours;
+    public static String minutes;
+    public static String seconds;
     public static String bhack;
     public static String badmission;
     public static String brefuse;
@@ -57,45 +63,66 @@ public class config  {
     public static String blatant;
     public static boolean banonquit;
 
-
     static  {
         assert cfg != null;
-        ScreenShareServer = cfg.getString("ScreenShareServer");
-        FallbackServer = cfg.getString("FallbackServer");
-        LastConnectedServer = cfg.getBoolean("LastConnectedServer");
-        FallBackStaff = cfg.getBoolean("FallBackStaff");
-        prefix = cfg.getString("prefix");
-        noperm = cfg.getString("noperm");
-        anydesk = cfg.getString("anydesk");
-        discord = cfg.getString("discord");
-        teamspeak = cfg.getString("teamspeak");
-        playeroffline = cfg.getString("playeroffline");
-        alreadyinss = cfg.getString("alreadyinss");
-        staffinss = cfg.getString("staffinss");
-        alreadyssplayer = cfg.getString("alreadyssplayer");
-        suspectnotinss =  cfg.getString("suspectnotinss");
-        cantcontrolyourself = cfg.getString("cantcontrolyourself");
-        cantcontrolstaff = cfg.getString("cantcontrolstaff");
-        playerjoin = cfg.getString("playerjoin");
-        playerquit = cfg.getString("playerquit");
-        cleanplayer = cfg.getString("cleanplayer");
-        playercleaned = cfg.getString("playercleaned");
-        ssmessage = cfg.getStringList("ssmessage");
-        staffmessage = cfg.getStringList("staffmessage");
-        title = cfg.getString("title");
-        subtitle = cfg.getString("subtitle");
-        fadein = cfg.getInt("fadein");
-        fadeout = cfg.getInt("fadeout");
-        stay = cfg.getInt("stay");
-        sendAnydesk = cfg.getBoolean("sendAnydesk");
-        sendDiscord = cfg.getBoolean("sendDiscord");
-        sendTeamspeak = cfg.getBoolean("sendTeamspeak");
+
+        //Config
+        ScreenShareServer = cfg.getString("config.ScreenShareServer");
+        FallbackServer = cfg.getString("config.FallbackServer");
+        LastConnectedServer = cfg.getBoolean("config.LastConnectedServer");
+        FallBackStaff = cfg.getBoolean("config.FallBackStaff");
         clearchat = cfg.getBoolean("clearChat");
-        sendTitle = cfg.getBoolean("sendTitle");
-        noplayer = cfg.getString("noplayer");
-        noperm = cfg.getString("noperm");
-        nocommand = cfg.getString("nocommand");
-        console = cfg.getString("console");
+        banonquit = cfg.getBoolean("banonquit");
+
+
+        //Messages on Join
+        sendAnydesk = cfg.getBoolean("onjoin.anydesk.send");
+        anydesk = cfg.getString("onjoin.anydesk.message");
+        sendTeamspeak = cfg.getBoolean("onjoin.teamspeak.send");
+        teamspeak = cfg.getString("onjoin.teanspeak.message");
+        sendDiscord = cfg.getBoolean("onjoin.discord.send");
+        discord = cfg.getString("onjoin.discord.message");
+        ssmessage = cfg.getStringList("onjoin.ssmessage");
+        staffmessage = cfg.getStringList("onjoin.staffmessage");
+
+        //Title
+        title = cfg.getString("title.title");
+        sendTitle = cfg.getBoolean("title.send");
+        subtitle = cfg.getString("title.subtitle");
+        fadein = cfg.getInt("title.fadein");
+        fadeout = cfg.getInt("title.fadeout");
+        stay = cfg.getInt("title.stay");
+
+        //Command Blocker
+        blockCommands = cfg.getBoolean("commandblocker.enabled");
+        whitelistedCommands = cfg.getStringList("commandblocker.whitelistedCommands");
+
+        //Prefix
+        prefix = cfg.getString("prefix");
+
+
+        //Messages - Info
+        playerquit = cfg.getString("messages.info.playerquit");
+        cleanplayer = cfg.getString("messages.info.cleanplayer");
+        playercleaned = cfg.getString("messages.info.playercleaned");
+        commandBlocked = cfg.getString("messages.info.commandblocked");
+
+        //Messages - Errors
+        noplayer = cfg.getString("messages.error.noplayer");
+        noperm = cfg.getString("messages.error.noperm");
+        nocommand = cfg.getString("messages.error.nocommand");
+        noperm = cfg.getString("messages.error.noperm");
+        cantexecute = cfg.getString("messages.error.cantexecute");
+        playeroffline = cfg.getString("messages.error.playeroffline");
+        alreadyinss = cfg.getString("messages.error.alreadyinss");
+        staffinss = cfg.getString("messages.error.staffinss");
+        alreadyssplayer = cfg.getString("messages.error.alreadyssplayer");
+        suspectnotinss =  cfg.getString("messages.error.suspectnotinss");
+        cantcontrolyourself = cfg.getString("messages.error.cantcontrolyourself");
+        cantcontrolstaff = cfg.getString("messages.error.cantcontrolstaff");
+        console = cfg.getString("messages.error.console");
+
+        //Buttons
         bhack = cfg.getString("buttons.hack");
         badmission = cfg.getString("buttons.admission");
         brefuse = cfg.getString("buttons.refuse");
@@ -103,11 +130,17 @@ public class config  {
         bquit = cfg.getString("buttons.quit");
         bconfirm = cfg.getString("buttons.confirm");
         confirmbutton = cfg.getBoolean("buttons.confirmButton");
+
+        //Commands
         hack = cfg.getString("bancommand.hack");
         admission = cfg.getString("bancommand.admission");
         refuse = cfg.getString("bancommand.refuse");
         quit = cfg.getString("bancommand.quit");
         blatant = cfg.getString("bancommand.blatant");
-        banonquit = cfg.getBoolean("banonquit");
+
+        hours = cfg.getString("hours");
+        minutes = cfg.getString("minutes");
+        seconds = cfg.getString("seconds");
+
     }
 }

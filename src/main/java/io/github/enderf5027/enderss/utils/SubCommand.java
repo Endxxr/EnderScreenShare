@@ -10,7 +10,7 @@ public abstract class SubCommand {
 
     public abstract String getSyntax();
 
-    public abstract void execute(ProxiedPlayer player, String args[]);
+    public abstract void execute(ProxiedPlayer player, String[] args);
 
 
 }

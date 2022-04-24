@@ -1,11 +1,14 @@
 package io.github.enderf5027.enderss.utils;
+
 import io.github.enderf5027.enderss.session.SessionManager;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class ChatUtils {
@@ -106,6 +109,19 @@ public class ChatUtils {
         String prefix = config.prefix;
         message = message.replace("%PREFIX%", prefix);
         return message;
+    }
+
+    public static String calculateTime(long seconds) {
+        int day = (int) TimeUnit.SECONDS.toDays(seconds);
+        long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24L);
+
+        long minute = TimeUnit.SECONDS.toMinutes(seconds) -
+                (TimeUnit.SECONDS.toHours(seconds)* 60);
+
+        long second = TimeUnit.SECONDS.toSeconds(seconds) -
+                (TimeUnit.SECONDS.toMinutes(seconds) *60);
+
+        return hours + config.hours + minute + config.minutes + second + config.seconds;
     }
 
 

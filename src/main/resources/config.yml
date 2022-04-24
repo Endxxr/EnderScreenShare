@@ -1,80 +1,115 @@
 #EnderSS by Endxxr
-#Ver 0.1
+#Ver 0.2
 
-#Coming in v0.2
-#-> Time elapsed through the command or placeholder
-#-> Command Blocker
+# NOTE:
+# The config will automatically update by itself but without comments. I suggest you to visit the GitHub page of this plugin
+# for knowing what the new settings do
 
 #Server Configuration
-ScreenShareServer: SS
-FallbackServer: Lobby
+config:
+    ScreenShareServer: SS
+    FallbackServer: Lobby
 
-#Should we fall back the player in the lobby or in the last connected server they were on?
-LastConnectedServer: true
+    #Should we fall back the player in the lobby or in the last connected server they were on?
+    LastConnectedServer: true
 
-#Fall back the staff when the control ends
-FallBackStaff: true
+    #Fall back the staff when the control ends
+    FallBackStaff: true
 
-#Should we send the last three messages when the player joins?
-sendAnydesk: true
-sendDiscord: false
-sendTeamspeak: false
+    #Clears the chat when the player joins
+    clearChat: true
 
-#Clears the chat when the player joins
-clearChat: true
-#Send the title you set before (title & subtitle)
-sendTitle: true
+    #Should we instantly ban the player when they leave the proxy?
+    banonquit: true
 
+
+#Send these messages when the suspect joins the SS Server
+onjoin:
+    anydesk:
+        send: true
+        message: "&fYou need to download Anydesk in order to proceed: &chttps://anydesk.com/en/downloads" #Link for download AnyDesk
+
+    teamspeak:
+        send: true
+        message: "&fPlease join our teamspeak at &bhttps://ts.yourserver.example" #Link for join Teamspeak
+
+    discord:
+        send: true
+        message: "&fPlease join our discord at &dhttps://discord.yourserver.example" #Link for join Discord
+
+    # You can use both %STAFF% and %SUSPECT%.
+    # These values MUST be Strings List, so they have to look like this:
+    # message:
+    # - "hey im a string in a list"
+    # - "you have to write something like this!"
+    #
+    # if you wish to set a one line message, don't use value:"message" but set a list with only one string
+    ssmessage:
+        - ""
+        - "&cYou are under cheat control"
+        - "&cDon't log out and listen to the staff (%STAFF%)"
+        - ""
+    staffmessage:
+        - ""
+        - "&c%SUSPECT% is now being controlled by %STAFF%"
+        - ""
+
+
+
+title:
+    send: true
+    title: "&4&lScreenShare"
+    subtitle: "&cDon't log out"
+    #20 = 1 Second
+    fadein: 15
+    stay: 50
+    fadeout: 15
+
+
+
+commandblocker:
+    #Should we block the ability to run commands when the player is frozen?
+    enabled: true
+
+    whitelistedCommands:
+        - "/example1"
+        - "/example2"
+
+
+
+prefix: "" #This string will be used for %PREFIX% placeholder
 
 #Messages
-prefix: "" #This string will be used for %PREFIX% placeholder
-noperm: "&cInsufficient Permissions"
-nocommand: "&cThis command doesn't exist!"
-noplayer: "&cSpecify a player"
-console: "&cOnly players can run this command"
+messages:
+    info:
+        #For these strings you can use the placeholder %SUSPECT%
+        playerquit: "&c%SUSPECT% logged out while being controlled"
+        cleanplayer: "&2Control ended. Thank you for your patience"
+        playercleaned: "&aThe control on %SUSPECT% ended"
+        commandblocked: "&c%SUSPECT% tried to execute %COMMAND%"
 
-anydesk: "&fYou need to download Anydesk in order to proceed: &chttps://anydesk.com/en/downloads" #Link for download AnyDesk
-discord: "&fPlease join our discord at &dhttps://discord.yourserver.example" #Link for join Discord
-teamspeak: "&fPlease join our teamspeak at &bhttps://ts.yourserver.example" #Link for join Teamspeak
+    error:
+        noperm: "&cInsufficient Permissions"
+        nocommand: "&cThis command doesn't exist!"
+        noplayer: "&cSpecify a player"
+        console: "&cOnly players can run this command"
+        cantexecute: "&cYou can't execute commands while being controlled"
 
-#For these strings you can use the placeholder %SUSPECT%
-playeroffline: "&cThis player is offline"
-alreadyinss: "&cThis player is already being controlled"
-staffinss: "&cYou can control one player at time"
-alreadyssplayer: "&cYou are already controlling this player"
-suspectnotinss: "&cThis player isn't being controlled"
+        #For these strings you can use the placeholder %SUSPECT%
+        playeroffline: "&cThis player is offline"
+        alreadyinss: "&cThis player is already being controlled"
+        staffinss: "&cYou can control one player at time"
+        alreadyssplayer: "&cYou are already controlling this player"
+        suspectnotinss: "&cThis player isn't being controlled"
+        cantcontrolyourself: "&cYou can't control yourself. Just ban yourself directly, no?"
+        cantcontrolstaff: "&cYou can't control a staff member"
+        notcontrolling: "&cYou're not controlling this player"
 
-playerquit: "&c%SUSPECT% logged out while being controlled"
-cantcontrolyourself: "&cYou can't control yourself. Just ban yourself directly, no?"
-cantcontrolstaff: "&cYou can't control a staff member"
 
-cleanplayer: "&2Control ended. Thank you for your patience"
-playercleaned: "&aThe control on %SUSPECT% ended"
-notcontrolling: "&cYou're not controlling this player"
+hours: "hours"
+minutes: "minutes"
+seconds: "seconds"
 
-# You can use both %STAFF% and %SUSPECT%.
-# These values MUST be Strings List, so they have to look like this:
-# message:
-# - "hey im a string in a list"
-# - "you have to write something like this!"
-#
-# if you wish to set a one line message, don't use value:"message" but set a list with only one string
-ssmessage:
-    - ""
-    - "&cYou are under cheat control"
-    - "&cDon't log out and listen to the staff (%STAFF%)"
-    - ""
-staffmessage:
-    - ""
-    - "&c%SUSPECT% is now being controlled by %STAFF%"
-    - ""
-
-title: "&4&lScreenShare"
-subtitle: "&cDon't log out"
-#20 = 1 Second
-fadein: 15
-stay: 50
-fadeout: 15
 
 buttons:
     hack: "&4[&c&lHACK&4]"
@@ -83,9 +118,9 @@ buttons:
     quit: "&d[&5&lQUIT&d]"
     clean: "&a[&2&lCLEAN&a]"
     confirm: "&2[&a&lCONFIRM&a]"
+    #The ban commands will be executed directly instead of suggest the command
+    confirmButtons: false
 
-#The ban commands will be executed directly instead of suggest the command
-confirmButtons: false
 
 #The only available placeholder here is %SUSPECT%
 #Litebans need to be installed on the proxy in order to work
@@ -96,5 +131,5 @@ bancommand:
     admission: /ban %SUSPECT% 14d Cheat Admission -s
     blatant: /ban %SUSPECT% 30d Blatant Cheating -s
 
-#Should we instantly ban the player when they leave the proxy?
-banonquit: true
+#Don't modify this value! We need it for update the configuration of the plugin and check updates
+version: 0.2

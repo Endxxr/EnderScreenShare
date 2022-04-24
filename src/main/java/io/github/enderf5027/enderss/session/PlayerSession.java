@@ -1,5 +1,6 @@
 package io.github.enderf5027.enderss.session;
 
+import io.github.enderf5027.enderss.utils.ChatUtils;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -12,7 +13,7 @@ public class PlayerSession {
     private ProxiedPlayer Staffer;
     private ProxiedPlayer PlayerScreenShared;
     private ServerInfo LastServer;
-
+    private long secondsElapsed;
 
     public PlayerSession(UUID uuid, String name){
     }
@@ -41,6 +42,8 @@ public class PlayerSession {
         return Staffer;
     }
 
+    public String getTime() {return ChatUtils.calculateTime(secondsElapsed);}
+
     public void setFrozen(boolean frozen) {
         isFrozen = frozen;
     }
@@ -55,6 +58,10 @@ public class PlayerSession {
 
     public void setStaffer(ProxiedPlayer staffer) {
         Staffer = staffer;
+    }
+
+    public void setSecondsElapsed(long seconds) {
+        secondsElapsed = seconds;
     }
 
 }
