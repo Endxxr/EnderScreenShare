@@ -100,6 +100,8 @@ public final class Enderss extends Plugin {
                     }
                 }
             }
+
+            YamlConfiguration.getProvider(YamlConfiguration.class).save(externalConfig, new File(getDataFolder(), "config.yml"));
             log.info("Configuration updated! Thank you for using EnderScreenShare");
         } catch (IOException e) {
             log.severe("Couldn't update the config ! Check the error(s) below and try to fix it");
