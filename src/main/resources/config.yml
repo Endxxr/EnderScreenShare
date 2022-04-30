@@ -1,9 +1,12 @@
 #EnderSS by Endxxr
-#Ver 0.2
 
 # NOTE:
-# The config will automatically update by itself but without comments. I suggest you to visit the GitHub page of this plugin
-# for knowing what the new settings do
+# The config will NOT automatically update by itself. I suggest you to visit the GitHub page for get the latest when updating the .jar file instead.
+# However, the plugin will still alerts you when there'e the need to update
+
+# Coming in v0.3
+# > Alerts for updating the jar config
+# > Disable messages
 
 #Server Configuration
 config:
@@ -21,7 +24,6 @@ config:
 
     #Should we instantly ban the player when they leave the proxy?
     banonquit: true
-
 
 #Send these messages when the suspect joins the SS Server
 onjoin:
@@ -131,5 +133,5 @@ bancommand:
     admission: /ban %SUSPECT% 14d Cheat Admission -s
     blatant: /ban %SUSPECT% 30d Blatant Cheating -s
 
-#Don't modify this value! We need it for update the configuration of the plugin and check updates
+#Don't modify this value(s)! We need it for check updates
 version: 0.2

@@ -24,6 +24,7 @@ public final class Enderss extends Plugin {
     public static Configuration config;
     private static Enderss plugin;
     private static final Logger log = ProxyServer.getInstance().getLogger();
+    public static boolean obsolete;
 
     @Override
     public void onEnable() {
@@ -32,8 +33,8 @@ public final class Enderss extends Plugin {
         plugin=this;
         getLogger().info("§8§l§m------------------");
         getLogger().info("");
-        getLogger().info("§5§lEnderSS §8§l» §d§l0.1 §5(Made by Endxxr)");
-        getLogger().info("§d§l! Ender#0001 for support");
+        getLogger().info("§5§lEnderSS §8§l» §d§l0.2 §5(Made by Endxxr)");
+        getLogger().info("§d§l! Ender#0069 for support");
         getLogger().info("");
         getLogger().info("§8§l§m------------------");
         createConfig();
@@ -57,8 +58,8 @@ public final class Enderss extends Plugin {
         // Plugin shutdown logic
         getLogger().info("§8§l§m------------------");
         getLogger().info("");
-        getLogger().info("§6§lEnderSS §8§l» §e§l0.1 §6(Made by Endxxr)");
-        getLogger().info("§e§lSpigotLink");
+        getLogger().info("§5§lEnderSS §8§l» §d§lDisabling...");
+        getLogger().info("§d§l! Ender#0069 for support");
         getLogger().info("");
         getLogger().info("§8§l§m------------------");
     }
@@ -89,25 +90,16 @@ public final class Enderss extends Plugin {
 
     public void updateConfig() {
         try{
-            InputStream internalIS = getResourceAsStream("config.yml");
-            Configuration internalConfig = YamlConfiguration.getProvider(YamlConfiguration.class).load(internalIS);
+            Configuration internalConfig = YamlConfiguration.getProvider(YamlConfiguration.class).load(getResourceAsStream("config.yml"));
             Configuration externalConfig = YamlConfiguration.getProvider(YamlConfiguration.class).load(new File(plugin.getDataFolder(), "config.yml"));
             if (internalConfig.getFloat("version") > externalConfig.getFloat("version")){
-                log.warning("Updating the configuration...");
-                for (String string : internalConfig.getKeys()) {
-                    if (!externalConfig.contains(string)) {
-                        externalConfig.set(string, internalConfig.get(string));
-                    }
-                }
+                log.warning("[EnderSS] Your plugin configuration is obsolete");
+                obsolete = true;
             }
-
-            YamlConfiguration.getProvider(YamlConfiguration.class).save(externalConfig, new File(getDataFolder(), "config.yml"));
-            log.info("Configuration updated! Thank you for using EnderScreenShare");
         } catch (IOException e) {
-            log.severe("Couldn't update the config ! Check the error(s) below and try to fix it");
+            log.severe("Couldn't check the config ! Check the error(s) below and try to fix it");
             e.printStackTrace();
         }
-
 
     }
 

@@ -21,7 +21,6 @@ public class ChatUtils {
         placeholders.add("%STAFF%");
     }
 
-
     public static String PlaceHolderManager(String message, String placeholder, ProxiedPlayer player){
         switch (placeholder){
             case "%STAFF%":

@@ -30,7 +30,7 @@ SS | ScreenShare | Freeze | Control
 ````
 EnderSS | EnderScreenShare
 ````
-/enderss [info|about|version] - enderss.help - Some useful commands, i think
+/enderss [info|about|version] - enderss.help - Some useful commands, I think
 ````
 Clean
 ````
@@ -38,8 +38,17 @@ Clean
 ````
 Blatant
 ````
-/blatant <player> - enderss.staff - Directly ban a player for blatant cheating
+/blatant <player> - enderss.blatant - Directly ban a player for blatant cheating
 ````
+
+## Permissions
+| Permission     |                       description                       |
+|:---------------|:-------------------------------------------------------:|
+| enderss.staff  |  Basic permission to give to your SS Verified staffer   |
+| endess.blatant | Allow the staffer to ban the plyer for blatant cheating |
+| enderss.admin      |            For receive alerts about updates             |
+
+
 
 ## Known Issues
 - The clean command/button won't work if the SS server is both the "join server" and the unique server the player has been playing since they joined [WON'T FIX]

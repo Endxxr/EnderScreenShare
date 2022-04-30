@@ -7,7 +7,6 @@ import java.util.List;
 
 public class config  {
     public static Configuration cfg = Enderss.config;
-
     public static String ScreenShareServer;
     public static String FallbackServer;
     public static boolean LastConnectedServer;
@@ -62,6 +61,7 @@ public class config  {
     public static String quit;
     public static String blatant;
     public static boolean banonquit;
+    public static boolean obsolete;
 
     static  {
         assert cfg != null;
@@ -70,16 +70,16 @@ public class config  {
         ScreenShareServer = cfg.getString("config.ScreenShareServer");
         FallbackServer = cfg.getString("config.FallbackServer");
         LastConnectedServer = cfg.getBoolean("config.LastConnectedServer");
-        FallBackStaff = cfg.getBoolean("config.FallBackStaff");
-        clearchat = cfg.getBoolean("clearChat");
-        banonquit = cfg.getBoolean("banonquit");
 
+        FallBackStaff = cfg.getBoolean("config.FallBackStaff");
+        clearchat = cfg.getBoolean("config.clearChat");
+        banonquit = cfg.getBoolean("config.banonquit");
 
         //Messages on Join
         sendAnydesk = cfg.getBoolean("onjoin.anydesk.send");
         anydesk = cfg.getString("onjoin.anydesk.message");
         sendTeamspeak = cfg.getBoolean("onjoin.teamspeak.send");
-        teamspeak = cfg.getString("onjoin.teanspeak.message");
+        teamspeak = cfg.getString("onjoin.teamspeak.message");
         sendDiscord = cfg.getBoolean("onjoin.discord.send");
         discord = cfg.getString("onjoin.discord.message");
         ssmessage = cfg.getStringList("onjoin.ssmessage");
@@ -99,7 +99,6 @@ public class config  {
 
         //Prefix
         prefix = cfg.getString("prefix");
-
 
         //Messages - Info
         playerquit = cfg.getString("messages.info.playerquit");

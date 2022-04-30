@@ -13,7 +13,7 @@ import static io.github.enderf5027.enderss.utils.ChatUtils.format;
 
 public class BlatantCommand extends Command {
     public BlatantCommand() {
-        super("blatant", "enderss.staff");
+        super("blatant", "enderss.blatant");
     }
 
     @Override
