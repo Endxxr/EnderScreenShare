@@ -12,13 +12,25 @@ This is my first public plugin, so I hope you will like it!
 
 `For report a bug or info: https://discord.gg/PhMbS3jtAJ // ! Ender#0069`
 
+# Features
+ ✓ Full of commands & Customizable
+
+✓ Lightweight
+
+✓ Ban on quit
+
+✓ Automatically blocks commands 
+
+✓ Available in both English and Italian language (check lang folder)
+
 ## Getting Started
 
 ### Requirements
-- Last Version of Bungeecord/Waterfall [1.18]
+- Latest Version of Bungeecord/Waterfall [1.18]
 - A ScreenShare server and a Lobby/Hub server
 
 ### Installation
+- Download the plugin from Spigot or GitHub releases 
 - Put the ```.jar``` file in the plugin folder of your Bungeecord/Waterfall server 
 - Restart your server
 - Enjoy!
@@ -42,7 +54,7 @@ Blatant
 ````
 
 ## Permissions
-| Permission     |                       description                       |
+| Permission     |                       Description                       |
 |:---------------|:-------------------------------------------------------:|
 | enderss.staff  |  Basic permission to give to your SS Verified staffer   |
 | endess.blatant | Allow the staffer to ban the plyer for blatant cheating |
@@ -51,7 +63,7 @@ Blatant
 
 
 ## Known Issues
-- The clean command/button won't work if the SS server is both the "join server" and the unique server the player has been playing since they joined [WON'T FIX]
+- The clean command/button won't work if the SS server is both the "join server" and the unique server the player has been playing since they joined. [WON'T FIX THIS]
 
 ## Report a bug
 - Join my discord at https://discord.gg/PhMbS3jtAJ or PM (! Ender#0069)
