@@ -18,4 +18,4 @@ commands:
     permission: enderss.staff
   blatant:
     description: Directly ban a player for Blatant Cheating
-    permission: enderss.staff
+    permission: enderss.blatant

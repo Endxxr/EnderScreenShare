@@ -27,7 +27,8 @@ public class CommandBlocker implements Listener {
             if (!config.whitelistedCommands.contains(message)) {
                 event.setCancelled(true);
                 sender.sendMessage(format(config.cantexecute));
-                senderSession.getStaffer().sendMessage(format(config.commandBlocked.replace("%COMMAND%", message)));
+                String replacedMessage = config.commandBlocked.replace("%COMMAND%", message);
+                senderSession.getStaffer().sendMessage(format(replacedMessage.replace("%SUSPECT%", sender.getDisplayName())));
             }
         }
     }

@@ -19,6 +19,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.logging.Logger;
 
+/*
+        TODO:
+        interrupt the screenshare if the players can't connect to the ss server
+ */
+
 public final class Enderss extends Plugin {
 
     public static Configuration config;
