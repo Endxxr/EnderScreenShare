@@ -25,6 +25,9 @@ public class ProxyJoinQuitEvent implements Listener {
         if (p.hasPermission("enderss.staff")) {
             session.setStaff(true);
         }
+        if (p.hasPermission("enderss.admin")) {
+            p.sendMessage(format("&8[&d&lEnder&5&lSS&8]&f You need to update the &cplugin!"));
+        }
         ServerInfo LastServer = ProxyServer.getInstance().getServerInfo(config.FallbackServer);
         session.setLastServer(LastServer);
     }
@@ -41,11 +44,12 @@ public class ProxyJoinQuitEvent implements Listener {
             }
 
             for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
-                if (getSession(player).isStaff()) {
-                    player.sendMessage(format(config.playerquit, staff, p));
+                PlayerSession playerSession = getSession(player);
+                if (playerSession.isStaff()) {
+                    if (playerSession.getAlertsEnabled()) { player.sendMessage(format(config.playerquit, staff, p)); }
                     if (config.LastConnectedServer){
                         ServerInfo lastServer = getSession(staff).getLastServer();
-                        if (config.FallBackStaff) staff.connect(lastServer);
+                        if (config.FallBackStaff && !(lastServer==null)) staff.connect(lastServer);
                     } else {
                         if (config.FallBackStaff) player.connect(ProxyServer.getInstance().getServerInfo(config.FallbackServer));
                     }

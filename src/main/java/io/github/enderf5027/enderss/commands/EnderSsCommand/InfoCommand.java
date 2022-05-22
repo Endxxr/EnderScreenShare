@@ -7,6 +7,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+
 import static io.github.enderf5027.enderss.session.SessionManager.getSession;
 import static io.github.enderf5027.enderss.utils.ChatUtils.format;
 
@@ -62,7 +63,7 @@ public class InfoCommand extends SubCommand {
             if (!(targetSession.getStaffer()==null)) {
                 player.sendMessage(new TextComponent(ChatColor.DARK_PURPLE+targetSession.getStaffer().getDisplayName()));
             } else {
-                player.sendMessage(new TextComponent("Nobody"));
+                player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('c', "&cYes")));
             }
         }
         player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', "&fFrozen")));

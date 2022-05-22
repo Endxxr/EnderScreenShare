@@ -92,7 +92,8 @@ messages:
         cleanplayer: "&2Controllo finito. Grazie per la pazienza"
         playercleaned: "&aIl controllo su %SUSPECT% è finito"
         commandblocked: "&c%SUSPECT% ha provato ad eseguire %COMMAND%"
-
+        alertsEnabled: "&aAlerts abilitati"
+        alertsDisabled: "&cAlerts disabilitati"
     error:
         noperm: "&cPermessi insufficienti"
         nocommand: "&cComando inesistente"
@@ -109,6 +110,28 @@ messages:
         cantcontrolyourself: "&cNon puoi controllarti da solo. Bannati direttamente, no?"
         cantcontrolstaff: "&cNon puoi controllare un membro dello staff"
         notcontrolling: "&cNon puoi controllare questo giocatore"
+
+reports:
+    enabled: true
+    messages:
+        reportsent: #You can use %SUSPECT% and %REASON%
+            - ""
+            - "&aHai reportato %SUSPECT%"
+            - ""
+
+        reportreceived:
+            - ""
+            - "&5&lNUOVO REPORT"
+            - "&dSegnalatore&8: &f%REPORTER%"
+            - "&dSegnalato&8: &f%REPORTED%"
+            - "&dServer: &f%SERVER%"
+            - "&dMotivo&8: &f%REASON%"
+            - ""
+            #Buttons will be added here
+
+
+        nostaff: "Nessun dello staff è online"
+        nostaffenabled: true
 
 
 hours: "ore"
@@ -137,5 +160,4 @@ bancommand:
     blatant: /ban %SUSPECT% 30d Blatant Cheating -s
 
 #Don't modify this value(s)! We need it for check updates
-version: 0.2
-obsolete: false
+version: 0.3

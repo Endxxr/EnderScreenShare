@@ -1,4 +1,4 @@
-package io.github.enderf5027.enderss.commands.clean;
+package io.github.enderf5027.enderss.events;
 
 import io.github.enderf5027.enderss.Enderss;
 import io.github.enderf5027.enderss.session.PlayerSession;
@@ -18,8 +18,9 @@ public class PlayerSwitchEvent implements Listener{
         ProxiedPlayer p = e.getPlayer();
         PlayerSession session = SessionManager.getSession(p);
         ServerInfo lastServer = e.getFrom();
+
         session.setLastServer(lastServer);
-        if (p.hasPermission("enderss.admin") && Enderss.obsolete) {
+        if (p.hasPermission("enderss.admin") && Enderss.obsoleteConfig) {
             p.sendMessage(format("&8[&d&lEnder&5&lSS&8]&f You need to &cupdate the config!"));
         }
     }

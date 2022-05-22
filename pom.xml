@@ -6,7 +6,7 @@
 
     <groupId>io.github.enderf5027</groupId>
     <artifactId>Enderss</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <packaging>jar</packaging>
 
     <name>EnderSS</name>

@@ -1,5 +1,6 @@
 package io.github.enderf5027.enderss.utils;
 
+import io.github.enderf5027.enderss.Enderss;
 import io.github.enderf5027.enderss.session.SessionManager;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import static io.github.enderf5027.enderss.session.SessionManager.isStaff;
+
 public class ChatUtils {
 
 
@@ -19,7 +22,21 @@ public class ChatUtils {
     public ChatUtils(){
         placeholders.add("%SUSPECT%");
         placeholders.add("%STAFF%");
+        placeholders.add("%REPORTED%");
+        placeholders.add("%REPORTER%");
     }
+
+    public static void announceStaff(TextComponent message) {
+        ProxyServer.getInstance().getScheduler().runAsync(Enderss.plugin, () -> {
+            for (ProxiedPlayer staff : ProxyServer.getInstance().getPlayers()) {
+                if (isStaff(staff)) {
+                    staff.sendMessage(message);
+                }
+            }
+        });
+
+    }
+
 
     public static String PlaceHolderManager(String message, String placeholder, ProxiedPlayer player){
         switch (placeholder){

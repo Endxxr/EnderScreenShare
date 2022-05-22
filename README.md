@@ -26,7 +26,7 @@ This is my first public plugin, so I hope you will like it!
 ## Getting Started
 
 ### Requirements
-- Latest Version of Bungeecord/Waterfall [1.18]
+- Latest Version of Bungeecord/Waterfall
 - A ScreenShare server and a Lobby/Hub server
 
 ### Installation
@@ -42,7 +42,7 @@ SS | ScreenShare | Freeze | Control
 ````
 EnderSS | EnderScreenShare
 ````
-/enderss [info|about|version] - enderss.help - Some useful commands, I think
+/enderss [info|about|version|alerts] - enderss.help - Some useful commands, I think
 ````
 Clean
 ````
@@ -58,8 +58,10 @@ Blatant
 |:---------------|:-------------------------------------------------------:|
 | enderss.staff  |  Basic permission to give to your SS Verified staffer   |
 | endess.blatant | Allow the staffer to ban the plyer for blatant cheating |
-| enderss.admin      |            For receive alerts about updates             |
-
+| enderss.admin  |            For receive alerts about updates             |
+| enderss.exempt |              Disables controls on a player              |
+| enderss.bypass |              Disables controls on a player              |
+| enderss.report       |         Allow the player to report other players          |
 
 
 ## Known Issues

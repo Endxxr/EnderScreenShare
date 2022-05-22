@@ -10,12 +10,14 @@ public class PlayerSession {
 
     private boolean isFrozen = false;
     private boolean isStaff = false;
+    private boolean alerts = true;
     private ProxiedPlayer Staffer;
     private ProxiedPlayer PlayerScreenShared;
     private ServerInfo LastServer;
+
     private long secondsElapsed;
 
-    public PlayerSession(UUID uuid, String name){
+    public PlayerSession(UUID uuid, String name) {
     }
 
     public ServerInfo getLastServer() {
@@ -41,8 +43,11 @@ public class PlayerSession {
     public ProxiedPlayer getStaffer() {
         return Staffer;
     }
+    public boolean getAlertsEnabled() { return alerts; }
 
-    public String getTime() {return ChatUtils.calculateTime(secondsElapsed);}
+    public String getTime() {
+        return ChatUtils.calculateTime(secondsElapsed);
+    }
 
     public void setFrozen(boolean frozen) {
         isFrozen = frozen;
@@ -60,8 +65,6 @@ public class PlayerSession {
         Staffer = staffer;
     }
 
-    public void setSecondsElapsed(long seconds) {
-        secondsElapsed = seconds;
-    }
+    public void setAlerts(boolean Alerts) { alerts = Alerts; }
 
 }

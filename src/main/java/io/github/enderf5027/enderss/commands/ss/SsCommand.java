@@ -5,19 +5,28 @@ import io.github.enderf5027.enderss.utils.config;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.ServerConnectRequest;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.github.enderf5027.enderss.session.SessionManager.getSession;
 import static io.github.enderf5027.enderss.utils.ChatUtils.format;
 import static io.github.enderf5027.enderss.utils.ChatUtils.sendListMessage;
 
-public class SsCommand extends Command {
+public class SsCommand extends Command implements TabExecutor {
+
 
     public SsCommand() {
         super("ss", "enderss.staff", "screenshare", "freeze", "controllo");
@@ -37,8 +46,14 @@ public class SsCommand extends Command {
             return;
         }
         ProxiedPlayer sus = ProxyServer.getInstance().getPlayer(args[0]);
+
         if (sus == null) { //If the player is offline, sus will be null
             sender.sendMessage(format(config.playeroffline));
+            return;
+        }
+
+        if (sus.hasPermission("enderss.exempt") || sus.hasPermission("enderss.bypass")) {
+            sender.sendMessage(format(config.exempt));
             return;
         }
 
@@ -69,8 +84,9 @@ public class SsCommand extends Command {
 
         ServerInfo ss = ProxyServer.getInstance().getServerInfo(config.ScreenShareServer); //Gets the screenshare server from the config
 
-        sus.connect(ss);
-        staff.connect(ss);
+        if (!(staff.getServer().getInfo()==ss))staff.connect(ServerConnectRequest.builder().reason(ServerConnectEvent.Reason.COMMAND).connectTimeout(1000).target(ss).build());
+        sus.connect(ServerConnectRequest.builder().reason(ServerConnectEvent.Reason.COMMAND).connectTimeout(1000).target(ss).build());
+
         susSession.setFrozen(true);
         susSession.setStaffer(staff);
         staffSession.setPlayerScreenShared(sus);
@@ -90,10 +106,12 @@ public class SsCommand extends Command {
             }
         }
         for (ProxiedPlayer receiver : ProxyServer.getInstance().getPlayers()) {
-            if (getSession(receiver).isStaff()) {
+            PlayerSession session = getSession(receiver);
+            if (session.isStaff() && session.getAlertsEnabled()) {
                 sendListMessage(config.staffmessage, staff, sus, receiver);
             }
         }
+
         sendListMessage(config.ssmessage, staff, sus, sus);
 
         if (config.sendAnydesk) {
@@ -146,5 +164,17 @@ public class SsCommand extends Command {
 
     }
 
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            return Collections.emptyList();
+        }
+        List<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(player -> player.getName().startsWith(args[0])).collect(Collectors.toList());
+        List<String> results = new ArrayList<>();
+        players.forEach(player -> results.add(player.getName()));
+        players.clear();
+        return results;
+    }
 }
 

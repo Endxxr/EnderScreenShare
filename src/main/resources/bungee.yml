@@ -19,3 +19,6 @@ commands:
   blatant:
     description: Directly ban a player for Blatant Cheating
     permission: enderss.blatant
+  report:
+    description: Report a player
+    permission: enderss.report

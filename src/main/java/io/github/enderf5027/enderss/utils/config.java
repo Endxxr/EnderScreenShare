@@ -15,12 +15,18 @@ public class config  {
     public static String noperm;
     public static String nocommand;
     public static String console;
+    public static String exempt;
     public static String noplayer;
+    public static String noreason;
     public static String anydesk;
     public static String discord;
     public static String teamspeak;
     public static String cantexecute;
+    public static String cantfallbacksus;
+    public static String cantfallbackstaff;
     public static String commandBlocked;
+    public static String alertsEnabled;
+    public static String alertsDisabled;
     public static String playeroffline;
     public static String alreadyinss;
     public static String staffinss;
@@ -31,6 +37,11 @@ public class config  {
     public static String playercleaned;
     public static String cantcontrolyourself;
     public static String cantcontrolstaff;
+    public static String nostaff;
+    public static boolean nostaffenabled;
+    public static boolean reportsenabled;
+    public static List<String> reportsent;
+    public static List<String> reportreceived;
     public static List<String> staffmessage;
     public static List<String> ssmessage;
     public static String title;
@@ -53,6 +64,9 @@ public class config  {
     public static String brefuse;
     public static String bquit;
     public static String bclean;
+    public static String ssbutton;
+    public static String servertpbutton;
+    public static String hackbutton;
     public static String bconfirm;
     public static boolean confirmbutton;
     public static String hack;
@@ -61,7 +75,6 @@ public class config  {
     public static String quit;
     public static String blatant;
     public static boolean banonquit;
-    public static boolean obsolete;
 
     static  {
         assert cfg != null;
@@ -105,13 +118,19 @@ public class config  {
         cleanplayer = cfg.getString("messages.info.cleanplayer");
         playercleaned = cfg.getString("messages.info.playercleaned");
         commandBlocked = cfg.getString("messages.info.commandblocked");
+        alertsEnabled = cfg.getString("messages.info.alertsEnabled");
+        alertsDisabled = cfg.getString("messages.info.alertsDisabled");
+
 
         //Messages - Errors
         noplayer = cfg.getString("messages.error.noplayer");
         noperm = cfg.getString("messages.error.noperm");
         nocommand = cfg.getString("messages.error.nocommand");
         noperm = cfg.getString("messages.error.noperm");
+        noreason = cfg.getString("messages.error.noreason");
         cantexecute = cfg.getString("messages.error.cantexecute");
+        cantfallbacksus = cfg.getString("messages.error.cantfallbacksuspect");
+        cantfallbackstaff = cfg.getString("messages.error.cantfallbackstaff");
         playeroffline = cfg.getString("messages.error.playeroffline");
         alreadyinss = cfg.getString("messages.error.alreadyinss");
         staffinss = cfg.getString("messages.error.staffinss");
@@ -120,6 +139,17 @@ public class config  {
         cantcontrolyourself = cfg.getString("messages.error.cantcontrolyourself");
         cantcontrolstaff = cfg.getString("messages.error.cantcontrolstaff");
         console = cfg.getString("messages.error.console");
+        exempt = cfg.getString("messages.error.exempt");
+
+        //Reports
+        reportsenabled = cfg.getBoolean("reports.enabled");
+        reportsent = cfg.getStringList("reports.messages.reportsent");
+        reportreceived = cfg.getStringList("reports.messages.reportreceived");
+        nostaff = cfg.getString("reports.messages.nostaff");
+        nostaffenabled = cfg.getBoolean("reports.messages.nostaffenabled");
+
+
+
 
         //Buttons
         bhack = cfg.getString("buttons.hack");
@@ -128,7 +158,12 @@ public class config  {
         bclean = cfg.getString("buttons.clean");
         bquit = cfg.getString("buttons.quit");
         bconfirm = cfg.getString("buttons.confirm");
+        ssbutton = cfg.getString("buttons.ss");
+        servertpbutton = cfg.getString("buttons.servertp");
+        hackbutton = cfg.getString("buttons.ban");
         confirmbutton = cfg.getBoolean("buttons.confirmButton");
+
+
 
         //Commands
         hack = cfg.getString("bancommand.hack");

@@ -3,13 +3,12 @@
 
 # NOTE:
 # The config will NOT automatically update by itself. I suggest you to visit the GitHub page for get the latest when updating the .jar file instead.
-# However, the plugin will still alerts you when there'e the need to update
+# However, the plugin will still alert you when there's the need to update
 
-# Coming in v0.3
-# > Alerts for updating the jar config
-# > Disable messages
-# > /anydesk, /discord, /teamspeak commands
-# > Tabcomplete names
+# Coming in v0.4
+# > Luckperms context
+# > Chronograph command
+# > Private chat between Staff and Suspect
 
 #Server Configuration
 config:
@@ -92,13 +91,19 @@ messages:
         cleanplayer: "&2Control ended. Thank you for your patience"
         playercleaned: "&aThe control on %SUSPECT% ended"
         commandblocked: "&c%SUSPECT% tried to execute %COMMAND%"
+        alertsEnabled: "&aAlerts enabled"
+        alertsDisabled: "&cAlerts disabled"
 
     error:
         noperm: "&cInsufficient Permissions"
         nocommand: "&cThis command doesn't exist!"
         noplayer: "&cSpecify a player"
+        noreason: "&cGive a reason"
+        exempt: "&cYou can't control this player"
         console: "&cOnly players can run this command"
         cantexecute: "&cYou can't execute commands while being controlled"
+        cantfallbacksuspect: "&cWe can't fallback this player! Did they switched server before the SS?"
+        cantfallbackstaff: "&cWe can't fallback you! Did you switched server before the SS?"
 
         #For these strings you can use the placeholder %SUSPECT%
         playeroffline: "&cThis player is offline"
@@ -110,6 +115,27 @@ messages:
         cantcontrolstaff: "&cYou can't control a staff member"
         notcontrolling: "&cYou're not controlling this player"
 
+reports:
+    enabled: true
+    messages:
+        reportsent: #You can use %SUSPECT% and %REASON%
+            - ""
+            - "&aYou successfully reported %SUSPECT%"
+            - ""
+
+        reportreceived:
+            - ""
+            - "&5&lNEW REPORT"
+            - "&dReporter&8: &f%REPORTER%"
+            - "&dReported&8: &f%REPORTED%"
+            - "&dServer: &f%SERVER%"
+            - "&dReason&8: &f%REASON%"
+            - ""
+            #Buttons will be added here
+
+
+        nostaff: "No one of the staff team is online! You can receive support here: https://discord.example.com/"
+        nostaffenabled: true
 
 hours: "hours"
 minutes: "minutes"
@@ -123,6 +149,10 @@ buttons:
     quit: "&d[&5&lQUIT&d]"
     clean: "&a[&2&lCLEAN&a]"
     confirm: "&2[&a&lCONFIRM&a]"
+    ss: "&4[&c&lSS&4]"
+    servertp: "&a[&2&lTP&a]"
+    ban: "&4[&c&lBAN&4]"
+
     #The ban commands will be executed directly instead of suggest the command
     confirmButtons: false
 
@@ -137,4 +167,4 @@ bancommand:
     blatant: /ban %SUSPECT% 30d Blatant Cheating -s
 
 #Don't modify this value(s)! We need it for check updates
-version: 0.2
+version: 0.3

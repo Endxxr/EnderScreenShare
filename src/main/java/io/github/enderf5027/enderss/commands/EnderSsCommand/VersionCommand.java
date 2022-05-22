@@ -34,7 +34,7 @@ public class VersionCommand extends SubCommand {
 
         player.sendMessage(new TextComponent(""));
         player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', "&d&lEnder&5&lSS")));
-        player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', "Version &d0.1 &f- Beta")));
+        player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', "Version &d0.3 &f- Beta")));
         player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', "&fby &dEndxxr")));
         player.sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', "&fRunning under &d"+ ProxyServer.getInstance().getVersion())));
         player.sendMessage(new TextComponent(""));
