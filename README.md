@@ -52,6 +52,10 @@ Blatant
 ````
 /blatant <player> - enderss.blatant - Directly ban a player for blatant cheating
 ````
+Report
+````
+report <player> <reason> - enderss.report - Report a player 
+````
 
 ## Permissions
 | Permission     |                       Description                       |
