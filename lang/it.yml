@@ -3,13 +3,12 @@
 
 # NOTE:
 # The config will NOT automatically update by itself. I suggest you to visit the GitHub page for get the latest when updating the .jar file instead.
-# However, the plugin will still alerts you when there'e the need to update
+# However, the plugin will still alert you when there's the need to update
 
-# Coming in v0.3
-# > Alerts for updating the jar config
-# > Disable messages
-# > /anydesk, /discord, /teamspeak commands
-# > Tabcomplete names
+# Coming in v0.4
+# > Luckperms context
+# > Chronograph command
+# > Private chat between Staff and Suspect
 
 #Server Configuration
 config:
