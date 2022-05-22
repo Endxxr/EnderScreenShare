@@ -65,7 +65,7 @@ Blatant
 
 
 ## Known Issues
-- The control will bug if the SS isn't joinable
+- The control will bug if the SS Server isn't joinable
 
 ## Report a bug
 - Join my discord at https://discord.gg/PhMbS3jtAJ or PM (! Ender#0069)
