@@ -69,7 +69,7 @@ report <player> <reason> - enderss.report - Report a player
 
 
 ## Known Issues
-- The clean command/button won't work if the SS server is both the "join server" and the unique server the player has been playing since they joined. [WON'T FIX THIS]
+- The control will bug if the SS Server isn't joinable
 
 ## Report a bug
 - Join my discord at https://discord.gg/PhMbS3jtAJ or PM (! Ender#0069)
