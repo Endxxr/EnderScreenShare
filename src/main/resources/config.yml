@@ -161,11 +161,11 @@ buttons:
 #The only available placeholder here is %SUSPECT%
 #Litebans need to be installed on the proxy in order to work
 bancommand:
-    refuse: /ban %SUSPECT% 30d SS Refused -s
-    quit: /ban %SUSPECT% 30d Quit in SS -s
-    hack: /ban %SUSPECT% 30d Cheating (SS) -s
-    admission: /ban %SUSPECT% 14d Cheat Admission -s
-    blatant: /ban %SUSPECT% 30d Blatant Cheating -s
+    refuse: ban %SUSPECT% 30d SS Refused -s
+    quit: ban %SUSPECT% 30d Quit in SS -s
+    hack: ban %SUSPECT% 30d Cheating (SS) -s
+    admission: ban %SUSPECT% 14d Cheat Admission -s
+    blatant: ban %SUSPECT% 30d Blatant Cheating -s
 
 #Don't modify this value(s)! We need it for check updates
 version: 0.3
