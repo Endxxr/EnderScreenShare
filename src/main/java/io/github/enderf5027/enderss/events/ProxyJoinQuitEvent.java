@@ -12,6 +12,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
+import static io.github.enderf5027.enderss.Enderss.obsoleteVersion;
 import static io.github.enderf5027.enderss.session.SessionManager.*;
 import static io.github.enderf5027.enderss.utils.ChatUtils.format;
 
@@ -25,7 +26,7 @@ public class ProxyJoinQuitEvent implements Listener {
         if (p.hasPermission("enderss.staff")) {
             session.setStaff(true);
         }
-        if (p.hasPermission("enderss.admin")) {
+        if (p.hasPermission("enderss.admin") && obsoleteVersion) {
             p.sendMessage(format("&8[&d&lEnder&5&lSS&8]&f You need to update the &cplugin!"));
         }
         ServerInfo LastServer = ProxyServer.getInstance().getServerInfo(config.FallbackServer);
@@ -39,10 +40,7 @@ public class ProxyJoinQuitEvent implements Listener {
         ProxiedPlayer staff = session.getStaffer();
         removeSession(p);
         if (session.isFrozen()) {
-            if (config.banonquit){
-                ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), config.quit.replace("%SUSPECT%", p.getName()));
-            }
-
+            if (config.banonquit) ProxyServer.getInstance().getPluginManager().dispatchCommand( staff, config.quit.replace("%SUSPECT%", p.getName()));
             for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
                 PlayerSession playerSession = getSession(player);
                 if (playerSession.isStaff()) {
