@@ -55,7 +55,7 @@ onjoin:
         - ""
     staffmessage:
         - ""
-        - "&c%SUSPECT% è ora sotto controllo da %STAFF%"
+        - "&c%SUSPECT% e' ora sotto controllo da %STAFF%"
         - ""
 
 
@@ -87,9 +87,9 @@ prefix: "" #This string will be used for %PREFIX% placeholder
 messages:
     info:
         #For these strings you can use the placeholder %SUSPECT%
-        playerquit: "&c%SUSPECT% è uscito durante il controllo"
+        playerquit: "&c%SUSPECT% e' uscito durante il controllo"
         cleanplayer: "&2Controllo finito. Grazie per la pazienza"
-        playercleaned: "&aIl controllo su %SUSPECT% è finito"
+        playercleaned: "&aIl controllo su %SUSPECT% e' finito"
         commandblocked: "&c%SUSPECT% ha provato ad eseguire %COMMAND%"
         alertsEnabled: "&aAlerts abilitati"
         alertsDisabled: "&cAlerts disabilitati"
@@ -102,10 +102,10 @@ messages:
 
         #For these strings you can use the placeholder %SUSPECT%
         playeroffline: "&cGiocatore offline"
-        alreadyinss: "&cQuesto giocatore è già sotto contorllo"
+        alreadyinss: "&cQuesto giocatore e' gia' sotto contorllo"
         staffinss: "&cPuoi controllare solo un giocatore alla volta"
-        alreadyssplayer: "&cStai già controllando questo giocatore"
-        suspectnotinss: "&cQuesto giocatore non è sotto controllo hack"
+        alreadyssplayer: "&cStai gia' controllando questo giocatore"
+        suspectnotinss: "&cQuesto giocatore non e' sotto controllo hack"
         cantcontrolyourself: "&cNon puoi controllarti da solo. Bannati direttamente, no?"
         cantcontrolstaff: "&cNon puoi controllare un membro dello staff"
         notcontrolling: "&cNon puoi controllare questo giocatore"
@@ -129,7 +129,7 @@ reports:
             #Buttons will be added here
 
 
-        nostaff: "Nessun dello staff è online"
+        nostaff: "Nessun dello staff e' online"
         nostaffenabled: true
 
 

@@ -28,6 +28,8 @@ public class ReportCommand extends Command implements TabExecutor {
     public void execute(CommandSender sender, String[] args) {
         ProxiedPlayer p = (ProxiedPlayer) sender;
 
+        if (!config.reportsenabled) return;
+
         if (args.length==0) {
             p.sendMessage(format(config.noplayer));
             return;
