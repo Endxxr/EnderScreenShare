@@ -1,7 +1,7 @@
 name: EnderSS
 version: '${project.version}'
-main: io.github.enderf5027.enderss.Enderss
-description: Screenshare plugin made by Endxxr @EnderF5027 Telegram
+main: me.endxxr.enderss.Enderss
+description: Screenshare plugin made by Endxxr (tg @pellicani)
 author: Endxxr
 commands:
   ss:
@@ -14,6 +14,7 @@ commands:
     usage: '&c/enderss <version|help|info>'
     permission: enderss.help
   clean:
+    aliases: [legit]
     description: Does what the button "clean" does, easy
     permission: enderss.staff
   blatant:
