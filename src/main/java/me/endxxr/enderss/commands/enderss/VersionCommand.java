@@ -18,8 +18,8 @@ public class VersionCommand implements SubCommand {
     public void execute(CommandSender sender, String[] args) {
         sender.sendMessage(ChatUtils.format("&5&lEnderSS &dv1.0"));
         sender.sendMessage("");
-        sender.sendMessage(ChatUtils.format("&5&lEnderSS &dby Endxxr"));
-        sender.sendMessage(ChatUtils.format("&dhttps://github.com/Endxxr/EnderSS"));
+        sender.sendMessage(ChatUtils.format("&fEnderSS &7by Endxxr"));
+        sender.sendMessage(ChatUtils.format("&fhttps://github.com/Endxxr/EnderSS"));
         sender.sendMessage("");
     }
 }

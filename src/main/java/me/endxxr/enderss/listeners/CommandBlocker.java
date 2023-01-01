@@ -12,13 +12,20 @@ import net.md_5.bungee.event.EventPriority;
 
 public class CommandBlocker implements Listener {
 
+    private final EnderSS plugin;
+
+    public CommandBlocker(EnderSS plugin) {
+        this.plugin = plugin;
+    }
+
+
     /**
      * Blocks commands from players when being controlled
      *
      * @param event
      */
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onCommand(ChatEvent event) {
         ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
         SsPlayer senderSession = EnderSS.getInstance().getPlayersManager().getPlayer(sender);

@@ -24,7 +24,6 @@ public class HelpCommand implements SubCommand {
         sender.sendMessage(ChatUtils.format(""));
         sender.sendMessage(ChatUtils.format("&5/enderss help &7- &fShow this help message"));
         sender.sendMessage(ChatUtils.format("&5/enderss version &7- &fShow the version of the plugin"));
-        sender.sendMessage(ChatUtils.format("&5/enderss info &7- &fShow the info of the plugin"));
         sender.sendMessage(ChatUtils.format("&5/enderss reload &7- &fReload the config"));
         sender.sendMessage(ChatUtils.format(""));
     }

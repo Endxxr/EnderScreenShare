@@ -2,7 +2,6 @@ package me.endxxr.enderss.scoreboard;
 
 import me.endxxr.enderss.EnderSS;
 import me.endxxr.enderss.enums.Config;
-import me.endxxr.enderss.models.SsPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -10,29 +9,26 @@ import net.md_5.bungee.protocol.packet.ScoreboardDisplay;
 import net.md_5.bungee.protocol.packet.ScoreboardObjective;
 import net.md_5.bungee.protocol.packet.ScoreboardScore;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.*;
 
 public class ScoreboardManager {
 
-    final EnderSS plugin;
-    final Random random;
-    final ScoreboardObjective deleteSb;
-    final ScoreboardDisplay deleteSbDisplay;
-    final ConcurrentHashMap<SsPlayer, Integer> scores;
+    private final HashMap<ProxiedPlayer, SsScoreboard> scoreboards;
+    private final ScoreboardObjective deleteSb;
+    private final ScoreboardDisplay deleteSbDisplay;
+    private final Random random;
+    private final EnderSS plugin;
+
+
 
     public ScoreboardManager(EnderSS plugin) {
-
+        this.scoreboards = new HashMap<>();
         this.plugin = plugin;
         this.random = new Random();
 
         this.deleteSb = new ScoreboardObjective();
         this.deleteSbDisplay = new ScoreboardDisplay();
-        this.scores = new ConcurrentHashMap<>();
+
 
         deleteSb.setName("delete");
         deleteSb.setAction((byte) 1);
@@ -40,78 +36,32 @@ public class ScoreboardManager {
         deleteSb.setType(ScoreboardObjective.HealthDisplay.INTEGER);
         deleteSbDisplay.setName("delete");
         deleteSbDisplay.setPosition((byte) 1);
-
     }
 
-
-    public void createScoreboards(ProxiedPlayer staffer, ProxiedPlayer suspect) {
-
-        updateStaffScoreboard(staffer, suspect);
-        updateSuspectScoreboard(suspect, staffer);
-        scores.put(plugin.getPlayersManager().getPlayer(staffer), 0);
-        stopWatch(staffer);
-
+    public void createScoreboards(ProxiedPlayer staff, ProxiedPlayer suspect) {
+        scoreboards.put(staff, new SsScoreboard(staff, suspect, plugin, random));
     }
-
-    private void updateSuspectScoreboard(ProxiedPlayer suspect, ProxiedPlayer staffer) {
-
-            String sbName = suspect.getName() + random.nextInt(999999);
-            deleteSb.setName(sbName);
-            deleteSb.setAction((byte) 0);
-            deleteSb.setValue(ChatColor.translateAlternateColorCodes('&', Config.SCOREBOARD_SUSPECT_TITLE.getString()));
-            deleteSb.setType(ScoreboardObjective.HealthDisplay.INTEGER);
-            deleteSbDisplay.setName(sbName);
-
-            List<String> lines = Config.SCOREBOARD_SUSPECT_LINES.getStringList();
-            Collections.reverse(lines);
-            suspect.unsafe().sendPacket(deleteSb);
-            suspect.unsafe().sendPacket(deleteSbDisplay);
-
-            for (int i = 0; i < lines.size(); i++) {
-                ScoreboardScore score = new ScoreboardScore();
-                score.setItemName(ChatColor.translateAlternateColorCodes('&', parsePlaceholders(lines.get(i), staffer, suspect)));
-                score.setValue(i);
-                score.setAction((byte) 0);
-                score.setScoreName(sbName);
-                suspect.unsafe().sendPacket(score);
-            }
-
-    }
-
-    public void updateStaffScoreboard(ProxiedPlayer staffer, ProxiedPlayer suspect) {
-
-        String sbName = staffer.getName() + random.nextInt(999999);
-        deleteSb.setName(sbName);
-        deleteSb.setAction((byte) 0);
-        deleteSb.setValue(ChatColor.translateAlternateColorCodes('&', Config.SCOREBOARD_STAFF_TITLE.getString()));
-        deleteSb.setType(ScoreboardObjective.HealthDisplay.INTEGER);
-        deleteSbDisplay.setName(sbName);
-
-        List<String> lines = Config.SCOREBOARD_STAFF_LINES.getStringList();
-        Collections.reverse(lines);
-        staffer.unsafe().sendPacket(deleteSb);
-        staffer.unsafe().sendPacket(deleteSbDisplay);
-
-        for (int i = 0; i < lines.size(); i++) {
-            ScoreboardScore score = new ScoreboardScore();
-            score.setItemName(ChatColor.translateAlternateColorCodes('&', parsePlaceholders(lines.get(i), staffer, suspect)));
-            score.setValue(i);
-            score.setAction((byte) 0);
-            score.setScoreName(sbName);
-            staffer.unsafe().sendPacket(score);
-        }
-    }
-
 
     /**
      *
-     * Sends the idling scoreboard to the specified player, asynchronously.
+     * Destroy all the scoreboards of the specified players
+     * and set the idling scoreboard to the specified players
      *
-     * @param target The player to send the scoreboard to.
+     * @param staffer the staff player
+     * @param suspect the suspect player
      */
 
+    public void endScoreboard(ProxiedPlayer staffer, ProxiedPlayer suspect) {
+        destroyScoreboard(staffer);
+        destroyScoreboard(suspect);
+        scoreboards.get(staffer).stop();
+        scoreboards.remove(staffer);
+    }
 
     public void sendIdlingScoreboard(ProxiedPlayer target) {
+
+        if (target==null || plugin.getPlayersManager().getPlayer(target)==null) return;
+
 
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             final ScoreboardObjective scoreboard = new ScoreboardObjective();
@@ -133,9 +83,21 @@ public class ScoreboardManager {
 
             for (int i = 0; i < lines.size(); i++) {
                 final ScoreboardScore score = new ScoreboardScore();
-                score.setItemName(ChatColor.translateAlternateColorCodes('&', lines.get(i)
-                        .replace("%STAFFER%", target.getDisplayName())
-                        .replace("%SUSPECT%", Config.SCOREBOARD_NOT_CONTROLLING_PLACEHOLDER.getString())));
+                String line = lines.get(i);
+                if (line.isBlank()) { // We have to do if we want all blanks lines to work
+                    StringBuilder sb1 = new StringBuilder();
+                    for (int j = 0; j < i; j++) {
+                        sb1.append(" ");
+                    }
+                    line = sb1.toString();
+                } else {
+                    String alerts = plugin.getPlayersManager().getPlayer(target).isAlerts() ? Config.SCOREBOARD_YES.getString() : Config.SCOREBOARD_NO.getString();
+                    line = ChatColor.translateAlternateColorCodes('&', line
+                            .replace("%STAFFER%", target.getName())
+                            .replace("%SUSPECT%", Config.SCOREBOARD_NOT_CONTROLLING_PLACEHOLDER.getString())
+                            .replace("%ALERTS%", alerts));
+                }
+                score.setItemName(line);
                 score.setValue(i);
                 score.setAction((byte) 0);
                 score.setScoreName(sbName);
@@ -157,68 +119,5 @@ public class ScoreboardManager {
         target.unsafe().sendPacket(this.deleteSbDisplay);
     }
 
-    /**
-     *
-     * Destroy all the scoreboards of the specified players
-     * and set the idling scoreboard to the specified players
-     *
-     * @param staffer the staff player
-     * @param suspect the suspect player
-     */
 
-    public void endScoreboard(ProxiedPlayer staffer, ProxiedPlayer suspect) {
-        destroyScoreboard(staffer);
-        destroyScoreboard(suspect);
-        if (staffer.getServer().getInfo().getName().equalsIgnoreCase(Config.CONFIG_SSSERVER.getString())) sendIdlingScoreboard(staffer);
-        if (suspect.getServer().getInfo().getName().equalsIgnoreCase(Config.CONFIG_SSSERVER.getString())) sendIdlingScoreboard(suspect);
-    }
-
-    /**
-     *
-     * Destroy the scoreboard of the specified player
-     * and set the idling scoreboard
-     *
-     * @param player the player
-     */
-
-    public void endScoreboard(ProxiedPlayer player) {
-        destroyScoreboard(player);
-        if (player.getServer().getInfo().getName().equalsIgnoreCase(Config.CONFIG_SSSERVER.getString())) sendIdlingScoreboard(player);
-    }
-
-
-    private void stopWatch(ProxiedPlayer staffer) {
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        SsPlayer ssPlayer = plugin.getPlayersManager().getPlayer(staffer);
-        ProxiedPlayer controlled = ssPlayer.getControlled(); 
-        executor.scheduleAtFixedRate(() -> {
-            if (plugin.getPlayersManager().getPlayer(staffer).getControlled()!=null) { //self-destruct if the player is no longer controlling
-                executor.shutdownNow();
-                return;
-            }
-            scores.replace(ssPlayer, scores.get(ssPlayer) + 1);
-            updateStaffScoreboard(staffer, ssPlayer.getControlled());
-            updateSuspectScoreboard(controlled, staffer);
-        }, 1, 1, java.util.concurrent.TimeUnit.SECONDS);
-    }
-
-    private String parsePlaceholders(String s, ProxiedPlayer staffer, ProxiedPlayer suspect) {
-        return s.replaceAll("%STAFFER%", staffer.getName())
-                .replaceAll("%SUSPECT%", suspect.getName())
-                .replaceAll("%TIME%", parseTime(scores.get(plugin.getPlayersManager().getPlayer(staffer))));
-    }
-
-    private String parseTime(int seconds) {
-        int minutes = seconds / 60;
-        int remainder = seconds % 60;
-        String finalString;
-        if (minutes >= 1) {
-            finalString =  minutes+"m "+remainder+"s";
-        } else {
-            finalString = seconds+"s";
-        }
-
-        return finalString;
-    }
-    
 }

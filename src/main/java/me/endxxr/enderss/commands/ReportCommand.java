@@ -40,7 +40,7 @@ public class ReportCommand extends Command implements TabExecutor {
 
         if (cooldowns.containsKey(player.getUniqueId())) {
             if (cooldowns.get(player.getUniqueId()) > System.currentTimeMillis()) {
-                player.sendMessage(ChatUtils.format(Config.REPORTS_MESSAGES_WAIT.getMessage(), "%time%", String.valueOf((cooldowns.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)));
+                player.sendMessage(ChatUtils.format(Config.REPORTS_MESSAGES_WAIT.getMessage(), "%SECONDS%", String.valueOf((cooldowns.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)));
                 return;
             }
         }
@@ -98,20 +98,28 @@ public class ReportCommand extends Command implements TabExecutor {
             }
         }
 
-        //BUTTONS
-        Configuration section = Config.REPORTS_BUTTONS.getSection(); //buttons.reports.x.y
-        if (Config.REPORTS_BUTTONS.getSection().getKeys().size() > 0) {
+        //BUTTONS; //reports.buttons.x.y
+        if (Config.REPORTS_BUTTONS_ELEMENTS.getSection().getKeys().size() > 0) {
             List<TextComponent> buttons = new ArrayList<>();
+            ClickEvent.Action action = Config.BUTTONS_CONFIRM_BUTTONS.getBoolean() ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
+            Configuration section = Config.REPORTS_BUTTONS_ELEMENTS.getSection();
             for (String key : section.getKeys()) {
-                String name = section.getString(key + ".button"); //Button name
-                String command = section.getString(key + ".command"); //Button command
+                String name = Config.REPORTS_BUTTONS_ELEMENTS.getButtonText(key); //Button name
+                String command = Config.REPORTS_BUTTONS_ELEMENTS.getButtonCommand(key); //Button command
                 if (name == null || command == null) {
                     plugin.getLogger().info("The report button: " + key + " is not configured correctly!");
                     continue;
                 }
+
                 TextComponent component = new TextComponent(ChatUtils.format(name));
-                component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command.replaceAll("%REPORTER%", player.getName()).replaceAll("%SUSPECT%", target.getName()).replaceAll("%REASON%", reasonString)));
-                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("/" + command.replaceAll("%REPORTER%", player.getName()).replaceAll("%SUSPECT%", target.getName()).replaceAll("%REASON%", reasonString))));
+                String formattedCommand = command
+                        .replace("%REPORTER%", player.getName())
+                        .replace("%REPORTED%", target.getName())
+                        .replace("%REASON%", reasonString)
+                        .replace("%SERVER%", player.getServer().getInfo().getName());
+
+                component.setClickEvent(new ClickEvent(action, formattedCommand));
+                component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("/" + formattedCommand)));
                 buttons.add(component);
             }
 
@@ -139,8 +147,9 @@ public class ReportCommand extends Command implements TabExecutor {
             }
         }
 
-        player.sendMessage(ChatUtils.format(Config.REPORTS_MESSAGES_REPORT_SENT.getMessage()));
-        cooldowns.put(player.getUniqueId(), System.currentTimeMillis()*Config.REPORTS_COOLDOWN.getLong());
+        player.sendMessage(ChatUtils.format(Config.REPORTS_MESSAGES_REPORT_SENT.getMessage()
+                .replaceAll("%SUSPECT%", target.getName())));
+        cooldowns.put(player.getUniqueId(), System.currentTimeMillis()+Config.REPORTS_COOLDOWN.getLong()*1000);
     }
 
     @Override

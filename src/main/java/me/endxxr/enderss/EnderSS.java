@@ -6,13 +6,18 @@ import me.endxxr.enderss.commands.CleanCommand;
 import me.endxxr.enderss.commands.ReportCommand;
 import me.endxxr.enderss.commands.ScreenShareCommand;
 import me.endxxr.enderss.commands.enderss.EnderSSCommand;
+import me.endxxr.enderss.enums.Config;
 import me.endxxr.enderss.listeners.CommandBlocker;
-import me.endxxr.enderss.listeners.JoinLeaveEvent;
-import me.endxxr.enderss.listeners.SwitchEvent;
+import me.endxxr.enderss.listeners.JoinLeaveListener;
+import me.endxxr.enderss.listeners.ScreenShareChat;
+import me.endxxr.enderss.listeners.SwitchListener;
 import me.endxxr.enderss.models.PlayersManager;
 import me.endxxr.enderss.scoreboard.ScoreboardManager;
+import me.endxxr.enderss.utils.ChatUtils;
+import me.endxxr.enderss.utils.ConfigValidator;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -25,6 +30,8 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Scanner;
+//TODO Staff controllable
+//TODO Command blocker
 
 public final class EnderSS extends Plugin {
     @Getter
@@ -38,6 +45,10 @@ public final class EnderSS extends Plugin {
     private boolean obsoleteVersion = false;
     @Getter
     private boolean liteBansPresent = false;
+    @Getter
+    private LuckPerms luckPerms;
+    @Getter
+    private boolean luckPermsPresent = false;
     @Getter
     private PlayersManager playersManager;
     @Getter
@@ -69,32 +80,47 @@ public final class EnderSS extends Plugin {
         getLogger().info("§8§l§m------------------");
         saveDefaultConfig();
         updateConfig();
+        validateConfig();
         checkUpdates();
         new Metrics(this, 15533);
+        checkSoftDependencies();
         setInstances();
         setCommands();
         setListeners();
-        checkSoftDependencies();
     }
 
     private void setCommands() {
         getProxy().getPluginManager().registerCommand(this, new ScreenShareCommand(this));
         getProxy().getPluginManager().registerCommand(this, new BlatantCommand());
-        getProxy().getPluginManager().registerCommand(this, new ReportCommand());
         getProxy().getPluginManager().registerCommand(this, new EnderSSCommand());
         getProxy().getPluginManager().registerCommand(this, this.cleanCommand);
+
+        if (Config.REPORTS_ENABLED.getBoolean()) getProxy().getPluginManager().registerCommand(this, new ReportCommand());
+
     }
 
     private void setListeners() {
-        getProxy().getPluginManager().registerListener(this, new JoinLeaveEvent());
-        getProxy().getPluginManager().registerListener(this, new SwitchEvent());
-        getProxy().getPluginManager().registerListener(this, new CommandBlocker());
+        getProxy().getPluginManager().registerListener(this, new JoinLeaveListener(this));
+        getProxy().getPluginManager().registerListener(this, new SwitchListener(this));
+        getProxy().getPluginManager().registerListener(this, new CommandBlocker(this));
+        if (Config.CHAT_ENABLED.getBoolean()) getProxy().getPluginManager().registerListener(this, new ScreenShareChat(this));
     }
+
+    private void validateConfig() {
+        if (!ConfigValidator.validate()) {
+            getLogger().severe("§c§lThe config.yml is not valid! Please fix it!");
+        }
+    }
+
 
     private void setInstances() {
         playersManager = new PlayersManager();
         cleanCommand = new CleanCommand();
         scoreboardManager = new ScoreboardManager(this);
+        if (luckPermsPresent) {
+            luckPerms = LuckPermsProvider.get();
+        }
+
     }
 
     private void saveDefaultConfig() {
@@ -116,8 +142,7 @@ public final class EnderSS extends Plugin {
                     .onUnmappableCharacter(CodingErrorAction.REPORT)));
             configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(reader);
         } catch (IOException e) {
-            getLogger().severe("Could not load config.yml from " + file);
-            e.printStackTrace();
+            ChatUtils.prettyPrintException(e, "There was an error while loading the configuration file.");
         }
 
     }
@@ -131,8 +156,7 @@ public final class EnderSS extends Plugin {
                 obsoleteConfig = true;
             }
         } catch (IOException e) {
-            getLogger().severe("Couldn't check the config ! Check the error(s) below and try to fix it");
-            e.printStackTrace();
+            ChatUtils.prettyPrintException(e, "There was an error while updating the configuration file.");
         }
     }
 
@@ -143,24 +167,22 @@ public final class EnderSS extends Plugin {
                     .onUnmappableCharacter(CodingErrorAction.REPORT)));
             configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(reader);
         } catch (IOException e) {
-            getLogger().severe("Could not load config.yml from " + new File(getDataFolder(), "config.yml"));
-            e.printStackTrace();
+            ChatUtils.prettyPrintException(e, "There was an error while reloading the configuration file.");
         }
     }
 
     private void checkUpdates() {
         ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
-            final String internalVersion = getDescription().getVersion();
-            String spigotVersion = getDescription().getVersion();
+            String internalVersion = getDescription().getVersion();
+            String spigotVersion = getDescription().getVersion(); //Se la connessione non va a buon fine
             try {
-                final InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=101769").openStream();
-                final Scanner scanner = new Scanner(is);
+                InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=101769").openStream();
+                Scanner scanner = new Scanner(is);
                 if (scanner.hasNext()) {
                     spigotVersion = scanner.next();
                 }
             } catch (IOException e) {
-                getLogger().warning("Could not check for updates: " + e.getMessage());
-                return;
+                ChatUtils.prettyPrintException(e, "There was an error while checking for updates.");
             }
 
             if (!internalVersion.equals(spigotVersion)) {
@@ -173,5 +195,6 @@ public final class EnderSS extends Plugin {
 
     private void checkSoftDependencies() {
         liteBansPresent = getProxy().getPluginManager().getPlugin("LiteBans") != null;
+        luckPermsPresent = getProxy().getPluginManager().getPlugin("LuckPerms") != null;
     }
 }

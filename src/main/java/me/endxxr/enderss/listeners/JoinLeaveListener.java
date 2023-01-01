@@ -5,7 +5,6 @@ import me.endxxr.enderss.EnderSS;
 import me.endxxr.enderss.enums.Config;
 import me.endxxr.enderss.models.SsPlayer;
 import me.endxxr.enderss.utils.ChatUtils;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
@@ -18,9 +17,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
-public class JoinLeaveEvent implements Listener {
+public class JoinLeaveListener implements Listener {
 
-    private final EnderSS plugin = EnderSS.getInstance();
+    private final EnderSS plugin;
+
+    public JoinLeaveListener(EnderSS plugin) {
+        this.plugin = plugin;
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onProxyJoin(PostLoginEvent e){
@@ -36,8 +39,8 @@ public class JoinLeaveEvent implements Listener {
 
     //NOTE: this method is fired even if the player is kicked for a ban. If we want to use a ban-on-quit feature, we need to check if the player is banned before executing the commands.
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onProxyQuit(PlayerDisconnectEvent e) {
-        final ProxiedPlayer player = e.getPlayer();
+    public void onProxyQuit(PlayerDisconnectEvent event) {
+        final ProxiedPlayer player = event.getPlayer();
         final SsPlayer session = plugin.getPlayersManager().getPlayer(player);
         plugin.getPlayersManager().terminatePlayer(player); //Remove player from the list
 
@@ -73,15 +76,16 @@ public class JoinLeaveEvent implements Listener {
             List<String> banOnQuitCommands = Config.BAN_ON_QUIT_COMMANDS.getStringList();
             if (!banOnQuitCommands.isEmpty()) {
                 if (Config.BAN_ON_QUIT_PREVENT_DOUBLE_BAN.getBoolean() //If the "Prevent Double Ban" option is active, LiteBans is present and the player is banned, the ban on quit command will not be executed
-                        && plugin.isLiteBansPresent() && !CompletableFuture.supplyAsync(() -> Database.get().isPlayerBanned(player.getUniqueId(), null)).join())
-                    return; //LiteBans accept ONLY async code.
-
-                for (String command : banOnQuitCommands) {
-                    plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), command.replace("%SUSPECT%", player.getName()));
+                        && plugin.isLiteBansPresent() && CompletableFuture.supplyAsync(() -> Database.get().isPlayerBanned(player.getUniqueId(), null)).join()) {
+                    for (String command : banOnQuitCommands) {
+                        plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), command.replace("%SUSPECT%", player.getName()));
+                    }
                 }
             }
 
-            plugin.getScoreboardManager().endScoreboard(staff);
+
+
+            if (Config.SCOREBOARD_ENABLED.getBoolean()) plugin.getScoreboardManager().endScoreboard(staff, player);
             return;
         }
 
@@ -101,11 +105,8 @@ public class JoinLeaveEvent implements Listener {
             } else {
                 sus.connect(ProxyServer.getInstance().getServerInfo(Config.CONFIG_FALLBACK.getString()));
             }
-            plugin.getScoreboardManager().endScoreboard(sus);
+            if (Config.SCOREBOARD_ENABLED.getBoolean()) plugin.getScoreboardManager().endScoreboard(player, sus);
             return;
         }
-
-        plugin.getScoreboardManager().endScoreboard(player);
-
     }
 }

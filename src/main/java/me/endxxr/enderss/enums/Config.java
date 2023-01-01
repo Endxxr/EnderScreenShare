@@ -4,7 +4,6 @@ import me.endxxr.enderss.EnderSS;
 import net.md_5.bungee.config.Configuration;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public enum Config {
 
@@ -15,11 +14,11 @@ public enum Config {
     CONFIG_CLEAR_CHAT("config.clear-chat"),
     CONFIG_STAFF_CONTROLLABLE("config.staff-controllable"),
     CONFIG_TERMINATE_SCREENSHARE_ON_SWITCH("config.terminate_screenshare-on-switch"),
-    START_ANYDESK_SEND("start.anydesk.sender"),
+    START_ANYDESK_SEND("start.anydesk.send"),
     START_ANYDESK_MESSAGE("start.anydesk.message"),
-    START_TEAMSPEAK_SEND("start.teamspeak.sender"),
+    START_TEAMSPEAK_SEND("start.teamspeak.send"),
     START_TEAMSPEAK_MESSAGE("start.teamspeak.message"),
-    START_DISCORD_SEND("start.discord.sender"),
+    START_DISCORD_SEND("start.discord.send"),
     START_DISCORD_MESSAGE("start.discord.message"),
     START_SS_MESSAGE("start.ss-message"),
     START_STAFF_MESSAGE("start.staff-message"),
@@ -28,6 +27,7 @@ public enum Config {
     START_TITLE_SUBTITLE("start.title.subtitle"),
     START_TITLE_FADEIN("start.title.fadein"),
     START_TITLE_FADEOUT("start.title.fadeout"),
+    START_TITLE_DELAY("start.title.delay"),
     START_TITLE_STAY("start.title.stay"),
     START_BUTTONS("start.buttons"),
     START_BUTTONS_ELEMENTS("start.buttons.elements"),
@@ -38,10 +38,19 @@ public enum Config {
     BAN_ON_QUIT_PREVENT_DOUBLE_BAN("ban-on-quit.prevent-double-ban"),
     BAN_ON_QUIT_COMMANDS("ban-on-quit.commands"),
     PREFIX("prefix"),
-    CHAT_STAFF("chat.staff"),
     CHAT_ENABLED("chat.enabled"),
-    CHAT_SUSPECT("chat.suspect"),
-    CHAT_DEBUG("chat.debug"),
+    CHAT_NOT_SS_SERVER("chat.not-ss-server"),
+    CHAT_RECEIVE_ENABLED("chat.receive.enabled"),
+    CHAT_RECEIVE_DISABLED("chat.receive.message"),
+    CHAT_STAFFER_READS_STAFFERS("chat.staffer-reads-staffers"),
+    CHAT_NOT_INVOLVED_EVERYONE("chat.not-involved-everyone"),
+    CHAT_FORMAT_STAFF("chat.format.staff"),
+    CHAT_FORMAT_SUSPECT("chat.format.suspect"),
+    CHAT_FORMAT_NOT_INVOLVED("chat.format.not-involved"),
+    CHAT_PREFIX_STAFF("chat.prefix.staff"),
+    CHAT_PREFIX_SUSPECT("chat.prefix.suspect"),
+    CHAT_PREFIX_NOT_INVOLVED("chat.prefix.not-involved"),
+    CHAT_CANCEL_EVENT("chat.cancel-event"),
     MESSAGES_INFO_PLAYER_QUIT("messages.info.player-quit"),
     MESSAGES_INFO_CLEAN_PLAYER("messages.info.clean-player"),
     MESSAGES_INFO_PLAYER_CLEANED("messages.info.player-cleaned"),
@@ -77,6 +86,9 @@ public enum Config {
     SCOREBOARD_SUSPECT("scoreboard.suspect"),
     SCOREBOARD_SUSPECT_TITLE("scoreboard.suspect.title"),
     SCOREBOARD_SUSPECT_LINES("scoreboard.suspect.lines"),
+    SCOREBOARD_YES("scoreboard.alerts-enabled-placeholder"),
+    SCOREBOARD_NO("scoreboard.alerts-disabled-placeholder"),
+
     MESSAGES_ERROR_CANNOT_SS_STAFF("messages.error.cannot-ss-staff"),
     MESSAGES_ERROR_NOT_CONTROLLING("messages.error.not-controlling"),
     REPORTS_ENABLED("reports.enabled"),
@@ -87,6 +99,7 @@ public enum Config {
     REPORTS_MESSAGES_CANNOT_REPORT_STAFF("reports.messages.cannot-report-staff"),
     REPORTS_MESSAGES_WAIT("reports.messages.wait"),
     REPORTS_BUTTONS("reports.buttons"),
+    REPORTS_BUTTONS_ELEMENTS("reports.buttons.elements"),
     REPORTS_BUTTONS_IN_LINE("reports.buttons.in-line"),
     REPORTS_NO_STAFF("reports.no-staff"),
     REPORTS_NO_STAFF_ENABLED("reports.no-staff-enabled"),
@@ -103,11 +116,11 @@ public enum Config {
     BUTTONS_SERVER_TP("buttons.server-tp"),
     BUTTONS_BAN("buttons.ban"),
     BUTTONS_CONFIRM_BUTTONS("buttons.confirm-buttons"),
-    BAN_COMMAND_REFUSE("ban.command.refuse"),
-    BAN_COMMAND_QUIT("ban.command.quit"),
-    BAN_COMMAND_HACK("ban.command.hack"),
-    BAN_COMMAND_ADMISSION("ban.command.admission"),
-    BAN_COMMAND_BLATANT("ban.command.blatant"),
+    BAN_COMMAND_REFUSE("ban-command.refuse"),
+    BAN_COMMAND_QUIT("ban-command.quit"),
+    BAN_COMMAND_HACK("ban-command.hack"),
+    BAN_COMMAND_ADMISSION("ban-command.admission"),
+    BAN_COMMAND_BLATANT("ban-command.blatant"),
     VERSION("version");
     private final String path;
     private static final EnderSS plugin = EnderSS.getInstance();
@@ -136,6 +149,7 @@ public enum Config {
     public int getInt() {
         return plugin.getConfiguration().getInt(path);
     }
+
 
     public double getFloat() {
         return plugin.getConfiguration().getDouble(path);

@@ -1,8 +1,11 @@
 package me.endxxr.enderss.utils;
 
+import me.endxxr.enderss.EnderSS;
 import me.endxxr.enderss.enums.Config;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
+
+import java.util.logging.Logger;
 
 public class ChatUtils {
 
@@ -31,6 +34,24 @@ public class ChatUtils {
         }
         component.setText(component.getText().replace("%PREFIX%", Config.PREFIX.getString()));
         return component;
+    }
+
+
+    public static void prettyPrintException(Exception exception, String customMessage) {
+        Logger logger = EnderSS.getInstance().getLogger();
+        String message = customMessage == null ? exception.getMessage() : customMessage;
+        logger.severe("========================");
+        logger.severe("");
+        logger.severe("An exception has been thrown:");
+        logger.severe(message);
+        logger.severe("");
+        logger.info("Please report this error on the GitHub page of the plugin");
+        logger.info("or on the Discord server");
+        logger.info("");
+        logger.info("Stacktrace:");
+        exception.printStackTrace();
+        logger.info("");
+        logger.severe("========================");
     }
 
 

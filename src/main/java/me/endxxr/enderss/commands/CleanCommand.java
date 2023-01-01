@@ -10,6 +10,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CleanCommand extends Command implements TabExecutor {
 
     private final EnderSS plugin;
@@ -45,11 +48,6 @@ public class CleanCommand extends Command implements TabExecutor {
 
     }
 
-    @Override
-    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return null;
-    }
-
 
     public void cleanPlayer(ProxiedPlayer target) {
         final SsPlayer ssSuspect = plugin.getPlayersManager().getPlayer(target);
@@ -79,7 +77,7 @@ public class CleanCommand extends Command implements TabExecutor {
         }
         final SsPlayer ssSuspect = plugin.getPlayersManager().getPlayer(suspect);
         final SsPlayer ssStaff = plugin.getPlayersManager().getPlayer(staff);
-        if (ssSuspect.isFrozen()) {
+        if (!ssSuspect.isFrozen()) {
             staff.sendMessage(ChatUtils.format(Config.MESSAGES_ERROR_SUSPECT_NOT_IN_SS.getMessage(), "%SUSPECT%", suspect.getName()));
             return;
         }
@@ -87,9 +85,16 @@ public class CleanCommand extends Command implements TabExecutor {
         ssSuspect.setStaffer(null);
         ssSuspect.setFrozen(false);
 
+        if (Config.CONFIG_FALLBACK_STAFF.getBoolean()) {
+            if (Config.CONFIG_LAST_CONNECTED_SERVER.getBoolean()) {
+                staff.connect(ProxyServer.getInstance().getServerInfo(ssSuspect.getLastServer()));
+            } else {
+                staff.connect(ProxyServer.getInstance().getServerInfo(Config.CONFIG_FALLBACK.getString()));
+            }
+        }
+
         if (Config.CONFIG_LAST_CONNECTED_SERVER.getBoolean()) {
             suspect.connect(ProxyServer.getInstance().getServerInfo(ssSuspect.getLastServer()));
-            if (Config.CONFIG_FALLBACK_STAFF.getBoolean()) staff.connect(ProxyServer.getInstance().getServerInfo(ssStaff.getLastServer()));
         } else {
             suspect.connect(ProxyServer.getInstance().getServerInfo(Config.CONFIG_FALLBACK.getString()));
         }
@@ -101,7 +106,25 @@ public class CleanCommand extends Command implements TabExecutor {
                         "%SUSPECT%", suspect.getName()));
             }
         }
+        if (Config.SCOREBOARD_ENABLED.getBoolean()) {
+            plugin.getScoreboardManager().endScoreboard(staff, suspect);
+        }
+
     }
 
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        List<String> players = new ArrayList<>();
+        for (SsPlayer player : plugin.getPlayersManager().getPlayers().values()) {
+            if (player.isFrozen()) {
+                String name = ProxyServer.getInstance().getPlayer(player.getUuid()).getName();
+                if (name.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    players.add(name);
+                }
+            }
+        }
+        return players;
+    }
 
 }

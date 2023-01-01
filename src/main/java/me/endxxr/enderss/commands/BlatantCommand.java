@@ -36,8 +36,12 @@ public class BlatantCommand extends Command implements TabExecutor {
             return;
         }
 
-        ProxyServer.getInstance().getPluginManager().dispatchCommand(sender, Config.BAN_COMMAND_BLATANT.getString()
-                .replaceAll("%SUSPECT%", target.getName()));
+        String command = Config.BAN_COMMAND_BLATANT.getString()
+                .replaceAll("%SUSPECT%", target.getName());
+        if (command.startsWith("/")) {
+            command = command.replace("/", "");
+        }
+        ProxyServer.getInstance().getPluginManager().dispatchCommand(sender, command);
     }
 
     @Override

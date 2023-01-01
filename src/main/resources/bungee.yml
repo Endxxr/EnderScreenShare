@@ -1,8 +1,11 @@
 name: EnderSS
 version: '${project.version}'
-main: me.endxxr.enderss.Enderss
+main: me.endxxr.enderss.EnderSS
 description: Screenshare plugin made by Endxxr (tg @pellicani)
 author: Endxxr
+softDepends:
+  - 'LiteBans'
+  - 'LuckPerms'
 commands:
   ss:
     aliases: [control, screenshare, freeze]

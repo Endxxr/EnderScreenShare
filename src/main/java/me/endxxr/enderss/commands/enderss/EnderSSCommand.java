@@ -1,5 +1,6 @@
 package me.endxxr.enderss.commands.enderss;
 
+import me.endxxr.enderss.EnderSS;
 import me.endxxr.enderss.enums.Config;
 import me.endxxr.enderss.utils.ChatUtils;
 import net.md_5.bungee.api.CommandSender;
@@ -8,6 +9,7 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnderSSCommand extends Command implements TabExecutor {
 
@@ -47,6 +49,6 @@ public class EnderSSCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return null;
+        return subCommands.stream().map(SubCommand::getName).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
     }
 }
