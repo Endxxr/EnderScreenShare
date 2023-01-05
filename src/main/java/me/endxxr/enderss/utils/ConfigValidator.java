@@ -11,9 +11,9 @@ public class ConfigValidator {
         if (!validateServer(Config.CONFIG_SSSERVER)) return false;
         if (!validateServer(Config.CONFIG_FALLBACK)) return false;
 
-        
         return true;
     }
+
 
 
     private static boolean validateServer(Config server) {

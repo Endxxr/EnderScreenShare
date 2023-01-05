@@ -99,8 +99,6 @@ public class ScreenShareCommand extends Command implements TabExecutor {
             if (!Config.CONFIG_STAFF_CONTROLLABLE.getBoolean()) {
                 staff.sendMessage(ChatUtils.format(Config.MESSAGES_ERROR_CANNOT_SS_STAFF.getMessage(), "%SUSPECT%", suspect.getName()));
                 return;
-            } else {
-                susSession.setStaffIgnored(false); //Set temporally to false //TODO
             }
         }
 

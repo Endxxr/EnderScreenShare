@@ -82,7 +82,7 @@ public class SsScoreboard {
         for (int i = 0; i < lines.size(); i++) {
             ScoreboardScore score = new ScoreboardScore();
             String line = lines.get(i);
-            if (line.isBlank()) { // We have to do if we want all blanks lines to work
+            if (line.equals("")) { // We have to do if we want all blanks lines to work
                 StringBuilder sb1 = new StringBuilder();
                 for (int j = 0; j < i; j++) {
                     sb1.append(" ");

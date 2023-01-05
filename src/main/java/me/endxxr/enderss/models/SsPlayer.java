@@ -28,9 +28,6 @@ public class SsPlayer {
     @Getter
     @Setter
     private boolean alerts = true;
-    @Getter
-    @Setter
-    private boolean staffIgnored = false;
     private UUID staffer;
     private UUID controlled;
     @Getter

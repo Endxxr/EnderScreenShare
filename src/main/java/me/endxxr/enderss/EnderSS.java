@@ -7,6 +7,7 @@ import me.endxxr.enderss.commands.ReportCommand;
 import me.endxxr.enderss.commands.ScreenShareCommand;
 import me.endxxr.enderss.commands.enderss.EnderSSCommand;
 import me.endxxr.enderss.enums.Config;
+import me.endxxr.enderss.exceptions.ConfigException;
 import me.endxxr.enderss.listeners.CommandBlocker;
 import me.endxxr.enderss.listeners.JoinLeaveListener;
 import me.endxxr.enderss.listeners.ScreenShareChat;
@@ -29,9 +30,8 @@ import java.net.URL;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
-//TODO Staff controllable
-//TODO Command blocker
 
 public final class EnderSS extends Plugin {
     @Getter
@@ -127,7 +127,7 @@ public final class EnderSS extends Plugin {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
         }
-        final File file = new File(getDataFolder(), "config.yml");
+        File file = new File(getDataFolder(), "config.yml");
         if (!file.exists()) {
             try (InputStream in = getResourceAsStream("config.yml")) {
                 Files.copy(in, file.toPath());
@@ -137,7 +137,7 @@ public final class EnderSS extends Plugin {
             }
         }
         try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8.newDecoder()
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8.newDecoder()
                     .onMalformedInput(CodingErrorAction.REPORT)
                     .onUnmappableCharacter(CodingErrorAction.REPORT)));
             configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(reader);
@@ -155,19 +155,13 @@ public final class EnderSS extends Plugin {
                 getLogger().warning("Your plugin configuration is obsolete");
                 obsoleteConfig = true;
             }
+
+            if (externalConfig.getFloat("version") < 1.0) {
+                updateFromLegacyConfig();
+            }
+
         } catch (IOException e) {
             ChatUtils.prettyPrintException(e, "There was an error while updating the configuration file.");
-        }
-    }
-
-    public void reloadConfig() {
-        try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "config.yml")), StandardCharsets.UTF_8.newDecoder()
-                    .onMalformedInput(CodingErrorAction.REPORT)
-                    .onUnmappableCharacter(CodingErrorAction.REPORT)));
-            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(reader);
-        } catch (IOException e) {
-            ChatUtils.prettyPrintException(e, "There was an error while reloading the configuration file.");
         }
     }
 
@@ -193,8 +187,35 @@ public final class EnderSS extends Plugin {
     });
 }
 
+    private void updateFromLegacyConfig() {
+
+        File file = new File(getDataFolder(), "config.yml");
+        try {
+            Files.move(file.toPath(), new File(getDataFolder(), "config.yml.old").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            ChatUtils.prettyPrintException(e, "There was an error while updating the configuration from the legacy version.");
+        }
+
+        saveDefaultConfig();
+        getLogger().warning("The plugin has updated the configuration file to the new format.");
+
+
+
+    }
+
     private void checkSoftDependencies() {
         liteBansPresent = getProxy().getPluginManager().getPlugin("LiteBans") != null;
         luckPermsPresent = getProxy().getPluginManager().getPlugin("LuckPerms") != null;
+    }
+
+    public void reloadConfig() {
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(getDataFolder(), "config.yml")), StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)));
+            configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(reader);
+        } catch (IOException e) {
+            ChatUtils.prettyPrintException(e, "There was an error while reloading the configuration file.");
+        }
     }
 }

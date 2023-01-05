@@ -75,15 +75,17 @@ public class JoinLeaveListener implements Listener {
             //Ban On Quit
             List<String> banOnQuitCommands = Config.BAN_ON_QUIT_COMMANDS.getStringList();
             if (!banOnQuitCommands.isEmpty()) {
-                if (Config.BAN_ON_QUIT_PREVENT_DOUBLE_BAN.getBoolean() //If the "Prevent Double Ban" option is active, LiteBans is present and the player is banned, the ban on quit command will not be executed
-                        && plugin.isLiteBansPresent() && CompletableFuture.supplyAsync(() -> Database.get().isPlayerBanned(player.getUniqueId(), null)).join()) {
-                    for (String command : banOnQuitCommands) {
-                        plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), command.replace("%SUSPECT%", player.getName()));
+
+                if (plugin.isLiteBansPresent() && Config.BAN_ON_QUIT_PREVENT_DOUBLE_BAN.getBoolean()) {
+                    if (CompletableFuture.supplyAsync(() -> Database.get().isPlayerBanned(player.getUniqueId(), null)).join()) {
+                        return;
                     }
                 }
+
+                for (String command : banOnQuitCommands) {
+                    plugin.getProxy().getPluginManager().dispatchCommand(plugin.getProxy().getConsole(), command.replace("%SUSPECT%", player.getName()));
+                }
             }
-
-
 
             if (Config.SCOREBOARD_ENABLED.getBoolean()) plugin.getScoreboardManager().endScoreboard(staff, player);
             return;
