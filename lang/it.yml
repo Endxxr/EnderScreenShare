@@ -82,8 +82,8 @@ start:
         fadeout: 15
 
         # Ritardo in secondi, utile se vuoi mandare il titolo quando sei sicuro che il giocatore si e' connesso al server SS.
-            # In millisecondi, 1000 = 1 secondo
-            delay: 2000
+        # In millisecondi, 1000 = 1 secondo
+        delay: 2000
 
 
 
