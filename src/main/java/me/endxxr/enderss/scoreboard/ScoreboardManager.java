@@ -32,8 +32,6 @@ public class ScoreboardManager {
 
         deleteSb.setName("delete");
         deleteSb.setAction((byte) 1);
-        deleteSb.setValue("delete");
-        deleteSb.setType(ScoreboardObjective.HealthDisplay.INTEGER);
         deleteSbDisplay.setName("delete");
         deleteSbDisplay.setPosition((byte) 1);
     }
@@ -111,12 +109,24 @@ public class ScoreboardManager {
      *
      * Destroy the current scoreboard of the specified player
      *
-     * @param target the target of this mehtod
+     * @param target the target of this method
      */
 
     private void destroyScoreboard(ProxiedPlayer target) {
         target.unsafe().sendPacket(this.deleteSb);
         target.unsafe().sendPacket(this.deleteSbDisplay);
+    }
+
+    /**
+     * Generate a SbName
+     * Prevent Lunar Client from crashing because of long sbName (>16)
+     *
+     * @param player
+     * @return
+     */
+    public String generateSbName(ProxiedPlayer player) {
+
+        return player.getUniqueId().toString().substring(0,8)+random.nextInt(99999999); //99.999.999
     }
 
 

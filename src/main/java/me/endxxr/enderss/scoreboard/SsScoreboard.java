@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SsScoreboard {
 
     private final EnderSS plugin;
-    private final Random random;
     private final UUID staff;
     private final UUID suspect;
     private final AtomicInteger time;
@@ -31,7 +30,6 @@ public class SsScoreboard {
         this.staff = staff.getUniqueId();
         this.suspect = suspect.getUniqueId();
 
-        this.random = new Random();
         this.time = new AtomicInteger();
 
 
@@ -47,7 +45,7 @@ public class SsScoreboard {
 
     private void sendStaff(ProxiedPlayer staffer) {
 
-        String sbName = staffer.getName() + random.nextInt(999999);
+        String sbName = plugin.getScoreboardManager().generateSbName(staffer);
         ScoreboardObjective sb = new ScoreboardObjective();
         ScoreboardDisplay sbDisplay = new ScoreboardDisplay();
         sb.setName(sbName);
@@ -62,18 +60,18 @@ public class SsScoreboard {
     }
 
     private void sendSuspect(ProxiedPlayer suspect) {
-            String sbName = suspect.getName() + random.nextInt(999999);
-            ScoreboardObjective sb = new ScoreboardObjective();
-            ScoreboardDisplay sbDisplay = new ScoreboardDisplay();
-            sb.setName(sbName);
-            sb.setAction((byte) 0);
-            sb.setValue(ChatColor.translateAlternateColorCodes('&', Config.SCOREBOARD_SUSPECT_TITLE.getString()));
-            sb.setType(ScoreboardObjective.HealthDisplay.INTEGER);
-            sbDisplay.setName(sbName);
-            sbDisplay.setPosition((byte) 1);
-            List<String> lines = Config.SCOREBOARD_SUSPECT_LINES.getStringList();
-            Collections.reverse(lines);
-            sendScoreboard(suspect, sb, sbDisplay, sbName, lines);
+        String sbName = plugin.getScoreboardManager().generateSbName(suspect);
+        ScoreboardObjective sb = new ScoreboardObjective();
+        ScoreboardDisplay sbDisplay = new ScoreboardDisplay();
+        sb.setName(sbName);
+        sb.setAction((byte) 0);
+        sb.setValue(ChatColor.translateAlternateColorCodes('&', Config.SCOREBOARD_SUSPECT_TITLE.getString()));
+        sb.setType(ScoreboardObjective.HealthDisplay.INTEGER);
+        sbDisplay.setName(sbName);
+        sbDisplay.setPosition((byte) 1);
+        List<String> lines = Config.SCOREBOARD_SUSPECT_LINES.getStringList();
+        Collections.reverse(lines);
+        sendScoreboard(suspect, sb, sbDisplay, sbName, lines);
     }
 
     private void sendScoreboard(ProxiedPlayer target, ScoreboardObjective sb, ScoreboardDisplay sbDisplay, String sbName, List<String> lines) {
@@ -138,5 +136,7 @@ public class SsScoreboard {
 
         return finalString;
     }
+
+
     
 }

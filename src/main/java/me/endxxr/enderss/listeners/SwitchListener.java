@@ -28,7 +28,6 @@ public class SwitchListener implements Listener {
 
             if (!ssPlayer.isFrozen() && ssPlayer.getControlled()==null //If the player is not frozen and is not controlling anyone
                     && Config.SCOREBOARD_ENABLED.getBoolean()
-                    && !event.getFrom().getName().equalsIgnoreCase(Config.CONFIG_SSSERVER.getString())
                     && event.getPlayer().getServer().getInfo().getName().equalsIgnoreCase(Config.CONFIG_SSSERVER.getString())) {
 
                 if (Config.SCOREBOARD_ENABLED.getBoolean()) plugin.getScoreboardManager().sendIdlingScoreboard(event.getPlayer());
