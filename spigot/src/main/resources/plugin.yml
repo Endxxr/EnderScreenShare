@@ -1,0 +1,4 @@
+name: spigot
+version: '${project.version}'
+main: dev.endxxr.spigot.Spigot
+api-version: 1.13
