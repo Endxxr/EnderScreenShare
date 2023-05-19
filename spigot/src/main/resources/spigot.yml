@@ -1,0 +1,95 @@
+#
+#███████╗██████╗ ██╗ ██████╗  ██████╗ ████████╗
+#██╔════╝██╔══██╗██║██╔════╝ ██╔═══██╗╚══██╔══╝
+#███████╗██████╔╝██║██║  ███╗██║   ██║   ██║
+#╚════██║██╔═══╝ ██║██║   ██║██║   ██║   ██║
+#███████║██║     ██║╚██████╔╝╚██████╔╝   ██║
+#╚══════╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝    ╚═╝
+#
+# Spigot Configuration of EnderSS
+
+
+spawn:
+  enabled: true
+  staff: "0,0,0,0,0,world" # x,y,z,yaw,pitch,world
+  suspect: "0,0,0,0,0,world" # x,y,z,yaw,pitch,world
+
+# Teleports you to the frozen player
+teleport-on-start: true
+
+protections:
+  bypass-permission: "enderss.bypass"
+  staff-bypass: true
+
+  # True means that the player won't be able to do that action (the protection is enabled)
+  world:
+    disabled-worlds: # List of worlds where the protections are disabled
+      - "example"
+    build-break: true
+    pvp: true
+    hunger: true
+    daylight-cycle: true
+    mob-spawn: true
+    fire-spread: true
+    void: true
+
+  #  True means that the player won't be able to do that action (the protection is enabled). Protections are activated only if the player is under control
+  player:
+    pvp: true
+    build-break: true
+    pick-drop-items: true
+    hunger: true
+    remove-effects: true
+    adventure-mode: true
+
+scoreboard:
+  enabled: true
+  not-controlling-placeholder: "&cNot Controlling"
+  alerts-enabled-placeholder: "&aYes"
+  alerts-disabled-placeholder: "&cNo"
+
+  #
+  # This will be shown to the staffer when he's controlling a player
+  #
+
+  staff:
+    title: "&c&lScreenShare"
+    lines:
+      - " "
+      - "&dName: &f%STAFFER%"
+      - " "
+      - "&dTime: &f%TIME%"
+      - "&dSuspect: &f%SUSPECT%"
+      - "&dAlerts: &f%ALERTS%"
+      - " "
+      - "&dendxxr.yourserver.example"
+
+  #
+  # This will be shown to the suspect
+  #
+
+  suspect:
+    title: "&c&lScreenShare"
+    lines:
+      - " "
+      - "&dName: &f%SUSPECT%"
+      - " "
+      - "&dTime: &f%TIME%"
+      - "&dStaffer: &f%STAFFER%"
+      - " "
+      - "&dendxxr.yourserver.example"
+
+  #
+  # This will be shown to everyone who's in the ss server
+  #
+
+  idling:
+    title: "&c&lScreenShare"
+    lines:
+      - " "
+      - "&dName: &f%STAFFER%"
+      - " "
+      - "&dSuspect: &f%SUSPECT%"
+      - " "
+      - "&dendxxr.yourserver.example"
+

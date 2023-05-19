@@ -1,0 +1,322 @@
+#      ___           ___                         ___           ___           ___           ___
+#     /\__\         /\  \         _____         /\__\         /\  \         /\__\         /\__\
+#    /:/ _/_        \:\  \       /::\  \       /:/ _/_       /::\  \       /:/ _/_       /:/ _/_
+#   /:/ /\__\        \:\  \     /:/\:\  \     /:/ /\__\     /:/\:\__\     /:/ /\  \     /:/ /\  \
+#  /:/ /:/ _/_   _____\:\  \   /:/  \:\__\   /:/ /:/ _/_   /:/ /:/  /    /:/ /::\  \   /:/ /::\  \
+# /:/_/:/ /\__\ /::::::::\__\ /:/__/ \:|__| /:/_/:/ /\__\ /:/_/:/__/___ /:/_/:/\:\__\ /:/_/:/\:\__\
+# \:\/:/ /:/  / \:\~~\~~\/__/ \:\  \ /:/  / \:\/:/ /:/  / \:\/:::::/  / \:\/:/ /:/  / \:\/:/ /:/  /
+#  \::/_/:/  /   \:\  \        \:\  /:/  /   \::/_/:/  /   \::/~~/~~~~   \::/ /:/  /   \::/ /:/  /
+#   \:\/:/  /     \:\  \        \:\/:/  /     \:\/:/  /     \:\~~\        \/_/:/  /     \/_/:/  /
+#    \::/  /       \:\__\        \::/  /       \::/  /       \:\__\         /:/  /        /:/  /
+#     \/__/         \/__/         \/__/         \/__/         \/__/         \/__/         \/__/
+#
+# Get the latest version of the config at https://github.com/Endxxr/EnderScreenShare/tree/master/lang
+
+# NOTE:
+# The config will NOT automatically update by itself. I suggest to visit the plugin's GitHub repository to get the latest when updating the .jar.
+# However, the plugin will still alert you when there's the need to update
+#
+# Any placeholderAPI placeholder isn't supported, PAPI isn't a BungeeCord plugin, so I can't hook in it
+#
+
+
+# Used for the %PREFIX% placeholder
+prefix: ""
+
+# If enabled, the plugin will have available only the Bukkit features. So you won't be able to freeze someone
+# if you don't have EnderSS on the proxy, disable this.
+proxy-mode: true
+
+#Can staff be controlled ?
+staff-controllable: true
+
+#Send these messages when the screenshare starts
+start:
+  #Clears the chat when the player joins
+  clear-chat: true
+  anydesk:
+    send: true
+    message:
+    - "&fYou need to download Anydesk in order to proceed: &chttps://anydesk.com/en/downloads" #Link for download AnyDesk
+
+  teamspeak:
+    send: true
+    message:
+    - "&fPlease join our teamspeak at &bhttps://ts.yourserver.example" #Link for join Teamspeak
+
+  discord:
+    send: true
+    message:
+    - "&fPlease join our discord at &dhttps://discord.yourserver.example" #Link for join Discord
+
+  # You can use both %STAFF% and %SUSPECT%.
+  # These values MUST be Strings List, so they have to look like this:
+  # message:
+  # - "hey im a string in a list"
+  # - "you have to write something like this!"
+  #
+  # if you wish to set a one line message, don't use value:"message" but set a list with only one string
+  ss-message:
+    - ""
+    - "&cYou are under cheat control"
+    - "&cDon't log out and listen to the staff (%STAFF%)"
+    - ""
+  staff-message:
+    - ""
+    - "&c%SUSPECT% is now being controlled by %STAFF%"
+    - ""
+
+  title:
+    send: true
+    title: "&4&lScreenShare"
+    subtitle: "&cDon't log out"
+    #20 = 1 Second
+    fadein: 15
+    stay: 50
+    fadeout: 15
+
+    # Delay in seconds, useful if you want to send the title when you're sure the player is in the SS Server.
+    # In milliseconds, 1000 = 1 second
+    delay: 2000
+
+
+
+  #Send these buttons when the control starts
+  #You can use the %SUSPECT% placeholder
+  #The command will be run as the player
+  #If you don't want to use buttons, just leave the list empty (buttons: {})
+  buttons:
+    in-line: false
+    elements:
+      hack:
+        type: HACK
+      admission:
+        type: ADMISSION
+      refuse:
+        type: REFUSE
+      quit:
+        type: QUIT
+      clean:
+        type: CLEAN
+      custom1:
+        type: CUSTOM
+        text: "&4[&c&lCustom Button&4]"
+        command: "example"
+
+command-blocker:
+  #Should we block the ability to run commands when the player is frozen?
+  enabled: true
+
+  #Whitelisted commands
+  whitelisted-commands:
+    - "example1"
+    - "example2"
+
+#If you don't want to use this feature, just leave the list empty (commands: {})
+ban-on-quit:
+
+  #You need LiteBans to use this feature
+  prevent-double-ban: true
+
+  #You can use the %SUSPECT% placeholder
+  commands:
+    - "ban 30d %SUSPECT% ScreenShare Refused -s"
+
+# Chat system of EnderSS
+# The staffers will be able to read the messages of every player in the SS server
+# The suspects will be able to read only the messages from the staffer who is controlling them
+# Players not involved in any control AND in the SS Server will be able to read from everyone, ONLY if they're staff
+#
+# Scheme
+#
+# WRITE:
+# - Staffer -> Suspect & Staffers || Staffer -> Suspect
+# - Suspect -> Staffer who is controlling him
+# - Not Involved -> Staffers || Not Involved -> Staffers & Suspects
+# READ:
+# - Staffer -> Suspect & Staffers || Staffer -> Suspect
+# - Suspect -> Staffer who is controlling him
+# - Not Involved -> Staffers || Not Involved -> Suspects & Staffers
+
+chat:
+  #Restart needed
+  enabled: true
+  receive-enabled: "&aChat enabled"
+  receive-disabled: "&cChat disabled"
+
+  # Set the staffer while controlling is able to read the messages from other staffers controlling other players
+  staffer-reads-staffers: true
+
+  # The not involved players will be able to read the messages from the staff and the suspects
+  # and both of them will be able to read the messages from the not involved players.
+  not-involved-everyone: true
+
+  # You can use both %prefix% and %luckperms% placeholders:
+  # In the first case, the prefix is the state of the player (Staff, Suspect or not involved)
+  # In the second case, the prefix is taken from LuckPerms BungeeCord
+  # Available placeholders: %prefix%, %luckperms%, %player%, %message%
+  format:
+    staff: "&r%prefix% &7%player%&7: &r%message%"
+    suspect: "%prefix% &7%player%&7: &r%message%"
+    not-involved: "&7%player%&7: &r%message%"
+
+  # Prefix for the %prefix% placeholder
+  prefix:
+    staff: "&b&lSTAFF"
+    suspect: "&c&lFROZEN"
+    not-involved: "&d"
+
+
+  # I advise you to keep this value to true
+  # If set to false, the message might be sent twice, in both the Ss chat and the back-end spigot chat
+  cancel-event: true
+
+
+#Messages
+messages:
+  info:
+    #For these strings you can use the placeholder %SUSPECT%
+    player-quit:
+    - "&c%SUSPECT% logged out while being controlled"
+    clean-player:
+    - "&2Control ended. Thank you for your patience"
+    player-cleaned:
+    - "&aThe control on %SUSPECT% ended"
+    command-blocked:
+    - "&c%SUSPECT% tried to execute %COMMAND%"
+    alerts-enabled:
+    - "&aAlerts enabled"
+    alerts-disabled:
+    - "&cAlerts disabled"
+
+  error:
+    no-permission:
+    - "&cInsufficient Permissions"
+    no-command:
+    - "&cThis command doesn't exist!"
+    no-player:
+    - "&cSpecify a player"
+    no-reason:
+    - "&cGive a reason"
+    console:
+    - "&cOnly players can run this command"
+    already-controlled:
+    - "&c%SUSPECT% is already being controlled"
+    cant-execute:
+    - "&cYou can't execute commands while being controlled"
+    cant-fallback-suspect: # PROXY
+    - "&cWe can't fallback this player! Did they switch server before the SS?"
+    cant-fallback-staff: # PROXY
+    - "&cWe can't fallback you! Did you switch server before the SS?"
+    cannot-ss-yourself: # PROXY
+    - "&cYou can't control yourself. Just ban yourself directly, no?"
+    cant-connect-to-ss: # PROXY
+    - "&cWe can't connect you or the suspect to the SS server. Is it online?"
+    cant-connect-suspect: # PROXY
+     - "&cWe can't connect the suspect to the SS server. Is it online?"
+
+    #For these strings you can use the placeholder %SUSPECT%
+    exempt:
+      - "&cYou can't control this player"
+    player-offline:
+      - "&cThis player is offline"
+    already-in-ss:
+      - "&cThis player is already being controlled"
+    staff-in-ss:
+      - "&cYou can control one player at time"
+    already-ss-player:
+      - "&cYou are already controlling this player"
+    suspect-not-in-ss:
+      - "&cThis player isn't being controlled"
+    cannot-ss-staff:
+      - "&cYou can't control a staff member"
+    not-controlling:
+      - "&cYou're not controlling this player"
+    staff-offline:
+      - "&cThe staffer who was controlling you went offline..."
+
+
+
+reports:
+  #Restart needed
+  enabled: true
+  cooldown: 60 #Value in seconds, Set to -1 to disable the cooldown
+  messages:
+    report-sent: #You can use %SUSPECT% and %REASON%
+      - ""
+      - "&aYou successfully reported %SUSPECT%"
+      - ""
+
+    report-received:
+      - ""
+      - "&5&lNEW REPORT"
+      - "&dReporter&8: &f%REPORTER%"
+      - "&dReported&8: &f%REPORTED%"
+      - "&dServer: &f%SERVER%"
+      - "&dReason&8: &f%REASON%"
+      - ""
+      #Buttons will be added here
+
+    cannot-report-yourself:
+      - "&cYou can't report yourself"
+    cannot-report-staff:
+      - "&cYou can't report a staff member"
+    wait:
+      - "&cYou have to wait %SECONDS% seconds before reporting again"
+
+
+  #The buttons have to be structured like this. They MUST have the button and the command key, although they'll be skipped
+  #You can use %REPORTER%, %REPORTED%, %SERVER% and %REASON%
+  #If you don't want to use buttons, just leave this empty (buttons: {})
+  buttons:
+    in-line: false
+    elements:
+      goto:
+        text: "&2[&aGoto&2]"
+        command: "server %REASON%"
+      ban:
+        text: "&4[&cBan&4]"
+        command: "blatant %REPORTED%"
+      control:
+        text: "&d[&5Control&d]"
+        command: "ss %REPORTED%"
+      example:
+        text: "Example"
+        command: "examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
+
+
+
+
+  no-staff:
+  - "No one of the staff team is online! You can receive support here: https://discord.example.com/"
+  no-staff-enabled: false
+
+buttons:
+  hack: "&4[&c&lHACK&4]"
+  admission: "&a[&2&lADMISSION&a]"
+  refuse: "&e[&6&lREFUSE&e]"
+  quit: "&d[&5&lQUIT&d]"
+  clean: "&a[&2&lCLEAN&a]"
+  confirm: "&2[&a&lCONFIRM&a]"
+  ss: "&4[&c&lSS&4]"
+  server-tp: "&a[&2&lTP&a]"
+  ban: "&4[&c&lBAN&4]"
+
+  #ALL the buttons, even the ones that aren't specified here, will execute the command instead of suggesting it
+  confirm-buttons: false
+
+
+#The only available placeholder here is %SUSPECT%
+#Litebans need to be installed on the proxy in order to work
+ban-command:
+  refuse: "/ban %SUSPECT% 30d SS Refused -s"
+  quit: "/ban %SUSPECT% 30d Quit in SS -s"
+  hack: "/ban %SUSPECT% 30d Cheating (SS) -s"
+  admission: "/ban %SUSPECT% 14d Cheat Admission -s"
+  blatant: "/ban %SUSPECT% 30d Blatant Cheating -s"
+
+
+
+
+#Don't modify this value(s)! We need it for check updates
+version: 1.1

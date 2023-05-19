@@ -1,0 +1,28 @@
+name: EnderSS
+version: '${project.version}'
+main: dev.endxxr.enderss.bungeecord.EnderSSBungeecord
+description: Customizable ScreenShare plugin made by Endxxr (tg @pellicani)
+author: Endxxr
+softDepends:
+  - 'LiteBans'
+  - 'LuckPerms'
+commands:
+  ss:
+    aliases: [control, screenshare, freeze]
+    description: Freeze a person and start an Hack Control
+    usage: '&c/ss <player>'
+    permission: enderss.staff
+  enderss:
+    description: Main command
+    usage: '&c/enderss <version|help|info>'
+    permission: enderss.help
+  clean:
+    aliases: [legit]
+    description: Does what the button "clean" does, easy
+    permission: enderss.staff
+  blatant:
+    description: Directly ban a player for Blatant Cheating
+    permission: enderss.blatant
+  report:
+    description: Report a player
+    permission: enderss.report
