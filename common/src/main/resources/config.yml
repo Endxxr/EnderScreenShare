@@ -178,7 +178,7 @@ messages:
     #For these strings you can use the placeholder %SUSPECT%
     player-quit:
     - "&c%SUSPECT% logged out while being controlled"
-    clean-player:
+    control-ended:
     - "&2Control ended. Thank you for your patience"
     player-cleaned:
     - "&aThe control on %SUSPECT% ended"
@@ -204,16 +204,10 @@ messages:
     - "&c%SUSPECT% is already being controlled"
     cant-execute:
     - "&cYou can't execute commands while being controlled"
-    cant-fallback-suspect: # PROXY
-    - "&cWe can't fallback this player! Did they switch server before the SS?"
-    cant-fallback-staff: # PROXY
-    - "&cWe can't fallback you! Did you switch server before the SS?"
-    cannot-ss-yourself: # PROXY
+    cannot-ss-yourself:
     - "&cYou can't control yourself. Just ban yourself directly, no?"
     cant-connect-to-ss: # PROXY
     - "&cWe can't connect you or the suspect to the SS server. Is it online?"
-    cant-connect-suspect: # PROXY
-     - "&cWe can't connect the suspect to the SS server. Is it online?"
 
     #For these strings you can use the placeholder %SUSPECT%
     exempt:
@@ -273,7 +267,7 @@ reports:
     elements:
       goto:
         text: "&2[&aGoto&2]"
-        command: "server %REASON%"
+        command: "server %SERVER%"
       ban:
         text: "&4[&cBan&4]"
         command: "blatant %REPORTED%"
@@ -281,7 +275,7 @@ reports:
         text: "&d[&5Control&d]"
         command: "ss %REPORTED%"
       example:
-        text: "Example"
+        text: "&d[&5Example&d]"
         command: "examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
 
 
@@ -314,9 +308,6 @@ ban-command:
   hack: "/ban %SUSPECT% 30d Cheating (SS) -s"
   admission: "/ban %SUSPECT% 14d Cheat Admission -s"
   blatant: "/ban %SUSPECT% 30d Blatant Cheating -s"
-
-
-
 
 #Don't modify this value(s)! We need it for check updates
 version: 1.1

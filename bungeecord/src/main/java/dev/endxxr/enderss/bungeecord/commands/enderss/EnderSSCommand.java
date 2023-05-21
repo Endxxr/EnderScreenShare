@@ -41,7 +41,7 @@ public class EnderSSCommand extends Command implements TabExecutor {
             }
         }
 
-        sender.sendMessage(BungeeChat.format("&cInvalid subcommand, use /enderss help for help"));
+        sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_COMMAND.getMessage()));
 
     }
 

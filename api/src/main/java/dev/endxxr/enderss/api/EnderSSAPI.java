@@ -23,6 +23,7 @@ public interface EnderSSAPI {
     EnderPlugin getPlugin();
 
     boolean isUpdateAvailable();
+    boolean isConfigObsolete();
 
     class Provider {
         @Getter

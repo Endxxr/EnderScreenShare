@@ -8,7 +8,6 @@ import dev.endxxr.enderss.api.EnderSSAPI;
 import dev.endxxr.enderss.api.enums.Platform;
 import dev.endxxr.enderss.api.enums.PluginMessageType;
 import dev.endxxr.enderss.api.objects.SSPlayer;
-import dev.endxxr.enderss.api.utils.LogUtils;
 import dev.endxxr.enderss.bungeecord.commands.BlatantCommand;
 import dev.endxxr.enderss.bungeecord.commands.CleanCommand;
 import dev.endxxr.enderss.bungeecord.commands.ReportCommand;
@@ -23,6 +22,7 @@ import dev.endxxr.enderss.bungeecord.managers.BungeeScreenShareManager;
 import dev.endxxr.enderss.common.EnderSS;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
+import dev.endxxr.enderss.common.utils.FileUtils;
 import lombok.SneakyThrows;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -30,28 +30,19 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.Metrics;
 import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public final class EnderSSBungeecord extends Plugin implements EnderPlugin {
-    private EnderSSBungeecord instance;
+public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
+    private EnderSSBungeeCord instance;
     private EnderSS enderSS;
     private YamlFile generalConfig;
     private YamlFile platformConfig;
-
-    private boolean obsoleteConfig;
     private boolean liteBansPresent = false;
     private LuckPerms luckPerms;
     private boolean luckPermsPresent = false;
@@ -66,16 +57,12 @@ public final class EnderSSBungeecord extends Plugin implements EnderPlugin {
     public void onEnable() {
 
         instance = this;
-        generalConfig = saveConfig("config.yml");
-        platformConfig = saveConfig("proxy.yml");
+        generalConfig = FileUtils.saveConfig("config.yml");
+        platformConfig = FileUtils.saveConfig("proxy.yml");
 
-
-        updateConfig();
         checkSoftDependencies();
 
-
         enderSS = new EnderSS(this,
-                generalConfig.getString("version"),
                 BungeePlayersManager.class,
                 null,
                 BungeeScreenShareManager.class
@@ -109,59 +96,7 @@ public final class EnderSSBungeecord extends Plugin implements EnderPlugin {
         if (GlobalConfig.CHAT_ENABLED.getBoolean()) getProxy().getPluginManager().registerListener(this, new ScreenShareChat());
     }
 
-    @SneakyThrows
-    private YamlFile saveConfig(String fileName) {
-        if (!getDataFolder().exists()) {
-            Files.createDirectory(getDataFolder().toPath());
-        }
-        File file = new File(getDataFolder(), fileName);
-        if (!file.exists()) {
-            try (InputStream in = getResourceAsStream(fileName)) {
-                Files.copy(in, file.toPath());
-            } catch (IOException e) {
-                getLogger().severe("Could not save "+fileName+" to "+ file);
-                e.printStackTrace();
-            }
-        }
 
-        YamlFile yamlFile = new YamlFile(file.getAbsolutePath());
-        yamlFile.load();
-        return yamlFile;
-    }
-
-    private void updateConfig() {
-        try {
-            Configuration internalConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(getResourceAsStream("config.yml"));
-            Configuration externalConfig = ConfigurationProvider.getProvider(YamlConfiguration.class).load(new File(getDataFolder(), "config.yml"));
-            if (internalConfig.getFloat("version") > externalConfig.getFloat("version")) {
-                getLogger().warning("Your plugin configuration is obsolete");
-                obsoleteConfig = true;
-            }
-
-            if (externalConfig.getFloat("version") < 1.0) {
-                updateFromLegacyConfig();
-            }
-
-        } catch (IOException e) {
-            LogUtils.prettyPrintException(e, "There was an error while updating the configuration file.");
-        }
-    }
-
-    private void updateFromLegacyConfig() {
-
-        File file = new File(getDataFolder(), "config.yml");
-        try {
-            Files.move(file.toPath(), new File(getDataFolder(), "config.yml.old").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            LogUtils.prettyPrintException(e, "There was an error while updating the configuration from the legacy version.");
-        }
-
-        saveConfig("config.yml");
-        getLogger().warning("The plugin has updated the configuration file to the new format.");
-
-
-
-    }
 
     private void checkSoftDependencies() {
         liteBansPresent = getProxy().getPluginManager().getPlugin("LiteBans") != null;
@@ -181,10 +116,15 @@ public final class EnderSSBungeecord extends Plugin implements EnderPlugin {
         return platformConfig;
     }
 
+    @SneakyThrows
     @Override
     public void reload() {
         generalConfig = new YamlFile(new File(getDataFolder(), "config.yml"));
         platformConfig = new YamlFile(new File(getDataFolder(), "proxy.yml"));
+
+        generalConfig.load();
+        platformConfig.load();
+
         sendPluginMessage(enderSS.getPlayersManager().getPlayer(ProxyServer.getInstance().getPlayers().iterator().next().getUniqueId()),
                 PluginMessageType.RELOAD);
     }
@@ -277,13 +217,7 @@ public final class EnderSSBungeecord extends Plugin implements EnderPlugin {
         return liteBansPresent;
     }
 
-    @Override
-    public boolean isConfigObsolete() {
-        return obsoleteConfig;
-    }
-
-
-    public EnderSSBungeecord getInstance() {
+    public EnderSSBungeeCord getInstance() {
         return instance;
     }
 }

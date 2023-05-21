@@ -6,8 +6,9 @@ import dev.endxxr.enderss.api.events.bungee.SsStartEvent;
 import dev.endxxr.enderss.api.exceptions.ConfigException;
 import dev.endxxr.enderss.api.objects.SSPlayer;
 import dev.endxxr.enderss.api.objects.managers.ScreenShareManager;
-import dev.endxxr.enderss.api.utils.LogUtils;
+import dev.endxxr.enderss.common.utils.LogUtils;
 import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.common.managers.ThreadManager;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
 import net.md_5.bungee.api.ProxyServer;
@@ -21,8 +22,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BungeeScreenShareManager implements ScreenShareManager {
@@ -75,12 +74,6 @@ public class BungeeScreenShareManager implements ScreenShareManager {
                 return;
             }
         }
-
-        if (suspectSS.isFrozen()) { //The suspect is already being controlled
-            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_ALREADY_IN_SS.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
-            return;
-        }
-
         if (staffSS.getControlled()!=null) {
             if (staffSS.getControlled().equals(suspectSS)) { //The staffer is already controlling this player
                 staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_ALREADY_SS_PLAYER.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
@@ -90,9 +83,15 @@ public class BungeeScreenShareManager implements ScreenShareManager {
             return;
         }
 
+        if (suspectSS.isFrozen()) { //The suspect is already being controlled
+            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_ALREADY_IN_SS.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
+            return;
+        }
+
+
         ServerInfo server = ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()); //Gets the screenshare server from the config
         if (server ==  null) {
-            LogUtils.prettyPrintException(new ConfigException("Nonexistent ScreenShare Server"), "The ScreenShare server is not defined in the config or nonexistent!");
+            LogUtils.prettyPrintUserMistake(new ConfigException("Nonexistent ScreenShare Server"), "The ScreenShare server is not defined in the config or nonexistent!");
             return;
         }
 
@@ -101,35 +100,41 @@ public class BungeeScreenShareManager implements ScreenShareManager {
             return;
         }
 
-
-        try {
-            AtomicBoolean connected = new AtomicBoolean(true);
-            ServerConnectRequest request = ServerConnectRequest.builder()
-                    .target(server)
-                    .reason(ServerConnectEvent.Reason.PLUGIN)
-                    .callback(((result, error) -> {
-                        if (error != null || result == ServerConnectRequest.Result.FAIL || result == ServerConnectRequest.Result.EVENT_CANCEL ) {
-                            connected.set(false);
-                            api.getPlugin().getLog().warning("Error while connecting a player to the screenshare server");
-                            api.getPlugin().getLog().warning("Error: " + error);
-                        }
-                    }))
-                    .build();
-
-            Executors.newSingleThreadExecutor().submit(() -> suspectPlayer.connect(request)).get(); //Waits for the connection to be completed
-            Executors.newSingleThreadExecutor().submit(() -> staffPlayer.connect(request)).get(); //Waits for the connection to be completed
-            if (!connected.get()) {
-                staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_CANT_CONNECT_TO_SS.getMessage()));
-                return;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            LogUtils.prettyPrintException(e, null);
-            return;
-        }
-
+        //Sets the players as controlled and controller
+        //We set it here to prevent the player from being controlled by multiple staff members
         suspectSS.setFrozen(true);
         suspectSS.setStaffer(staffSS);
         staffSS.setControlled(suspect);
+
+        AtomicBoolean connected = new AtomicBoolean(true);
+        ServerConnectRequest request = ServerConnectRequest.builder()
+                .target(server)
+                .reason(ServerConnectEvent.Reason.PLUGIN)
+                .callback(((result, error) -> {
+                    if (error != null || result == ServerConnectRequest.Result.FAIL || result == ServerConnectRequest.Result.EVENT_CANCEL ) {
+                        connected.set(false);
+                        api.getPlugin().getLog().warning("Error while connecting a player to the screenshare server");
+                        api.getPlugin().getLog().warning("Error: " + error);
+                    }
+                }))
+                .build();
+
+        ThreadManager.runConnectionTask(() -> {
+            staffPlayer.connect(request);
+            suspectPlayer.connect(request);
+        });
+
+
+        //Waits for the connection to be completed
+        if (!connected.get()) {
+            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_CANT_CONNECT_TO_SS.getMessage()));
+            staffSS.setControlled(null);
+            suspectSS.setStaffer(null);
+            suspectSS.setFrozen(false);
+            return;
+        }
+
+
 
         if (GlobalConfig.START_TITLE_SEND.getBoolean()) { //Send the title to the suspect
             api.getPlugin().runTaskLater( () -> ProxyServer.getInstance().createTitle()
@@ -166,8 +171,10 @@ public class BungeeScreenShareManager implements ScreenShareManager {
 
         //BUTTONS
         if (GlobalConfig.START_BUTTONS.getSection().getKeys(false).size() > 0) {
+
             List<TextComponent> buttons = new ArrayList<>();
             ClickEvent.Action action = GlobalConfig.BUTTONS_CONFIRM_BUTTONS.getBoolean() ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
+
             for (String button : GlobalConfig.START_BUTTONS_ELEMENTS.getSection().getKeys(false)) {
                 String type = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonType(button).toLowerCase();
                 if (premadeButtons.containsKey(type)) { //Checks if the button is a premade button
@@ -191,6 +198,7 @@ public class BungeeScreenShareManager implements ScreenShareManager {
                     buttons.add(component);
                 }
             }
+
             if (buttons.size() > 0) {
                 if (GlobalConfig.START_BUTTONS_IN_LINE.getBoolean()) {
                     ComponentBuilder builder = new ComponentBuilder("");
@@ -204,6 +212,7 @@ public class BungeeScreenShareManager implements ScreenShareManager {
                     }
                 }
             }
+
         }
 
         for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
@@ -240,9 +249,7 @@ public class BungeeScreenShareManager implements ScreenShareManager {
         }
 
         api.getPlugin().getLog().info("Player " + targetPlayer.getName() + " is now free");
-
-
-
+        api.getPlugin().sendPluginMessage(targetSS, PluginMessageType.END);
     }
 
     @Override
@@ -250,16 +257,17 @@ public class BungeeScreenShareManager implements ScreenShareManager {
 
         ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(staff);
         ProxiedPlayer suspectPlayer = ProxyServer.getInstance().getPlayer(suspect);
+        SSPlayer ssStaff = api.getPlayersManager().getPlayer(staff);
+        SSPlayer ssSuspect = api.getPlayersManager().getPlayer(suspect);
 
-        if (suspectPlayer==null){
-            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
+        if (!ssSuspect.isFrozen()) {
+            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_SUSPECT_NOT_IN_SS.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
             return;
         }
 
-        SSPlayer ssSuspect = api.getPlayersManager().getPlayer(suspect);
-        SSPlayer ssStaff = api.getPlayersManager().getPlayer(staff);
-        if (!ssSuspect.isFrozen()) {
-            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_SUSPECT_NOT_IN_SS.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
+        // If the staff is trying to clear a player that is not controlled by him
+        if (!staffPlayer.hasPermission("enderss.admin") && !ssStaff.getControlled().equals(ssSuspect)) {
+            staffPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
             return;
         }
         ssStaff.setControlled(null);
@@ -288,7 +296,11 @@ public class BungeeScreenShareManager implements ScreenShareManager {
             }
         }
 
-        api.getPlugin().getLog().info(staffPlayer.getName()+" has freed "+suspectPlayer.getName());
+        suspectPlayer.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_INFO_CONTROL_ENDED.getMessage(),
+                "%STAFF%", staffPlayer.getName(),
+                "%SUSPECT%", suspectPlayer.getName()));
 
+        api.getPlugin().getLog().info(staffPlayer.getName()+" has freed "+suspectPlayer.getName());
+        api.getPlugin().sendPluginMessage(ssStaff, PluginMessageType.END);
     }
 }

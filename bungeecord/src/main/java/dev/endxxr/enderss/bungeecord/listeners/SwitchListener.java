@@ -43,7 +43,7 @@ public class SwitchListener implements Listener {
             event.getPlayer().sendMessage(BungeeChat.format("&8[&d&lEnder&5&lSS&8]&f A new version is available!"));
         }
 
-        if (event.getPlayer().hasPermission("enderss.admin") && api.getPlugin().isConfigObsolete()) {
+        if (event.getPlayer().hasPermission("enderss.admin") && api.isConfigObsolete()) {
             event.getPlayer().sendMessage(BungeeChat.format("&8[&d&lEnder&5&lSS&8]&f Your config is obsolete!"));
         }
 
@@ -56,13 +56,6 @@ public class SwitchListener implements Listener {
                     suspect,
                     event.getPlayer(),
                     SSEndCause.STAFF_SWITCH));
-
-            api.getPlugin().sendPluginMessage(
-                    ssPlayer,
-                    api.getPlayersManager().getPlayer(suspect.getUniqueId()),
-                    PluginMessageType.END
-            );
-
         }
 
     }

@@ -10,8 +10,8 @@
 
 screenshare-server: "ss"
 fallback-server: "lobby"
-last-connected-server: "lobby"
-fallback-staff: "staff"
+last-connected-server: true
+fallback-staff: true
 reload-ss: true
 
 

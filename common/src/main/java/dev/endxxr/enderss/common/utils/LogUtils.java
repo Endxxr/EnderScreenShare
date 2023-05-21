@@ -1,4 +1,4 @@
-package dev.endxxr.enderss.api.utils;
+package dev.endxxr.enderss.common.utils;
 
 import dev.endxxr.enderss.api.EnderSSAPI;
 

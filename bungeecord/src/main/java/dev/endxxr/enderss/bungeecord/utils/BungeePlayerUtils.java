@@ -18,32 +18,4 @@ public class BungeePlayerUtils {
         return player.getServer().getInfo().getName().equalsIgnoreCase(ProxyConfig.SS_SERVER.getString());
     }
 
-    /**
-     *
-     * Gets the staffer or the controlled player of the specified player
-     *
-     * @param ssPlayer
-     * @return
-     */
-    public static SSPlayer getPartner(SSPlayer ssPlayer) {
-
-        if (ssPlayer == null) return null;
-
-        if (ssPlayer.isStaff()) {
-            if (ssPlayer.getControlled()!=null) {
-                return ssPlayer.getControlled();
-            }
-            if (ssPlayer.getStaffer()!=null && ssPlayer.isFrozen()) {
-                return ssPlayer.getStaffer();
-            }
-        } else {
-            if (ssPlayer.getStaffer()!=null) return ssPlayer.getStaffer();
-        }
-
-        return null;
-    }
-
-
-
-
 }

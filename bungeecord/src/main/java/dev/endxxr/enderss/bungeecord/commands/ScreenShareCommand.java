@@ -44,18 +44,8 @@ public class ScreenShareCommand extends Command implements TabExecutor {
 
         final ProxiedPlayer suspect = ProxyServer.getInstance().getPlayer(args[0]);
 
-        if (staff.equals(suspect)) { //Staff is trying to control themselves
-            staff.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_CANNOT_SS_YOURSELF.getMessage()));
-            return;
-        }
-
         if (suspect == null) { //If the player is offline, sus will be null
             sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage(), "%SUSPECT%", args[0]));
-            return;
-        }
-
-        if (suspect.hasPermission("enderss.exempt") || suspect.hasPermission("enderss.bypass")) {
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_EXEMPT.getMessage(), "%SUSPECT%", suspect.getName()));
             return;
         }
 

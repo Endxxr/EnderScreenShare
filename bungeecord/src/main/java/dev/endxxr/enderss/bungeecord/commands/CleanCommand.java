@@ -37,13 +37,18 @@ public class CleanCommand extends Command implements TabExecutor {
             return;
         }
 
-
         if (args.length == 0) {
             staff.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
         }
 
         final ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
+
+        if (target == null) {
+            staff.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage(), "%SUSPECT%", args[0]));
+            return;
+        }
+
         api.getScreenShareManager().clearPlayer(staff.getUniqueId(), target.getUniqueId());
 
     }

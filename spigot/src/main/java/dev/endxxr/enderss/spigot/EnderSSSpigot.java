@@ -4,7 +4,7 @@ import dev.endxxr.enderss.api.EnderPlugin;
 import dev.endxxr.enderss.api.enums.Platform;
 import dev.endxxr.enderss.api.enums.PluginMessageType;
 import dev.endxxr.enderss.api.objects.SSPlayer;
-import dev.endxxr.enderss.api.utils.LogUtils;
+import dev.endxxr.enderss.common.utils.LogUtils;
 import dev.endxxr.enderss.common.EnderSS;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.spigot.listeners.ControlsMessageListener;
@@ -47,7 +47,7 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
         checkSoftDependencies();
 
         saveDefaultConfig();
-        saveResource("config.yml", false);
+        saveResource("spigot.yml", false);
         generalConfig = new YamlFile(new File(getDataFolder(), "config.yml"));
         platformConfig = new YamlFile(new File(getDataFolder(), "spigot.yml"));
 
@@ -59,7 +59,6 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
         }
 
         enderSS = new EnderSS(this,
-                generalConfig.getString("version"),
                 SpigotPlayerManager.class,
                 SpigotScoreboardManager.class,
                 SpigotScreenShareManager.class
@@ -89,12 +88,12 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
         FileConfiguration internalConfig = getConfig();
         FileConfiguration externalConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 
-        if (internalConfig.getLong("version") > externalConfig.getLong("version")) {
+        if (internalConfig.getDouble("version") > externalConfig.getLong("version")) {
             getLogger().warning("Your plugin configuration is obsolete");
             obsoleteConfig = true;
         }
 
-        if (externalConfig.getLong("version") < 1.0) {
+        if (externalConfig.getDouble("version") < 1.0) {
             updateFromLegacyConfig();
         }
 
@@ -188,12 +187,6 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     public boolean isLiteBansPresent() {
         return liteBansPresent;
     }
-
-    @Override
-    public boolean isConfigObsolete() {
-        return obsoleteConfig;
-    }
-
     public EnderSSSpigot getInstance() {
         return instance;
     }

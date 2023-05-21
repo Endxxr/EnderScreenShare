@@ -1,6 +1,6 @@
 name: EnderSS
 version: '${project.version}'
-main: dev.endxxr.enderss.bungeecord.EnderSSBungeecord
+main: dev.endxxr.enderss.bungeecord.EnderSSBungeeCord
 description: Customizable ScreenShare plugin made by Endxxr (tg @pellicani)
 author: Endxxr
 softDepends:

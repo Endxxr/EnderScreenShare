@@ -25,5 +25,4 @@ public interface EnderPlugin {
     LuckPerms getLuckPermsAPI();
     boolean isLuckPermsPresent();
     boolean isLiteBansPresent();
-    boolean isConfigObsolete();
 }

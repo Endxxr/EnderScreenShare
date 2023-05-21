@@ -33,7 +33,7 @@ public class JoinLeaveListener implements Listener {
         ProxiedPlayer player = e.getPlayer();
         SSPlayer session = api.getPlayersManager().addPlayer(player.getUniqueId());
         if (player.hasPermission("enderss.admin") && api.isUpdateAvailable()) {
-            player.sendMessage(BungeeChat.format("&8[&d&lEnder&5&lSS&8]&f You need to update the &cplugin!"));
+            player.sendMessage(BungeeChat.format("&8[&d&lEnder&5&lSS&8]&f You need to &cupdate &fthe plugin!"));
         }
         session.setLastServer(ProxyConfig.FALLBACK_SERVER.getString());
 
@@ -52,8 +52,8 @@ public class JoinLeaveListener implements Listener {
         */
 
         if (ssPlayer.isFrozen()) { // If the player controlled quits
-            ProxiedPlayer staff = ProxyServer.getInstance().getPlayer(ssPlayer.getUUID());
-            SSPlayer ssStaff = api.getPlayersManager().getPlayer(staff.getUniqueId());
+            SSPlayer ssStaff = ssPlayer.getStaffer();
+            ProxiedPlayer staff = ProxyServer.getInstance().getPlayer(ssStaff.getUUID());
             ssStaff.setControlled(null);
 
 
@@ -85,6 +85,7 @@ public class JoinLeaveListener implements Listener {
                 }
 
                 for (String command : banOnQuitCommands) {
+                    command = command.replace("%SUSPECT%", player.getName());
                     api.getPlugin().dispatchCommand(null, command);
                 }
             }
@@ -117,11 +118,6 @@ public class JoinLeaveListener implements Listener {
             } else {
                 suspect.connect(ProxyServer.getInstance().getServerInfo(ProxyConfig.FALLBACK_SERVER.getString()));
             }
-            api.getPlugin().sendPluginMessage(
-                    ssPlayer,
-                    susSession,
-                    PluginMessageType.END
-            );
             ProxyServer.getInstance().getPluginManager().callEvent(new SsEndEvent(player, suspect, SSEndCause.STAFF_QUIT));
         }
     }

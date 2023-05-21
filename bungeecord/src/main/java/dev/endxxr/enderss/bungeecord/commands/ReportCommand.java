@@ -147,14 +147,14 @@ public class ReportCommand extends Command implements TabExecutor {
             }
 
             TextComponent component = new TextComponent(BungeeChat.format(name));
-            String formattedCommand = command
+            String formattedCommand = "/"+command
                     .replace("%REPORTER%", reporterName)
                     .replace("%REPORTED%", reportedName)
                     .replace("%REASON%", reason)
                     .replace("%SERVER%", serverName);
 
             component.setClickEvent(new ClickEvent(action, formattedCommand));
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent("/" + formattedCommand)}));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(formattedCommand)}));
             buttons.add(component);
         }
         return buttons;
