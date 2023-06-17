@@ -1,14 +1,15 @@
 package dev.endxxr.enderss.common.storage;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSS;
+import dev.endxxr.enderss.api.EnderSSProvider;
 import org.simpleyaml.configuration.ConfigurationSection;
+import org.simpleyaml.configuration.file.YamlFile;
 
 import java.util.List;
 
 public enum GlobalConfig {
 
     PREFIX("prefix"),
-    PROXY_MODE("proxy-mode"),
     STAFF_CONTROLLABLE("staff-controllable"),
     START_CLEAR_CHAT("start.clear-chat"),
     START_ANYDESK_SEND("start.anydesk.send"),
@@ -64,20 +65,6 @@ public enum GlobalConfig {
     MESSAGES_ERROR_SUSPECT_NOT_IN_SS("messages.error.suspect-not-in-ss"),
     MESSAGES_ERROR_CANT_CONNECT_TO_SS("messages.error.cant-connect-to-ss"),
     MESSAGES_ERROR_CANNOT_SS_YOURSELF("messages.error.cannot-ss-yourself"),
-    SCOREBOARD_ENABLED("scoreboard.enabled"),
-    SCOREBOARD_NOT_CONTROLLING_PLACEHOLDER("scoreboard.not-controlling-placeholder"),
-    SCOREBOARD_IDLING("scoreboard.idling"),
-    SCOREBOARD_IDLING_TITLE("scoreboard.idling.title"),
-    SCOREBOARD_IDLING_LINES("scoreboard.idling.lines"),
-    SCOREBOARD_STAFF("scoreboard.staff"),
-    SCOREBOARD_STAFF_TITLE("scoreboard.staff.title"),
-    SCOREBOARD_STAFF_LINES("scoreboard.staff.lines"),
-    SCOREBOARD_SUSPECT("scoreboard.suspect"),
-    SCOREBOARD_SUSPECT_TITLE("scoreboard.suspect.title"),
-    SCOREBOARD_SUSPECT_LINES("scoreboard.suspect.lines"),
-    SCOREBOARD_YES("scoreboard.alerts-enabled-placeholder"),
-    SCOREBOARD_NO("scoreboard.alerts-disabled-placeholder"),
-
     MESSAGES_ERROR_CANNOT_SS_STAFF("messages.error.cannot-ss-staff"),
     MESSAGES_ERROR_NOT_CONTROLLING("messages.error.not-controlling"),
     REPORTS_ENABLED("reports.enabled"),
@@ -109,7 +96,8 @@ public enum GlobalConfig {
     BAN_COMMAND_BLATANT("ban-command.blatant"),
     VERSION("version");
 
-    private static final EnderSSAPI api = EnderSSAPI.Provider.getApi();
+    public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getGeneralConfig();
+    
     GlobalConfig(String path) {
         this.path = path;
     }
@@ -121,29 +109,29 @@ public enum GlobalConfig {
     }
 
     public String getString() {
-        String s =api.getPlugin().getGeneralConfig().getString(path);
+        String s =config.getString(path);
         return s == null ? "" : s;
     }
 
     public List<String> getStringList() {
-        return api.getPlugin().getGeneralConfig().getStringList(path);
+        return config.getStringList(path);
     }
 
     public boolean getBoolean() {
-        return api.getPlugin().getGeneralConfig().getBoolean(path);
+        return config.getBoolean(path);
     }
 
     public int getInt() {
-        return api.getPlugin().getGeneralConfig().getInt(path);
+        return config.getInt(path);
     }
 
 
     public double getFloat() {
-        return api.getPlugin().getGeneralConfig().getDouble(path);
+        return config.getDouble(path);
     }
 
     public long getLong() {
-        return api.getPlugin().getGeneralConfig().getLong(path);
+        return config.getLong(path);
     }
 
     public String getMessage() {
@@ -151,19 +139,19 @@ public enum GlobalConfig {
     }
 
     public ConfigurationSection getSection() {
-        return api.getPlugin().getGeneralConfig().getConfigurationSection(path);
+        return config.getConfigurationSection(path);
     }
 
     public String getButtonType(String name) {
-        return api.getPlugin().getGeneralConfig().getString(path + "." + name + ".type");
+        return config.getString(path + "." + name + ".type");
     }
 
     public String getButtonText(String name) {
-        return api.getPlugin().getGeneralConfig().getString(path + "." + name + ".text");
+        return config.getString(path + "." + name + ".text");
     }
 
     public String getButtonCommand(String name) {
-        return api.getPlugin().getGeneralConfig().getString(path + "." + name + ".command");
+        return config.getString(path + "." + name + ".command");
     }
 
 

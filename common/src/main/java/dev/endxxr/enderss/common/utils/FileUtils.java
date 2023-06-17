@@ -1,6 +1,6 @@
 package dev.endxxr.enderss.common.utils;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSSProvider;
 import lombok.SneakyThrows;
 import org.simpleyaml.configuration.file.YamlFile;
 
@@ -43,7 +43,7 @@ public class FileUtils {
         }
 
         FileUtils.saveConfig("config.yml");
-        EnderSSAPI.Provider.getApi().getPlugin().getLog().warning("The plugin has updated the configuration file to the new format.");
+        EnderSSProvider.getApi().getPlugin().getLog().warning("The plugin has updated the configuration file to the new format.");
 
     }
 

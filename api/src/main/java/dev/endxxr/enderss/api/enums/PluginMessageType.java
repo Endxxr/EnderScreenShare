@@ -4,6 +4,7 @@ public enum PluginMessageType {
 
     START("start"),
     END("end"),
+    KICK("kick"),
     RELOAD("reload");
 
     private final String name;

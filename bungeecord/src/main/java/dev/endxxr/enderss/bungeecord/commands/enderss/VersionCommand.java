@@ -1,9 +1,10 @@
 package dev.endxxr.enderss.bungeecord.commands.enderss;
 
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.api.EnderSSProvider;
+import dev.endxxr.enderss.api.utils.ChatUtils;
 import net.md_5.bungee.api.CommandSender;
 
-public class VersionCommand implements SubCommand {
+public class VersionCommand implements BungeeSubCommand {
     @Override
     public String getName() {
         return "version";
@@ -11,15 +12,16 @@ public class VersionCommand implements SubCommand {
 
     @Override
     public String getPermission() {
-        return "enderss.admin";
+        return "enderss.settings.version";
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage(BungeeChat.format("&5&lEnderSS &dv1.0"));
+        sender.sendMessage(ChatUtils.formatComponent("&5&lEnderSS &dv"+ EnderSSProvider.getApi().VERSION));
+        sender.sendMessage(ChatUtils.formatComponent("&8Running on BunngeeCord"));
         sender.sendMessage("");
-        sender.sendMessage(BungeeChat.format("&fEnderSS &7by Endxxr"));
-        sender.sendMessage(BungeeChat.format("&fhttps://github.com/Endxxr/EnderSS"));
+        sender.sendMessage(ChatUtils.formatComponent("&fEnderSS &7by Endxxr"));
+        sender.sendMessage(ChatUtils.formatComponent("&fhttps://github.com/Endxxr/EnderSS"));
         sender.sendMessage("");
     }
 }

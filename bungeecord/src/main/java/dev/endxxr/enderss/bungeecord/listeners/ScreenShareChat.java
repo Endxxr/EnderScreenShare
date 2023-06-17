@@ -1,12 +1,12 @@
 package dev.endxxr.enderss.bungeecord.listeners;
 
+import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.ChatSender;
 import dev.endxxr.enderss.api.events.bungee.SsChatEvent;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
+import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.api.objects.SSPlayer;
-import dev.endxxr.enderss.bungeecord.utils.BungeePlayerUtils;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -18,9 +18,9 @@ import net.md_5.bungee.event.EventPriority;
 
 public class ScreenShareChat implements Listener {
 
-    private final EnderSSAPI api;
+    private final EnderSS api;
     public ScreenShareChat() {
-        this.api = EnderSSAPI.Provider.getApi();
+        this.api = EnderSSProvider.getApi();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -29,14 +29,14 @@ public class ScreenShareChat implements Listener {
         if (event.isCancelled() || event.isCommand() || event.isProxyCommand()) return;
 
         ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
-        SSPlayer ssSender = api.getPlayersManager().getPlayer(sender.getUniqueId());
+        SsPlayer ssSender = api.getPlayersManager().getPlayer(sender.getUniqueId());
 
         ChatSender senderType = null;
         if (ssSender.isStaff() && !ssSender.isFrozen() && ssSender.getControlled()!=null) { //Because staff can be frozen
             senderType = ChatSender.STAFF;
         } else if (ssSender.isFrozen()) {
             senderType = ChatSender.SUSPECT;
-        } else if (BungeePlayerUtils.isInSsServer(sender) && ssSender.isStaff()) {
+        } else if (sender.getServer().getInfo().getName().equalsIgnoreCase(ProxyConfig.SS_SERVER.getString()) && ssSender.isStaff()) {
             senderType = ChatSender.NOT_INVOLVED;
         }
 
@@ -87,14 +87,14 @@ public class ScreenShareChat implements Listener {
 
     private void sendNotInvolvedMessage(String message) {
 
-        TextComponent formattedMessage = BungeeChat.format(message);
+        TextComponent formattedMessage = ChatUtils.formatComponent(message);
 
         for (ProxiedPlayer player : ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers()) {
 
-            SSPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
+            SsPlayer SsPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
             if (GlobalConfig.CHAT_NOT_INVOLVED_EVERYONE.getBoolean()) {
                 player.sendMessage(formattedMessage);
-            } else if (ssPlayer.isStaff()) {
+            } else if (SsPlayer.isStaff()) {
                 player.sendMessage(formattedMessage);
             }
         }
@@ -102,24 +102,24 @@ public class ScreenShareChat implements Listener {
 
     }
 
-    private void sendStaffMessage(SSPlayer ssSender, String message) {
+    private void sendStaffMessage(SsPlayer ssSender, String message) {
         
         ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(ssSender.getControlled().getUUID());
-        TextComponent formattedMessage = BungeeChat.format(message);
+        TextComponent formattedMessage = ChatUtils.formatComponent(message);
 
         receiver.sendMessage(formattedMessage);
         if (GlobalConfig.CHAT_STAFFER_READS_STAFFERS.getBoolean()) {
             ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers().forEach(player -> {
-                SSPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
+                SsPlayer SsPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
                 if (player == receiver) return; // if the receiver is a staff member, don't send the message to him
-                if (!ssPlayer.isStaff()) return;
+                if (!SsPlayer.isStaff()) return;
                 player.sendMessage(formattedMessage);
             });
         }
     }
 
-    private void sendSuspectMessage(SSPlayer sender, String message) {
-        TextComponent formattedMessage = BungeeChat.format(message);
+    private void sendSuspectMessage(SsPlayer sender, String message) {
+        TextComponent formattedMessage = ChatUtils.formatComponent(message);
         ProxyServer.getInstance().getPlayer(sender.getUUID()).sendMessage(formattedMessage);
         ProxyServer.getInstance().getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
     }

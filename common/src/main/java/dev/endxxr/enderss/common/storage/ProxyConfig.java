@@ -1,6 +1,6 @@
 package dev.endxxr.enderss.common.storage;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSSProvider;
 import org.simpleyaml.configuration.file.YamlFile;
 
 public enum ProxyConfig {
@@ -10,7 +10,7 @@ public enum ProxyConfig {
     CONFIG_LAST_CONNECTED_SERVER("last-connected-server"),
     CONFIG_FALLBACK_STAFF("fallback-staff"),
     RELOAD_SS("reload-ss");
-    private static final YamlFile config = EnderSSAPI.Provider.getApi().getPlugin().getPlatformConfig();
+    public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();
     private final String path;
     ProxyConfig(String s) {
         path = s;

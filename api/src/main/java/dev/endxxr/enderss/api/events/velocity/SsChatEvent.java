@@ -1,9 +1,10 @@
 package dev.endxxr.enderss.api.events.velocity;
 
 
+import com.velocitypowered.api.event.Event;
 import com.velocitypowered.api.proxy.connection.Player;
 
-public class SsChatEvent {
+public class SsChatEvent implements Event {
 
 
     private final String initialMessage;
@@ -34,8 +35,5 @@ public class SsChatEvent {
         return cancelled;
     }
 
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
-    }
     
 }

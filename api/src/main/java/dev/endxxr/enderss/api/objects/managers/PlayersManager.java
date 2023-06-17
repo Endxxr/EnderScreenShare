@@ -1,21 +1,14 @@
 package dev.endxxr.enderss.api.objects.managers;
 
-import dev.endxxr.enderss.api.objects.SSPlayer;
-import lombok.Getter;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class PlayersManager {
 
-    @Getter
-    private final HashMap<UUID, SSPlayer> registeredPlayers;
 
-    public PlayersManager() {
-        registeredPlayers = new HashMap<>();
-    }
-
+    protected final HashMap<UUID, SsPlayer> registeredPlayers = new HashMap<>();
 
     /**
      *
@@ -24,11 +17,7 @@ public abstract class PlayersManager {
      * @param uuid the player to add
      * @return the SsPlayer object
      */
-    public SSPlayer addPlayer(UUID uuid) {
-        SSPlayer ssPlayer = new SSPlayer(uuid);
-        registeredPlayers.put(uuid, ssPlayer);
-        return ssPlayer;
-    }
+    public abstract SsPlayer registerPlayer(UUID uuid);
 
 
     /**
@@ -38,7 +27,7 @@ public abstract class PlayersManager {
      * @param player the player to remove
      */
 
-    public void terminatePlayer(SSPlayer player) {
+    public void unregisterPlayer(@Nullable SsPlayer player) {
         registeredPlayers.remove(player.getUUID());
     }
 
@@ -49,12 +38,12 @@ public abstract class PlayersManager {
      * @param uuid the player to get the SsPlayer object
      * @return the SsPlayer object
      */
-    public SSPlayer getPlayer(UUID uuid) {
+    public SsPlayer getPlayer(UUID uuid) {
         return registeredPlayers.get(uuid);
     }
 
-    public SSPlayer getPlayer(SSPlayer ssPlayer) {
-        return getPlayer(ssPlayer.getUUID());
+    public SsPlayer getPlayer(SsPlayer SsPlayer) {
+        return getPlayer(SsPlayer.getUUID());
     }
 
 
@@ -65,12 +54,12 @@ public abstract class PlayersManager {
      * @return all online staffers
      */
 
-    public HashMap<UUID, SSPlayer> getStaffers() {
-        HashMap<UUID, SSPlayer> staffers = new HashMap<>();
+    public HashMap<UUID, SsPlayer> getStaffers() {
+        HashMap<UUID, SsPlayer> staffers = new HashMap<>();
         for (UUID uuid : registeredPlayers.keySet()) {
-            SSPlayer ssPlayer = registeredPlayers.get(uuid);
-            if (ssPlayer.isStaff()) {
-                staffers.put(uuid, ssPlayer);
+            SsPlayer SsPlayer = registeredPlayers.get(uuid);
+            if (SsPlayer.isStaff()) {
+                staffers.put(uuid, SsPlayer);
             }
         }
         return staffers;
@@ -87,9 +76,11 @@ public abstract class PlayersManager {
     public boolean isStaffOnline() {
         return !getStaffers().isEmpty();
     }
+    public abstract boolean hasPermission(UUID uuid, String permission);
+    public abstract List<String> getControllablePlayers(String initialChars);
 
-    public abstract Collection<UUID> getOnlinePlayers();
-    public abstract boolean hasPermission(String permission, UUID uuid);
-
+    public Set<SsPlayer> getRegisteredPlayers() {
+        return new HashSet<>(registeredPlayers.values());
+    }
 
 }

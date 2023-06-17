@@ -1,29 +1,40 @@
 package dev.endxxr.enderss.spigot;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import dev.endxxr.enderss.api.EnderPlugin;
 import dev.endxxr.enderss.api.enums.Platform;
 import dev.endxxr.enderss.api.enums.PluginMessageType;
-import dev.endxxr.enderss.api.objects.SSPlayer;
-import dev.endxxr.enderss.common.utils.LogUtils;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.EnderSS;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
+import dev.endxxr.enderss.common.storage.SpigotConfig;
+import dev.endxxr.enderss.common.utils.LogUtils;
+import dev.endxxr.enderss.spigot.commands.BlatantCommand;
+import dev.endxxr.enderss.spigot.commands.CleanCommand;
+import dev.endxxr.enderss.spigot.commands.ReportCommand;
+import dev.endxxr.enderss.spigot.commands.ScreenShareCommand;
+import dev.endxxr.enderss.spigot.commands.enderss.EnderSSCommand;
+import dev.endxxr.enderss.spigot.hooks.PapiExpansion;
 import dev.endxxr.enderss.spigot.listeners.ControlsMessageListener;
-import dev.endxxr.enderss.spigot.managers.SpigotPlayerManager;
-import dev.endxxr.enderss.spigot.managers.SpigotScoreboardManager;
-import dev.endxxr.enderss.spigot.managers.SpigotScreenShareManager;
+import dev.endxxr.enderss.spigot.listeners.ConnectionListener;
+import dev.endxxr.enderss.spigot.listeners.protections.PlayerProtections;
+import dev.endxxr.enderss.spigot.listeners.protections.WorldProtections;
+import dev.endxxr.enderss.spigot.managers.PlayerManager;
+import dev.endxxr.enderss.spigot.managers.ScreenShareManager;
+import lombok.SneakyThrows;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -34,85 +45,114 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     private YamlFile generalConfig;
     private YamlFile platformConfig;
     private LuckPerms luckPerms;
-    private boolean obsoleteConfig;
     private boolean liteBansPresent = false;
     private boolean luckPermsPresent = false;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        instance = this;
 
-        updateConfig();
+        try {
+            Class.forName("net.md_5.bungee.api.ChatColor");
+        } catch (ClassNotFoundException e) {
+            getLogger().severe("");
+            getLogger().severe("You're not using a Spigot Fork. This plugin requires BungeeCord Chat API");
+            getLogger().severe("which is only available on Spigot Forks.");
+            getLogger().severe("Disabling plugin...");
+            getLogger().severe("");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+
+        instance = this;
         checkSoftDependencies();
 
         saveDefaultConfig();
         saveResource("spigot.yml", false);
         generalConfig = new YamlFile(new File(getDataFolder(), "config.yml"));
         platformConfig = new YamlFile(new File(getDataFolder(), "spigot.yml"));
+        loadConfigs();
 
-        boolean proxyMode = GlobalConfig.PROXY_MODE.getBoolean();
+
+
+        enderSS = new EnderSS(this,
+                PlayerManager.class,
+                ScreenShareManager.class
+                );
+
+        boolean proxyMode = SpigotConfig.PROXY_MODE.getBoolean();
 
         if (proxyMode) {
             getLogger().warning("Proxy mode is enabled. Some features won't work.");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "enderss:controls", new ControlsMessageListener());
         }
 
-        enderSS = new EnderSS(this,
-                SpigotPlayerManager.class,
-                SpigotScoreboardManager.class,
-                SpigotScreenShareManager.class
-                );
+        registerCommands();
+        registerListeners();
 
-        new Metrics(this, 15533);
+        Metrics metrics = new Metrics(this, 15533);
+        metrics.addCustomChart(new SimplePie("platform", Platform.SPIGOT::name));
+    }
 
-
-
+    private void loadConfigs() {
+        try {
+            generalConfig.load();
+            platformConfig.load();
+        } catch (IOException e) {
+            LogUtils.prettyPrintException(new RuntimeException(e), "Failed to load config files.");
+        }
     }
 
     @Override
     public void onDisable() {
-        Bukkit.getMessenger().unregisterIncomingPluginChannel(this, "enderss:controls");
+        if (SpigotConfig.PROXY_MODE.getBoolean()) {
+            Bukkit.getMessenger().unregisterIncomingPluginChannel(this, "enderss:controls", new ControlsMessageListener());
+        }
     }
 
     private void checkSoftDependencies() {
-        liteBansPresent = Bukkit.getPluginManager().getPlugin("LiteBans") != null;
-        if (Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+
+        PluginManager pluginManager = Bukkit.getPluginManager();
+
+        liteBansPresent = pluginManager.getPlugin("LiteBans") != null;
+
+        if (pluginManager.getPlugin("LuckPerms") != null) {
             luckPermsPresent = true;
             luckPerms = LuckPermsProvider.get();
         }
-    }
 
-    private void updateConfig() {
-
-        FileConfiguration internalConfig = getConfig();
-        FileConfiguration externalConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
-
-        if (internalConfig.getDouble("version") > externalConfig.getLong("version")) {
-            getLogger().warning("Your plugin configuration is obsolete");
-            obsoleteConfig = true;
-        }
-
-        if (externalConfig.getDouble("version") < 1.0) {
-            updateFromLegacyConfig();
+        if (pluginManager.getPlugin("PlaceholderAPI") != null) {
+            new PapiExpansion().register();
         }
 
     }
 
-    private void updateFromLegacyConfig() {
-        File file = new File(getDataFolder(), "config.yml");
-        try {
-            Files.move(file.toPath(), new File(getDataFolder(), "config.yml.old").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            LogUtils.prettyPrintException(e, "There was an error while updating the configuration from the legacy version.");
+    private void registerCommands() {
+
+        if (!SpigotConfig.PROXY_MODE.getBoolean()) {
+            getCommand("ss").setExecutor(new ScreenShareCommand());
+            getCommand("ss").setTabCompleter(new ScreenShareCommand());
+            getCommand("clean").setExecutor(new CleanCommand());
+            getCommand("clean").setTabCompleter(new CleanCommand());
         }
 
-        saveDefaultConfig();
-        getLogger().warning("The plugin has updated the configuration file to the new format.");
+        if (GlobalConfig.REPORTS_ENABLED.getBoolean()) {
+            getCommand("report").setExecutor(new ReportCommand());
+            getCommand("report").setTabCompleter(new ReportCommand());
+        }
 
+        getCommand("senderss").setExecutor(new EnderSSCommand());
+        getCommand("senderss").setTabCompleter(new EnderSSCommand());
+        getCommand("blatant").setExecutor(new BlatantCommand());
+        getCommand("blatant").setTabCompleter(new BlatantCommand());
 
+    }
 
-
+    private void registerListeners() {
+        Bukkit.getPluginManager().registerEvents(new WorldProtections(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerProtections(), this);
+        Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
     }
 
     @Override
@@ -131,26 +171,49 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     }
 
     @Override
-    public void dispatchCommand(SSPlayer sender, String command) {
+    public void dispatchCommand(SsPlayer sender, String command) {
         Bukkit.dispatchCommand(Objects.requireNonNull(Bukkit.getPlayer(sender.getUUID())), command);
     }
 
+
+    @SneakyThrows
     @Override
     public void reload() {
         reloadConfig();
         generalConfig = new YamlFile(new File(getDataFolder(), "config.yml"));
         platformConfig = new YamlFile(new File(getDataFolder(), "spigot.yml"));
+        generalConfig.load();
+        platformConfig.load();
         getLogger().info("Reloaded!");
     }
 
     @Override
-    public void sendPluginMessage(SSPlayer staffer, SSPlayer suspect, PluginMessageType type) {
-        return;
+    public void sendPluginMessage(SsPlayer staffer, SsPlayer suspect, PluginMessageType type) {
+
+        Player player = Bukkit.getPlayer(staffer.getUUID());
+        if (player == null) return;
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(type.name());
+        out.writeUTF(staffer.getUUID().toString());
+        out.writeUTF(suspect.getUUID().toString());
+
+        player.sendPluginMessage(this, "enderss:controls", out.toByteArray());
+
+
     }
 
     @Override
-    public void sendPluginMessage(SSPlayer staffer, PluginMessageType type) {
-        return;
+    public void sendPluginMessage(SsPlayer staffer, PluginMessageType type) {
+
+        Player player = Bukkit.getPlayer(staffer.getUUID());
+        if (player == null) return;
+
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(type.name());
+        out.writeUTF(staffer.getUUID().toString());
+
+        player.sendPluginMessage(this, "enderss:controls", out.toByteArray());
     }
 
     @Override

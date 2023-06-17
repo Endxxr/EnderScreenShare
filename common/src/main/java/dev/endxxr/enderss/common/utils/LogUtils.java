@@ -1,13 +1,14 @@
 package dev.endxxr.enderss.common.utils;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSS;
+import dev.endxxr.enderss.api.EnderSSProvider;
 
 import java.util.logging.Logger;
 
 public class LogUtils {
 
     public static void prettyPrintUserMistake(Exception e, String customMessage) {
-        Logger logger = EnderSSAPI.Provider.getApi().getPlugin().getLog(); // Get the logger from the API because it's static
+        Logger logger = EnderSSProvider.getApi().getPlugin().getLog(); // Get the logger from the API because it's static
         String message = customMessage == null ? e.getMessage() : customMessage;
         logger.severe("========================");
         logger.severe("");
@@ -18,7 +19,7 @@ public class LogUtils {
     }
 
     public static void prettyPrintException(Exception exception, String customMessage) {
-        EnderSSAPI api = EnderSSAPI.Provider.getApi();// Get the logger from the API because it's static
+        EnderSS api = EnderSSProvider.getApi();// Get the logger from the API because it's static
 
         Logger logger;
         if (api == null) {

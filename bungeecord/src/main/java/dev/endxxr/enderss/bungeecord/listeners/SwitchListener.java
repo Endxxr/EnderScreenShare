@@ -1,11 +1,11 @@
 package dev.endxxr.enderss.bungeecord.listeners;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
-import dev.endxxr.enderss.api.enums.PluginMessageType;
+import dev.endxxr.enderss.api.EnderSS;
+import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.SSEndCause;
 import dev.endxxr.enderss.api.events.bungee.SsEndEvent;
-import dev.endxxr.enderss.api.objects.SSPlayer;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.api.objects.player.ProxyPlayer;
+import dev.endxxr.enderss.api.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
 import net.md_5.bungee.api.ProxyServer;
@@ -17,40 +17,33 @@ import net.md_5.bungee.event.EventHandler;
 
 public class SwitchListener implements Listener {
 
-    private final EnderSSAPI api;
+    private final EnderSS api;
 
     public SwitchListener() {
-        this.api = EnderSSAPI.Provider.getApi();
+        this.api = EnderSSProvider.getApi();
     }
 
     @EventHandler
     public void onSwitch(ServerSwitchEvent event) {
-        SSPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
+        ProxyPlayer proxyPlayer = (ProxyPlayer) api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
         ServerInfo lastServer = event.getFrom();
         
         if (lastServer != null) {
-            ssPlayer.setLastServer(lastServer.getName());
-
-            if (!ssPlayer.isFrozen() && ssPlayer.getControlled()==null //If the player is not frozen and is not controlling anyone
-                    && GlobalConfig.SCOREBOARD_ENABLED.getBoolean()
-                    && event.getPlayer().getServer().getInfo().getName().equalsIgnoreCase(ProxyConfig.SS_SERVER.getString())) {
-
-                //if (GlobalConfig.SCOREBOARD_ENABLED.getBoolean()) plugin.getScoreboardManager().sendIdlingScoreboard(event.getPlayer());
-            }
+            proxyPlayer.setLastServer(lastServer.getName());
         }
         
         if (event.getPlayer().hasPermission("enderss.admin") && api.isUpdateAvailable()) {
-            event.getPlayer().sendMessage(BungeeChat.format("&8[&d&lEnder&5&lSS&8]&f A new version is available!"));
+            event.getPlayer().sendMessage(ChatUtils.formatComponent("&8[&d&lEnder&5&lSS&8]&f New version available!"));
         }
 
         if (event.getPlayer().hasPermission("enderss.admin") && api.isConfigObsolete()) {
-            event.getPlayer().sendMessage(BungeeChat.format("&8[&d&lEnder&5&lSS&8]&f Your config is obsolete!"));
+            event.getPlayer().sendMessage(ChatUtils.formatComponent("&8[&d&lEnder&5&lSS&8]&f Your config is obsolete!"));
         }
 
 
-        if (lastServer == ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()) && ssPlayer.getControlled() != null) { // If the player was controlling anyone
-            ProxiedPlayer suspect = ProxyServer.getInstance().getPlayer(ssPlayer.getControlled().getUUID());
-            api.getScreenShareManager().clearPlayer(ssPlayer.getUUID(), suspect.getUniqueId());
+        if (lastServer == ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()) && proxyPlayer.getControlled() != null) { // If the player was controlling anyone
+            ProxiedPlayer suspect = ProxyServer.getInstance().getPlayer(proxyPlayer.getControlled().getUUID());
+            api.getScreenShareManager().clearPlayer(proxyPlayer.getUUID(), suspect.getUniqueId());
             //plugin.getScoreboardManager().endScoreboard(event.getPlayer(), ssPlayer.getControlled());
             ProxyServer.getInstance().getPluginManager().callEvent(new SsEndEvent(
                     suspect,

@@ -4,22 +4,20 @@ package dev.endxxr.enderss.bungeecord;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import dev.endxxr.enderss.api.EnderPlugin;
-import dev.endxxr.enderss.api.EnderSSAPI;
 import dev.endxxr.enderss.api.enums.Platform;
 import dev.endxxr.enderss.api.enums.PluginMessageType;
-import dev.endxxr.enderss.api.objects.SSPlayer;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.bungeecord.commands.BlatantCommand;
 import dev.endxxr.enderss.bungeecord.commands.CleanCommand;
 import dev.endxxr.enderss.bungeecord.commands.ReportCommand;
 import dev.endxxr.enderss.bungeecord.commands.ScreenShareCommand;
 import dev.endxxr.enderss.bungeecord.commands.enderss.EnderSSCommand;
 import dev.endxxr.enderss.bungeecord.listeners.CommandBlocker;
-import dev.endxxr.enderss.bungeecord.listeners.JoinLeaveListener;
+import dev.endxxr.enderss.bungeecord.listeners.ConnectionListener;
 import dev.endxxr.enderss.bungeecord.listeners.ScreenShareChat;
 import dev.endxxr.enderss.bungeecord.listeners.SwitchListener;
-import dev.endxxr.enderss.bungeecord.managers.BungeePlayersManager;
-import dev.endxxr.enderss.bungeecord.managers.BungeeScreenShareManager;
-import dev.endxxr.enderss.common.EnderSS;
+import dev.endxxr.enderss.bungeecord.managers.PlayersManager;
+import dev.endxxr.enderss.bungeecord.managers.ScreenShareManager;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
 import dev.endxxr.enderss.common.utils.FileUtils;
@@ -31,6 +29,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SimplePie;
 import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.file.YamlFile;
 
@@ -40,12 +39,12 @@ import java.util.logging.Logger;
 
 public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
     private EnderSSBungeeCord instance;
-    private EnderSS enderSS;
+    private dev.endxxr.enderss.common.EnderSS enderSS;
     private YamlFile generalConfig;
     private YamlFile platformConfig;
     private boolean liteBansPresent = false;
-    private LuckPerms luckPerms;
     private boolean luckPermsPresent = false;
+    private LuckPerms luckPerms;
 
 
     @Override
@@ -62,12 +61,10 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
 
         checkSoftDependencies();
 
-        enderSS = new EnderSS(this,
-                BungeePlayersManager.class,
-                null,
-                BungeeScreenShareManager.class
+        enderSS = new dev.endxxr.enderss.common.EnderSS(this,
+                PlayersManager.class,
+                ScreenShareManager.class
         );
-        enderSS.start();
 
         setCommands();
         setListeners();
@@ -76,7 +73,8 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
         getProxy().registerChannel("enderss:controls");
 
 
-        new Metrics(this, 15533);
+        Metrics metrics = new Metrics(this, 15533);
+        metrics.addCustomChart(new SimplePie("platform", Platform.BUNGEECORD::name));
     }
 
     private void setCommands() {
@@ -90,7 +88,7 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
 
 
     private void setListeners() {
-        getProxy().getPluginManager().registerListener(this, new JoinLeaveListener());
+        getProxy().getPluginManager().registerListener(this, new ConnectionListener());
         getProxy().getPluginManager().registerListener(this, new SwitchListener());
         getProxy().getPluginManager().registerListener(this, new CommandBlocker());
         if (GlobalConfig.CHAT_ENABLED.getBoolean()) getProxy().getPluginManager().registerListener(this, new ScreenShareChat());
@@ -130,15 +128,15 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
     }
 
     @Override
-    public void sendPluginMessage(SSPlayer staffer, SSPlayer suspect, PluginMessageType type) {
+    public void sendPluginMessage(SsPlayer staffer, SsPlayer suspect, PluginMessageType type) {
 
         ProxiedPlayer bungeeStaffer = ProxyServer.getInstance().getPlayer(staffer.getUUID());
         ProxiedPlayer bungeeSuspect = ProxyServer.getInstance().getPlayer(suspect.getUUID());
 
         ByteArrayDataOutput packet = ByteStreams.newDataOutput();
         packet.writeUTF(type.getString());
-        packet.writeUTF(bungeeStaffer.getName());
-        packet.writeUTF(bungeeSuspect.getName());
+        packet.writeUTF(bungeeStaffer.getUniqueId().toString());
+        packet.writeUTF(bungeeSuspect.getUniqueId().toString());
 
 
         ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).sendData("enderss:controls", packet.toByteArray());
@@ -146,18 +144,18 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
     }
 
     @Override
-    public void sendPluginMessage(SSPlayer player, PluginMessageType type) {
+    public void sendPluginMessage(SsPlayer player, PluginMessageType type) {
 
         ProxiedPlayer bungeePlayer = ProxyServer.getInstance().getPlayer(player.getUUID());
 
         if (bungeePlayer==null ) {
-            EnderSSAPI.Provider.getApi().getPlugin().getLog().warning("The network is empty, can't forward the message to the ss server.");
+            getLogger().warning("The network is empty, can't forward the message to the ss server.");
             return;
         }
 
         ByteArrayDataOutput packet = ByteStreams.newDataOutput();
         packet.writeUTF(type.getString());
-        packet.writeUTF(bungeePlayer.getName());
+        packet.writeUTF(bungeePlayer.getUniqueId().toString());
 
         ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).sendData("enderss:controls", packet.toByteArray());
 
@@ -185,7 +183,7 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
     }
 
     @Override
-    public void dispatchCommand(SSPlayer sender, String command) {
+    public void dispatchCommand(SsPlayer sender, String command) {
         CommandSender finalSender;
 
         if (sender==null) {

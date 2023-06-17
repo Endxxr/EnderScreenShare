@@ -1,8 +1,9 @@
 package dev.endxxr.enderss.bungeecord.commands;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSSProvider;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.api.utils.ChatUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -18,7 +19,7 @@ public class ScreenShareCommand extends Command implements TabExecutor {
 
 
     public ScreenShareCommand() {
-        super("screenshare", "enderss.staff", "ss", "freeze", "controllo");
+        super("screenshare", "enderss.ss", "ss", "freeze", "controllo");
     }
 
     @Override
@@ -30,7 +31,7 @@ public class ScreenShareCommand extends Command implements TabExecutor {
 
 
         if (!(sender instanceof ProxiedPlayer)) {
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_CONSOLE.getMessage()));
+            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_CONSOLE.getMessage()));
             return;
 
         }
@@ -38,18 +39,18 @@ public class ScreenShareCommand extends Command implements TabExecutor {
         final ProxiedPlayer staff = (ProxiedPlayer) sender;
 
         if (args.length < 1 || args[0] == null) { //No player specified
-            staff.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
+            staff.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
         }
 
         final ProxiedPlayer suspect = ProxyServer.getInstance().getPlayer(args[0]);
 
         if (suspect == null) { //If the player is offline, sus will be null
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage(), "%SUSPECT%", args[0]));
+            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage(), "%SUSPECT%", args[0]));
             return;
         }
 
-        EnderSSAPI.Provider.getApi().getScreenShareManager().startScreenShare(staff.getUniqueId(), suspect.getUniqueId());
+        EnderSSProvider.getApi().getScreenShareManager().startScreenShare(staff.getUniqueId(), suspect.getUniqueId());
 
     }
 
@@ -58,10 +59,6 @@ public class ScreenShareCommand extends Command implements TabExecutor {
         if (args.length == 0) {
             return Collections.emptyList();
         }
-        List<ProxiedPlayer> players = ProxyServer.getInstance().getPlayers().stream().filter(player -> player.getName().startsWith(args[0])).collect(Collectors.toList());
-        List<String> results = new ArrayList<>();
-        players.forEach(player -> results.add(player.getName()));
-        players.clear();
-        return results;
+        return EnderSSProvider.getApi().getPlayersManager().getControllablePlayers(args[0]);
     }
 }

@@ -1,8 +1,9 @@
 package dev.endxxr.enderss.bungeecord.commands;
 
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
-import dev.endxxr.enderss.api.EnderSSAPI;
-import dev.endxxr.enderss.api.objects.SSPlayer;
+import dev.endxxr.enderss.api.EnderSSProvider;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
+import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -20,11 +21,11 @@ import java.util.*;
 
 public class ReportCommand extends Command implements TabExecutor {
 
-    private final EnderSSAPI api;
+    private final EnderSS api;
     private final HashMap<UUID, Long> cooldowns = new HashMap<>();
     public ReportCommand() {
-        super("report", "enderss.report", "report", "segnala");
-        this.api = EnderSSAPI.Provider.getApi();
+        super("report", "enderss.report");
+        this.api = EnderSSProvider.getApi();
 
     }
 
@@ -33,42 +34,47 @@ public class ReportCommand extends Command implements TabExecutor {
 
         //CHECKS
         if (!(sender instanceof ProxiedPlayer)) {
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_CONSOLE.getMessage()));
+            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_CONSOLE.getMessage()));
             return;
         }
 
         final ProxiedPlayer player = (ProxiedPlayer) sender;
 
+        if (!player.hasPermission("enderss.staff") && !player.hasPermission("enderss.report")) {
+            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
+            return;
+        }
+
         if (cooldowns.containsKey(player.getUniqueId())) {
             if (cooldowns.get(player.getUniqueId()) > System.currentTimeMillis()) {
-                player.sendMessage(BungeeChat.format(GlobalConfig.REPORTS_MESSAGES_WAIT.getMessage(), "%SECONDS%", String.valueOf((cooldowns.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)));
+                player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_WAIT.getMessage(), "%SECONDS%", String.valueOf((cooldowns.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)));
                 return;
             }
         }
 
         if (args.length == 0) {
-            player.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
+            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
         }
 
         ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
         if (target==player) {
-            player.sendMessage(BungeeChat.format(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_YOURSELF.getMessage()));
+            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_YOURSELF.getMessage()));
             return;
         }
 
         if (target==null){
-            player.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
+            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
             return;
         }
 
         if (api.getPlayersManager().getPlayer(target.getUniqueId()).isStaff()) {
-            player.sendMessage(BungeeChat.format(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_STAFF.getMessage()));
+            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_STAFF.getMessage()));
             return;
         }
 
         if (args.length == 1) {
-            player.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_REASON.getMessage()));
+            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_REASON.getMessage()));
             return;
         }
 
@@ -80,7 +86,7 @@ public class ReportCommand extends Command implements TabExecutor {
         final String reasonString = reason.toString().trim();
         if (GlobalConfig.REPORTS_NO_STAFF_ENABLED.getBoolean()) {
             if (!api.getPlayersManager().isStaffOnline()) {
-                player.sendMessage(BungeeChat.format(GlobalConfig.REPORTS_NO_STAFF.getMessage()));
+                player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_NO_STAFF.getMessage()));
                 return;
             }
         }
@@ -88,9 +94,9 @@ public class ReportCommand extends Command implements TabExecutor {
         //STAFF
         Set<UUID> onlineStaff = api.getPlayersManager().getStaffers().keySet();
         for (UUID uuid : onlineStaff) {
-            SSPlayer staff = api.getPlayersManager().getPlayer(uuid);
-            if (staff.isAlerts()) {
-                TextComponent message = new TextComponent(BungeeChat.format(GlobalConfig.REPORTS_MESSAGES_REPORT_RECEIVED.getMessage()
+            SsPlayer staff = api.getPlayersManager().getPlayer(uuid);
+            if (staff.hasAlerts()) {
+                TextComponent message = new TextComponent(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_REPORT_RECEIVED.getMessage()
                         .replace("%REPORTER%", player.getName())
                         .replace("%REPORTED%", target.getName())
                         .replace("%REASON%", reasonString)
@@ -113,7 +119,7 @@ public class ReportCommand extends Command implements TabExecutor {
                 }
                 for (UUID uuid : onlineStaff) {
                     ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
-                    if (api.getPlayersManager().getPlayer(uuid).isAlerts()) {
+                    if (api.getPlayersManager().getPlayer(uuid).hasAlerts()) {
                         staffPlayer.sendMessage(cb.create());
                     }
                 }
@@ -121,7 +127,7 @@ public class ReportCommand extends Command implements TabExecutor {
                 for (TextComponent component : buttons) {
                     for (UUID uuid : onlineStaff) {
                         ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
-                        if (api.getPlayersManager().getPlayer(uuid).isAlerts()) {
+                        if (api.getPlayersManager().getPlayer(uuid).hasAlerts()) {
                             staffPlayer.sendMessage(component);
                         }
                     }
@@ -129,7 +135,7 @@ public class ReportCommand extends Command implements TabExecutor {
             }
         }
 
-        player.sendMessage(BungeeChat.format(GlobalConfig.REPORTS_MESSAGES_REPORT_SENT.getMessage()
+        player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_REPORT_SENT.getMessage()
                 .replaceAll("%SUSPECT%", target.getName())));
         cooldowns.put(player.getUniqueId(), System.currentTimeMillis()+ GlobalConfig.REPORTS_COOLDOWN.getLong()*1000);
     }
@@ -146,7 +152,7 @@ public class ReportCommand extends Command implements TabExecutor {
                 continue;
             }
 
-            TextComponent component = new TextComponent(BungeeChat.format(name));
+            TextComponent component = new TextComponent(ChatUtils.formatComponent(name));
             String formattedCommand = "/"+command
                     .replace("%REPORTER%", reporterName)
                     .replace("%REPORTED%", reportedName)
@@ -164,9 +170,9 @@ public class ReportCommand extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         if (args.length == 1) {
             List<String> players = new ArrayList<>();
-            for (UUID uuid : api.getPlayersManager().getOnlinePlayers() ) {
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
-                if (player.getName().toLowerCase().startsWith(args[0].toLowerCase()) && !api.getPlayersManager().getPlayer(player.getUniqueId()).isStaff()) { //If start with that letter and isn't staff
+            for (SsPlayer ss : api.getPlayersManager().getRegisteredPlayers() ) {
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(ss.getUUID());
+                if (player.getName().toLowerCase().startsWith(args[0].toLowerCase()) && !ss.isStaff()) { //If start with that letter and isn't staff
                     players.add(player.getName());
                 }
             }

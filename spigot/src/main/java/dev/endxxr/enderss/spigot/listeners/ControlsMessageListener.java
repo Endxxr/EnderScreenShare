@@ -3,31 +3,33 @@ package dev.endxxr.enderss.spigot.listeners;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import dev.endxxr.enderss.api.EnderPlugin;
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.PluginMessageType;
-import dev.endxxr.enderss.common.storage.SpigotConfig;
+import dev.endxxr.enderss.api.objects.managers.ScreenShareManager;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class ControlsMessageListener implements PluginMessageListener {
 
-    EnderPlugin plugin = EnderSSAPI.Provider.getApi().getPlugin();
+    private final EnderPlugin plugin = EnderSSProvider.getApi().getPlugin();
 
     @Override
     public void onPluginMessageReceived(@NotNull String s, @NotNull Player player, byte @NotNull [] bytes) {
 
-        if (!s.equals("ender:controls")) return;
+        if (!s.equals("enderss:controls")) return;
 
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();
 
         PluginMessageType type;
         try {
-            type = PluginMessageType.valueOf(subChannel);
+            type = PluginMessageType.valueOf(subChannel.toUpperCase());
         } catch (IllegalArgumentException e) {
+            plugin.getLog().warning("Got an invalid message from the proxy");
             return;
         }
 
@@ -50,27 +52,52 @@ public class ControlsMessageListener implements PluginMessageListener {
     }
 
     private void stopSpigotScreenShare(ByteArrayDataInput in) {
-    }
 
-    private void startSpigotScreenShare(ByteArrayDataInput in) {
-        String staffUUID = in.readUTF();
-        String suspectUUID = in.readUTF();
+        UUID staffUUID = UUID.fromString(in.readUTF());
+        UUID suspectUUID;
+
+        try {
+            suspectUUID = UUID.fromString(in.readUTF());
+        } catch (Exception e) {
+            suspectUUID = null;
+        }
 
         Player staff = Bukkit.getPlayer(staffUUID);
         Player suspect = Bukkit.getPlayer(suspectUUID);
 
+        ScreenShareManager manager = EnderSSProvider.getApi().getScreenShareManager();
 
-        if (staff == null || suspect == null) return;
 
-        if (SpigotConfig.PROTECTIONS_PLAYER_REMOVE_EFFECTS.getBoolean()) {
-            suspect.getActivePotionEffects().forEach(effect -> suspect.removePotionEffect(effect.getType()));
+        if (suspect == null && !staff.hasPermission("enderss.staff")) { // Staff quits
+            manager.clearPlayer(staffUUID);
+            return;
         }
 
-        if (SpigotConfig.PROTECTIONS_PLAYER_ADVENTURE_MODE.getBoolean()) {
-
-            suspect.setGameMode(GameMode.ADVENTURE);
+        if (suspect == null && staff.hasPermission("enderss.staff")) { //
+            manager.clearPlayer(staffUUID);
+            return;
         }
 
+        if (staff == null) {
+            return; //what
+        }
 
+        manager.clearPlayer(staffUUID, suspectUUID);
+    }
+
+    private void startSpigotScreenShare(ByteArrayDataInput in) {
+        EnderSSProvider.getApi().getPlugin().runTaskLater(() -> {
+            String staffUUID = in.readUTF();
+            String suspectUUID = in.readUTF();
+
+            Player staff = Bukkit.getPlayer(UUID.fromString(staffUUID));
+            Player suspect = Bukkit.getPlayer(UUID.fromString(suspectUUID));
+
+
+            if (staff == null || suspect == null) return;
+
+            EnderSSProvider.getApi().getScreenShareManager().startScreenShare(staff.getUniqueId(), suspect.getUniqueId());
+
+        }, 20);
     }
 }

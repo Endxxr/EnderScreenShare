@@ -1,9 +1,10 @@
 package dev.endxxr.enderss.bungeecord.listeners;
 
-import dev.endxxr.enderss.api.EnderSSAPI;
+import dev.endxxr.enderss.api.EnderSS;
+import dev.endxxr.enderss.api.EnderSSProvider;
+import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.api.objects.SSPlayer;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.api.utils.ChatUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
@@ -16,10 +17,10 @@ import java.util.List;
 
 public class CommandBlocker implements Listener {
 
-    private final EnderSSAPI api;
+    private final EnderSS api;
 
     public CommandBlocker() {
-        this.api = EnderSSAPI.Provider.getApi();
+        this.api = EnderSSProvider.getApi();
     }
 
 
@@ -32,7 +33,7 @@ public class CommandBlocker implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onCommand(ChatEvent event) {
         ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
-        SSPlayer senderSession = api.getPlayersManager().getPlayer(sender.getUniqueId());
+        SsPlayer senderSession = api.getPlayersManager().getPlayer(sender.getUniqueId());
 
         if (!event.isCommand() || !senderSession.isFrozen() || senderSession.isStaff()) {
             return;
@@ -49,10 +50,10 @@ public class CommandBlocker implements Listener {
             });
             if (!slashCommands.contains(message)) {
                 event.setCancelled(true);
-                sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_CANT_EXECUTE.getMessage()));
+                sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_CANT_EXECUTE.getMessage()));
                 String replacedMessage = GlobalConfig.MESSAGES_INFO_COMMAND_BLOCKED.getMessage().replace("%COMMAND%", message);
                 ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(senderSession.getStaffer().getUUID());
-                receiver.sendMessage(BungeeChat.format(replacedMessage.replace("%SUSPECT%", sender.getDisplayName())));
+                receiver.sendMessage(ChatUtils.formatComponent(replacedMessage.replace("%SUSPECT%", sender.getDisplayName())));
             }
         }
     }

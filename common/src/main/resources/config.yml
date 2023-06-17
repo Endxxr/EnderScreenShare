@@ -23,10 +23,6 @@
 # Used for the %PREFIX% placeholder
 prefix: ""
 
-# If enabled, the plugin will have available only the Bukkit features. So you won't be able to freeze someone
-# if you don't have EnderSS on the proxy, disable this.
-proxy-mode: true
-
 #Can staff be controlled ?
 staff-controllable: true
 

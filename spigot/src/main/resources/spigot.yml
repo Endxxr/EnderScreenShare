@@ -1,95 +1,78 @@
 #
-#███████╗██████╗ ██╗ ██████╗  ██████╗ ████████╗
-#██╔════╝██╔══██╗██║██╔════╝ ██╔═══██╗╚══██╔══╝
-#███████╗██████╔╝██║██║  ███╗██║   ██║   ██║
-#╚════██║██╔═══╝ ██║██║   ██║██║   ██║   ██║
-#███████║██║     ██║╚██████╔╝╚██████╔╝   ██║
-#╚══════╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝    ╚═╝
+# ███████╗██████╗ ██╗ ██████╗  ██████╗ ████████╗
+# ██╔════╝██╔══██╗██║██╔════╝ ██╔═══██╗╚══██╔══╝
+# ███████╗██████╔╝██║██║  ███╗██║   ██║   ██║
+# ╚════██║██╔═══╝ ██║██║   ██║██║   ██║   ██║
+# ███████║██║     ██║╚██████╔╝╚██████╔╝   ██║
+# ╚══════╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝    ╚═╝
 #
 # Spigot Configuration of EnderSS
 
 
+# If enabled, the plugin will act as "helper" of the proxy version and its presence is mandatory.
+# If disabled, the plugin will act as a standalone plugin and will work without the proxy version.
+# Requires FULL RESTART to be applied
+proxy-mode: false
+
+disabled: "&cThis feature is disabled in proxy mode"
+
 spawn:
   enabled: true
-  staff: "0,0,0,0,0,world" # x,y,z,yaw,pitch,world
-  suspect: "0,0,0,0,0,world" # x,y,z,yaw,pitch,world
+  staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
+  suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
 
-# Teleports you to the frozen player
 teleport-on-start: true
 
+
+fallback:
+  staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
+  suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
+# Teleports you to the frozen player
+
+commands:
+  set-spawn:
+    usage: "&fUsage: /enderss setspawn &c<staff|suspect|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
+    set: "&aSpawn set for %TYPE%&f!"
+    invalid-type: "&cInvalid type! &fValid types: &cstaff&f, &csuspect"
+    invalid-world: "&cInvalid world!"
+    invalid-coordinates: "&cInvalid coordinates!"
+    invalid-rotation: "&cInvalid rotation!"
+    error: "&cAn error occurred while setting the spawn! Check the console for more info."
+
+
 protections:
-  bypass-permission: "enderss.bypass"
+  bypass-permission: "enderss.protections" # Root permission to bypass all protections, recommended to leave it as it is
   staff-bypass: true
 
   # True means that the player won't be able to do that action (the protection is enabled)
   world:
-    disabled-worlds: # List of worlds where the protections are disabled
-      - "example"
+    white-listed-worlds: # List of worlds where the protections are disabled
+      - "example" # Bypass permission: enderss.protections.example
+
+    # Bypass permission: enderss.protections.world.protectionName
     build-break: true
     pvp: true
+    invulnerability: true
     hunger: true
     daylight-cycle: true
+    weather-cycle: true
     mob-spawn: true
     fire-spread: true
     void: true
 
   #  True means that the player won't be able to do that action (the protection is enabled). Protections are activated only if the player is under control
   player:
+    # Bypass permission: enderss.protections.player.protectionName
     pvp: true
     build-break: true
     pick-drop-items: true
     hunger: true
+    damage: true
     remove-effects: true
-    adventure-mode: true
+    adventure-mode: true # If true, the player will be set to adventure mode
 
-scoreboard:
-  enabled: true
-  not-controlling-placeholder: "&cNot Controlling"
-  alerts-enabled-placeholder: "&aYes"
-  alerts-disabled-placeholder: "&cNo"
+placeholders:
+  yes: "&aYes"
+  no: "&cNo"
 
-  #
-  # This will be shown to the staffer when he's controlling a player
-  #
-
-  staff:
-    title: "&c&lScreenShare"
-    lines:
-      - " "
-      - "&dName: &f%STAFFER%"
-      - " "
-      - "&dTime: &f%TIME%"
-      - "&dSuspect: &f%SUSPECT%"
-      - "&dAlerts: &f%ALERTS%"
-      - " "
-      - "&dendxxr.yourserver.example"
-
-  #
-  # This will be shown to the suspect
-  #
-
-  suspect:
-    title: "&c&lScreenShare"
-    lines:
-      - " "
-      - "&dName: &f%SUSPECT%"
-      - " "
-      - "&dTime: &f%TIME%"
-      - "&dStaffer: &f%STAFFER%"
-      - " "
-      - "&dendxxr.yourserver.example"
-
-  #
-  # This will be shown to everyone who's in the ss server
-  #
-
-  idling:
-    title: "&c&lScreenShare"
-    lines:
-      - " "
-      - "&dName: &f%STAFFER%"
-      - " "
-      - "&dSuspect: &f%SUSPECT%"
-      - " "
-      - "&dendxxr.yourserver.example"
 

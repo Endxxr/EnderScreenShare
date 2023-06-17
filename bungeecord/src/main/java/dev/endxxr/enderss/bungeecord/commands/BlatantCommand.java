@@ -1,7 +1,7 @@
 package dev.endxxr.enderss.bungeecord.commands;
 
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.api.utils.ChatUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -20,19 +20,20 @@ public class BlatantCommand extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        if (!sender.hasPermission("enderss.blatant")) {
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
+        if (!sender.hasPermission("enderss.staff") && !sender.hasPermission("enderss.blatant")) {
+            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
             return;
         }
 
+
         if (args.length == 0) {
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
+            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
         }
 
         final ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
         if (target==null){
-            sender.sendMessage(BungeeChat.format(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
+            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
             return;
         }
 
