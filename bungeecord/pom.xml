@@ -34,13 +34,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.proxiodev.redisbungee</groupId>
-            <artifactId>RedisBungee-Bungee</artifactId>
-            <version>0.11.1</version>
-            <scope>provided</scope>
-            <!-- <classifier>all</classifier>  USE THIS IF YOU WANT TO USE INCLUDED JEDIS LIB BECAUSE OF RELOCATION -->
-        </dependency>
-        <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>

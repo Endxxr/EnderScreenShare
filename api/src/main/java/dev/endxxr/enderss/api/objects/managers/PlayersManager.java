@@ -95,7 +95,25 @@ public abstract class PlayersManager {
      * @return true if the player has the permission, false otherwise
      */
     public abstract boolean hasPermission(UUID uuid, String permission);
+
+    /**
+     *
+     * Get a list of players that can be controlled
+     *
+     * @param initialChars the initial chars of the player name
+     * @return a list of players that can be controlled
+     */
     public abstract @NotNull List<String> getControllablePlayers(String initialChars);
+
+
+    /**
+     *
+     * Get a set of all players connected to the network and registered in the plugin
+     *
+     * @return a set of all players connected to the network and registered in the plugin
+     */
+
+
     public Set<SsPlayer> getRegisteredPlayers() {
         return new HashSet<>(registeredPlayers.values());
     }

@@ -85,10 +85,31 @@ public class ScreenShareChat implements Listener {
                     break;
             }
         });
-        
+    }
 
+    private void sendStaffMessage(SsPlayer ssSender, String message) {
 
+        ProxiedPlayer sender = ProxyServer.getInstance().getPlayer(ssSender.getUUID());
+        ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(ssSender.getControlled().getUUID());
+        TextComponent formattedMessage = BungeeChat.formatComponent(message);
 
+        sender.sendMessage(formattedMessage);
+        receiver.sendMessage(formattedMessage);
+        if (GlobalConfig.CHAT_STAFFER_READS_STAFFERS.getBoolean()) {
+            ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers().forEach(player -> {
+                SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
+                if (player == receiver || player == sender) return; // if the receiver is a staff member, don't send the message to him
+                if (playerSS==null || !playerSS.isStaff()) return;
+
+                player.sendMessage(formattedMessage);
+            });
+        }
+    }
+
+    private void sendSuspectMessage(SsPlayer sender, String message) {
+        TextComponent formattedMessage = BungeeChat.formatComponent(message);
+        ProxyServer.getInstance().getPlayer(sender.getUUID()).sendMessage(formattedMessage);
+        ProxyServer.getInstance().getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
     }
 
     private void sendNotInvolvedMessage(String message) {
@@ -100,34 +121,12 @@ public class ScreenShareChat implements Listener {
             SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
             if (GlobalConfig.CHAT_NOT_INVOLVED_EVERYONE.getBoolean()) {
                 player.sendMessage(formattedMessage);
-            } else if (playerSS==null || playerSS.isStaff()) {
+            } else if (playerSS!=null && playerSS.isStaff()) {
                 player.sendMessage(formattedMessage);
             }
         }
 
 
-    }
-
-    private void sendStaffMessage(SsPlayer ssSender, String message) {
-        
-        ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(ssSender.getControlled().getUUID());
-        TextComponent formattedMessage = BungeeChat.formatComponent(message);
-
-        receiver.sendMessage(formattedMessage);
-        if (GlobalConfig.CHAT_STAFFER_READS_STAFFERS.getBoolean()) {
-            ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers().forEach(player -> {
-                SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
-                if (player == receiver) return; // if the receiver is a staff member, don't send the message to him
-                if (playerSS==null || !playerSS.isStaff()) return;
-                player.sendMessage(formattedMessage);
-            });
-        }
-    }
-
-    private void sendSuspectMessage(SsPlayer sender, String message) {
-        TextComponent formattedMessage = BungeeChat.formatComponent(message);
-        ProxyServer.getInstance().getPlayer(sender.getUUID()).sendMessage(formattedMessage);
-        ProxyServer.getInstance().getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
     }
 
 }

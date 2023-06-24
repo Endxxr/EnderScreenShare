@@ -12,9 +12,6 @@ import java.util.List;
 
 public class BungeeChat {
 
-
-
-
     public static List<TextComponent> buildButtons(HashMap<String, String> stringButtons, boolean confirmButton) {
         List<TextComponent> buttons = new ArrayList<>();
         ClickEvent.Action action = confirmButton ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
