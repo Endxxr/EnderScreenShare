@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 public interface EnderPlugin {
 
+    String CHANNEL_NAME = "enderss:controls";
+
     void runTaskAsync(Runnable runnable);
     void runTaskTimer(Runnable runnable, int delay, int frequency);
     void runTaskLater(Runnable runnable, int delay);

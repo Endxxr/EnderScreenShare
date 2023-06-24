@@ -2,7 +2,7 @@ package dev.endxxr.enderss.velocity.commands.enderss;
 
 import com.velocitypowered.api.command.CommandSource;
 import dev.endxxr.enderss.api.EnderSSProvider;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.velocity.utils.VelocityChat;
 
 public class ReloadCommand implements VelocitySubCommand {
 
@@ -22,7 +22,7 @@ public class ReloadCommand implements VelocitySubCommand {
         EnderSSProvider.getApi().getPlugin().reload();
         EnderSSProvider.getApi().getPlugin().getLog()
                 .info("Config reloaded in " + (System.currentTimeMillis() - start) + "ms");
-        sender.sendMessage(ChatUtils.formatAdventureComponent("Config reloaded in " + (System.currentTimeMillis() - start) + "ms"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("Config reloaded in " + (System.currentTimeMillis() - start) + "ms"));
 
     }
 }

@@ -210,7 +210,7 @@ messages:
             - "&cSolo i giocatori possono eseguire questo comando"
         already-controlled:
             - "&c%SUSPECT% è già sotto controllo"
-        cant-execute:
+        cant-executeAsync:
             - "&cNon puoi eseguire comandi mentre sei sotto controllo"
         cant-fallback-suspect:
             - "&cNon siamo riusciti a teletrasportare indietro questo giocatore!"

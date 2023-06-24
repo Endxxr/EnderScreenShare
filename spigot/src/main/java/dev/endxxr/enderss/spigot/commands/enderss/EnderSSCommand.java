@@ -1,7 +1,7 @@
 package dev.endxxr.enderss.spigot.commands.enderss;
 
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -55,6 +55,7 @@ public class EnderSSCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return subCommands.stream().map(SpigotSubCommand::getName).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+        String prefix = args.length == 0 ? "" : args[0];
+        return subCommands.stream().map(SpigotSubCommand::getName).filter(s -> s.startsWith(prefix)).collect(Collectors.toList());
     }
 }

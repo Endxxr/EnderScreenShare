@@ -1,21 +1,25 @@
 package dev.endxxr.enderss.api.events.velocity;
 
+import com.velocitypowered.api.event.ResultedEvent;
+import com.velocitypowered.api.proxy.Player;
+import lombok.Getter;
+import lombok.Setter;
 
-import com.velocitypowered.api.event.Event;
-import com.velocitypowered.api.proxy.connection.Player;
-
-public class SsChatEvent implements Event {
+public class SsChatEvent {
 
 
     private final String initialMessage;
     private final String message;
     private final Player sender;
-    private boolean cancelled = false;
+    @Getter
+    @Setter
+    private ResultedEvent.GenericResult result;
 
     public SsChatEvent(String initialMessage, String message, Player sender) {
         this.initialMessage = initialMessage;
         this.message = message;
         this.sender = sender;
+        result = ResultedEvent.GenericResult.allowed();
     }
 
     public String getMessage() {
@@ -29,10 +33,6 @@ public class SsChatEvent implements Event {
 
     public String getInitialMessage() {
         return initialMessage;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     

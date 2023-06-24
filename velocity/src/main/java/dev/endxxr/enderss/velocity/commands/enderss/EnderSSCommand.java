@@ -2,8 +2,9 @@ package dev.endxxr.enderss.velocity.commands.enderss;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import dev.endxxr.enderss.api.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
+import dev.endxxr.enderss.velocity.utils.VelocityChat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -27,14 +28,14 @@ public class EnderSSCommand implements SimpleCommand {
         CommandSource sender = invocation.source();
 
         if (args.length==0) {
-            sender.sendMessage(ChatUtils.formatAdventureComponent("&cPlease use /enderss help"));
+            sender.sendMessage(VelocityChat.formatAdventureComponent("&cPlease use /enderss help"));
             return;
         }
 
         for (VelocitySubCommand subCommand : subCommands) {
             if (subCommand.getName().equalsIgnoreCase(args[0])) {
                 if (!sender.hasPermission(subCommand.getPermission()) && !sender.hasPermission("enderss.settings")) {
-                    sender.sendMessage(ChatUtils.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
+                    sender.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
                     return;
                 }
                 subCommand.execute(sender, args);
@@ -42,14 +43,15 @@ public class EnderSSCommand implements SimpleCommand {
             }
         }
 
-        sender.sendMessage(ChatUtils.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_COMMAND.getMessage()));
+        sender.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_COMMAND.getMessage()));
 
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
         String[] args = invocation.arguments();
-        return subCommands.stream().map(VelocitySubCommand::getName).filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
+        String prefix = args.length == 0 ? "" : args[0];
+        return subCommands.stream().map(VelocitySubCommand::getName).filter(s -> s.startsWith(prefix)).collect(Collectors.toList());
     }
 
     @Override

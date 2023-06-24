@@ -34,28 +34,29 @@ public class PapiExpansion extends PlaceholderExpansion {
 
         String yes = SpigotConfig.PLACEHOLDER_YES.getString();
         String no = SpigotConfig.PLACEHOLDER_NO.getString();
+        String none = SpigotConfig.PLACEHOLDER_NONE.getString();
 
         if(params.equalsIgnoreCase("suspect")){
-            return Bukkit.getPlayer(ssPlayer.getUUID()).getName();
+            return ssPlayer.getControlled()!=null ? Bukkit.getPlayer(ssPlayer.getControlled().getUUID()).getName() : none;
         }
 
         if(params.equalsIgnoreCase("staff")){
-            return Bukkit.getPlayer(ssPlayer.getUUID()).getName();
+            return ssPlayer.getStaffer()!=null ? Bukkit.getPlayer(ssPlayer.getStaffer().getUUID()).getName() : none;
         }
 
-        if (params.equalsIgnoreCase("is_staff")) {
+        if (params.equalsIgnoreCase("staffer")) {
             return ssPlayer.isStaff() ? yes : no;
         }
 
-        if (params.equalsIgnoreCase("is_controlling")) {
+        if (params.equalsIgnoreCase("controlling")) {
             return ssPlayer.getControlled()!=null ? yes : no;
         }
 
-        if (params.equalsIgnoreCase("is_frozen")) {
+        if (params.equalsIgnoreCase("frozen")) {
             return ssPlayer.isFrozen() ? yes : no;
         }
 
-        return null; // Placeholder is unknown by the Expansion
+        return "Unknown Placeholder"; // Placeholder is unknown by the Expansion
     }
 
 

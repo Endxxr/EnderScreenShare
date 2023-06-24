@@ -1,11 +1,10 @@
 package dev.endxxr.enderss.api.events.velocity;
 
-import com.velocitypowered.api.event.Event;
-import com.velocitypowered.api.proxy.connection.Player;
+import com.velocitypowered.api.proxy.Player;
 import dev.endxxr.enderss.api.enums.SSEndCause;
 import org.jetbrains.annotations.Nullable;
 
-public class SsEndEvent implements Event {
+public class SsEndEvent {
 
     @Nullable private final Player staffer;
     @Nullable private final Player suspect;

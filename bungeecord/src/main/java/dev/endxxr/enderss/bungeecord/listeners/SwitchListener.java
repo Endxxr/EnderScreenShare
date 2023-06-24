@@ -5,9 +5,9 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.SSEndCause;
 import dev.endxxr.enderss.api.events.bungee.SsEndEvent;
 import dev.endxxr.enderss.api.objects.player.ProxyPlayer;
-import dev.endxxr.enderss.api.utils.ChatUtils;
-import dev.endxxr.enderss.common.storage.GlobalConfig;
+import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
+import dev.endxxr.enderss.common.utils.LogUtils;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,17 +27,22 @@ public class SwitchListener implements Listener {
     public void onSwitch(ServerSwitchEvent event) {
         ProxyPlayer proxyPlayer = (ProxyPlayer) api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
         ServerInfo lastServer = event.getFrom();
-        
+
+        if (proxyPlayer == null) {
+            LogUtils.prettyPrintException(new IllegalArgumentException("Wasn't able to get the profile of the player, is it online?"), "Event Error");
+            return;
+        }
+
         if (lastServer != null) {
             proxyPlayer.setLastServer(lastServer.getName());
         }
         
         if (event.getPlayer().hasPermission("enderss.admin") && api.isUpdateAvailable()) {
-            event.getPlayer().sendMessage(ChatUtils.formatComponent("&8[&d&lEnder&5&lSS&8]&f New version available!"));
+            event.getPlayer().sendMessage(BungeeChat.formatComponent("&8[&d&lEnder&5&lSS&8]&f New version available!"));
         }
 
         if (event.getPlayer().hasPermission("enderss.admin") && api.isConfigObsolete()) {
-            event.getPlayer().sendMessage(ChatUtils.formatComponent("&8[&d&lEnder&5&lSS&8]&f Your config is obsolete!"));
+            event.getPlayer().sendMessage(BungeeChat.formatComponent("&8[&d&lEnder&5&lSS&8]&f Your config is obsolete!"));
         }
 
 

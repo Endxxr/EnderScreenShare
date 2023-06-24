@@ -1,9 +1,8 @@
 package dev.endxxr.enderss.spigot.commands;
 
 import dev.endxxr.enderss.api.EnderSSProvider;
-import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.SpigotConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -12,10 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ScreenShareCommand implements CommandExecutor, TabExecutor {
 
@@ -53,22 +49,7 @@ public class ScreenShareCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 0) {
-            return Collections.emptyList();
-        }
-        List<Player> players = Bukkit.getOnlinePlayers().stream().filter(player -> player.getName().startsWith(args[0])).collect(Collectors.toList());
-        List<String> results = new ArrayList<>();
-        players.forEach( proxiedPlayer -> {
-            SsPlayer ssPlayer = EnderSSProvider.getApi().getPlayersManager().getPlayer(proxiedPlayer.getUniqueId());
-            if (!ssPlayer.isFrozen()) {
-                if (ssPlayer.isStaff() && GlobalConfig.STAFF_CONTROLLABLE.getBoolean()) {
-                    results.add(proxiedPlayer.getName());
-                } else if (!ssPlayer.isStaff()) {
-                    results.add(proxiedPlayer.getName());
-                }
-            }
-        });
-        players.clear();
-        return results;
+        String prefix = args.length == 0 ? "" : args[0];
+        return EnderSSProvider.getApi().getPlayersManager().getControllablePlayers(prefix);
     }
 }

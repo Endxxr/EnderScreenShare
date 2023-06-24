@@ -186,6 +186,8 @@ messages:
     - "&cAlerts disabled"
 
   error:
+    generic:
+    - "&cAn error occurred while executing this command"
     no-permission:
     - "&cInsufficient Permissions"
     no-command:
@@ -198,8 +200,8 @@ messages:
     - "&cOnly players can run this command"
     already-controlled:
     - "&c%SUSPECT% is already being controlled"
-    cant-execute:
-    - "&cYou can't execute commands while being controlled"
+    cant-executeAsync:
+    - "&cYou can't executeAsync commands while being controlled"
     cannot-ss-yourself:
     - "&cYou can't control yourself. Just ban yourself directly, no?"
     cant-connect-to-ss: # PROXY
@@ -263,16 +265,16 @@ reports:
     elements:
       goto:
         text: "&2[&aGoto&2]"
-        command: "server %SERVER%"
+        command: "/server %SERVER%"
       ban:
         text: "&4[&cBan&4]"
-        command: "blatant %REPORTED%"
+        command: "/blatant %REPORTED%"
       control:
         text: "&d[&5Control&d]"
-        command: "ss %REPORTED%"
+        command: "/ss %REPORTED%"
       example:
         text: "&d[&5Example&d]"
-        command: "examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
+        command: "/examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
 
 
 
@@ -292,7 +294,7 @@ buttons:
   server-tp: "&a[&2&lTP&a]"
   ban: "&4[&c&lBAN&4]"
 
-  #ALL the buttons, even the ones that aren't specified here, will execute the command instead of suggesting it
+  #ALL the buttons, even the ones that aren't specified here, will executeAsync the command instead of suggesting it
   confirm-buttons: false
 
 

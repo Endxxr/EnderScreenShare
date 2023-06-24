@@ -3,12 +3,12 @@ package dev.endxxr.enderss.velocity.commands;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.connection.Player;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import com.velocitypowered.api.proxy.Player;
+import dev.endxxr.enderss.velocity.utils.VelocityChat;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -28,28 +28,29 @@ public class BlatantCommand implements SimpleCommand {
 
 
         if (!sender.hasPermission("enderss.staff") && !sender.hasPermission("enderss.blatant")) {
-            sender.sendMessage(ChatUtils.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
+            sender.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
             return;
         }
 
 
         if (args.length == 0) {
-            sender.sendMessage(ChatUtils.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
+            sender.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
         }
 
-        final Player target = server.player(args[0]);
-        if (target==null){
-            sender.sendMessage(ChatUtils.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
+        final Optional<Player> targetOptional = server.getPlayer(args[0]);
+        if (!targetOptional.isPresent()){
+            sender.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
             return;
         }
+        Player target = targetOptional.get();
 
         String command = GlobalConfig.BAN_COMMAND_BLATANT.getString()
-                .replaceAll("%SUSPECT%", target.username());
+                .replaceAll("%SUSPECT%", target.getUsername());
         if (command.startsWith("/")) {
             command = command.replace("/", "");
         }
-        server.commandManager().execute(sender, command);
+        server.getCommandManager().executeAsync(sender, command);
 
     }
 
@@ -61,11 +62,10 @@ public class BlatantCommand implements SimpleCommand {
     @Override
     public List<String> suggest(Invocation invocation) {
         String[] args = invocation.arguments();
-        if (args.length==0) {
-            return Collections.emptyList();
-        }
-        List<Player> players = server.connectedPlayers().stream().filter(player -> player.username().startsWith(args[0])).collect(Collectors.toList());
-        return players.stream().map(Player::username).collect(Collectors.toList());
+        String prefix = args.length == 0 ? "" : args[0];
+
+        List<Player> players = server.getAllPlayers().stream().filter(player -> player.getUsername().startsWith(prefix)).collect(Collectors.toList());
+        return players.stream().map(Player::getUsername).collect(Collectors.toList());
     }
 
     @Override

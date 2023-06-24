@@ -1,20 +1,18 @@
-package dev.endxxr.enderss.bungeecord.listeners;
+package dev.endxxr.enderss.spigot.listeners;
 
+import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.ChatSender;
-import dev.endxxr.enderss.api.events.bungee.SsChatEvent;
+import dev.endxxr.enderss.api.events.spigot.SsChatEvent;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
-import dev.endxxr.enderss.api.EnderSS;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.common.storage.ProxyConfig;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ChatEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ScreenShareChat implements Listener {
 
@@ -24,15 +22,15 @@ public class ScreenShareChat implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onChat(ChatEvent event) {
+    public void onChat(AsyncPlayerChatEvent event) {
 
-        if (event.isCancelled() || event.isCommand() || event.isProxyCommand()) return;
+        if (event.isCancelled() || event.getMessage().startsWith("/")) return;
 
-        ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
+        Player sender = event.getPlayer();
         SsPlayer ssSender = api.getPlayersManager().getPlayer(sender.getUniqueId());
 
         if (ssSender==null) {
-            sender.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_GENERIC.getMessage()));
+            sender.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_GENERIC.getMessage()));
             api.getPlugin().getLog().severe("Wasn't able to get the profile of the player, is it online?");
             return;
         }
@@ -42,7 +40,7 @@ public class ScreenShareChat implements Listener {
             senderType = ChatSender.STAFF;
         } else if (ssSender.isFrozen()) {
             senderType = ChatSender.SUSPECT;
-        } else if (sender.getServer().getInfo().getName().equalsIgnoreCase(ProxyConfig.SS_SERVER.getString()) && ssSender.isStaff()) {
+        } else if (ssSender.isStaff() && ssSender.getControlled()==null) {
             senderType = ChatSender.NOT_INVOLVED;
         }
 
@@ -56,7 +54,7 @@ public class ScreenShareChat implements Listener {
             String normalPrefix = GlobalConfig.valueOf("CHAT_PREFIX_" + finalSenderType.name().toUpperCase()).getString();
             String luckPermsPrefix = "";
             if (api.getPlugin().isLuckPermsPresent()) {
-                luckPermsPrefix = api.getPlugin().getLuckPermsAPI().getPlayerAdapter(ProxiedPlayer.class).getMetaData(sender).getPrefix();
+                luckPermsPrefix = api.getPlugin().getLuckPermsAPI().getPlayerAdapter(Player.class).getMetaData(sender).getPrefix();
                 if (luckPermsPrefix == null) luckPermsPrefix = "";
             } else if (originalMessage.contains("%luckperms%")) {
                 api.getPlugin().getLog().warning("LuckPerms not found, using a blank prefix");
@@ -69,7 +67,7 @@ public class ScreenShareChat implements Listener {
                     .replace("%message%", originalMessage);
 
             SsChatEvent ssChatEvent = new SsChatEvent(originalMessage, formattedMessage, sender);
-            ProxyServer.getInstance().getPluginManager().callEvent(ssChatEvent);
+            Bukkit.getPluginManager().callEvent(ssChatEvent);
             if (ssChatEvent.isCancelled()) return;
             formattedMessage = ssChatEvent.getMessage();
 
@@ -85,17 +83,13 @@ public class ScreenShareChat implements Listener {
                     break;
             }
         });
-        
-
-
-
     }
 
     private void sendNotInvolvedMessage(String message) {
 
-        TextComponent formattedMessage = BungeeChat.formatComponent(message);
+        String formattedMessage = ChatUtils.format(message);
 
-        for (ProxiedPlayer player : ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
 
             SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
             if (GlobalConfig.CHAT_NOT_INVOLVED_EVERYONE.getBoolean()) {
@@ -110,12 +104,12 @@ public class ScreenShareChat implements Listener {
 
     private void sendStaffMessage(SsPlayer ssSender, String message) {
         
-        ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(ssSender.getControlled().getUUID());
-        TextComponent formattedMessage = BungeeChat.formatComponent(message);
+        Player receiver = Bukkit.getPlayer(ssSender.getControlled().getUUID());
+        String formattedMessage = ChatUtils.format(message);
 
         receiver.sendMessage(formattedMessage);
         if (GlobalConfig.CHAT_STAFFER_READS_STAFFERS.getBoolean()) {
-            ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers().forEach(player -> {
+            Bukkit.getOnlinePlayers().forEach(player -> {
                 SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
                 if (player == receiver) return; // if the receiver is a staff member, don't send the message to him
                 if (playerSS==null || !playerSS.isStaff()) return;
@@ -125,9 +119,9 @@ public class ScreenShareChat implements Listener {
     }
 
     private void sendSuspectMessage(SsPlayer sender, String message) {
-        TextComponent formattedMessage = BungeeChat.formatComponent(message);
-        ProxyServer.getInstance().getPlayer(sender.getUUID()).sendMessage(formattedMessage);
-        ProxyServer.getInstance().getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
+        String formattedMessage = ChatUtils.format(message);
+        Bukkit.getPlayer(sender.getUUID()).sendMessage(formattedMessage);
+        Bukkit.getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
     }
 
 }

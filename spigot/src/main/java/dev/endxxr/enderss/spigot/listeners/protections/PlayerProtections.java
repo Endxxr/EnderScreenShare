@@ -24,8 +24,9 @@ public class PlayerProtections implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
 
         if (event.getTo().getY() > event.getFrom().getY()) { // If the player is falling down, we let him reach the ground
-            SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
-            if (!proxyPlayer.isFrozen() || SpigotConfig.PROXY_MODE.getBoolean() ) return;
+            SsPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
+            if (ssPlayer == null ) return;
+            if (!ssPlayer.isFrozen() || SpigotConfig.PROXY_MODE.getBoolean() ) return;
             event.getPlayer().teleport(event.getFrom());
         }
     }
@@ -38,11 +39,11 @@ public class PlayerProtections implements Listener {
         }
 
         Player player = (Player) event.getEntity();
-
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
         if (!isProtectionEnabled(player, SpigotConfig.PROTECTIONS_PLAYER_HUNGER)) return;
+        if (ssPlayer==null) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        if (!ssPlayer.isFrozen()) return;
         event.setCancelled(true);
 
         if (player.getSaturation() < 20) {
@@ -55,8 +56,8 @@ public class PlayerProtections implements Listener {
 
         if (!isProtectionEnabled(event.getPlayer(), SpigotConfig.PROTECTIONS_PLAYER_PICK_DROP_ITEMS)) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
+        if (ssPlayer != null && !ssPlayer.isFrozen()) return;
         event.setCancelled(true);
     }
 
@@ -65,8 +66,8 @@ public class PlayerProtections implements Listener {
 
         if (!isProtectionEnabled(event.getPlayer(), SpigotConfig.PROTECTIONS_PLAYER_PICK_DROP_ITEMS)) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
+        if (ssPlayer == null || !ssPlayer.isFrozen()) return;
         event.setCancelled(true);
     }
 
@@ -86,8 +87,8 @@ public class PlayerProtections implements Listener {
 
         if (isProtectionEnabled(player, SpigotConfig.PROTECTIONS_PLAYER_PVP)) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
+        if (ssPlayer == null || !ssPlayer.isFrozen()) return;
         event.setCancelled(true);
 
     }
@@ -104,8 +105,8 @@ public class PlayerProtections implements Listener {
 
         if (!isProtectionEnabled(player, SpigotConfig.PROTECTIONS_PLAYER_DAMAGE)) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
+        if (ssPlayer == null || !ssPlayer.isFrozen()) return;
         event.setCancelled(true);
 
     }
@@ -115,8 +116,8 @@ public class PlayerProtections implements Listener {
 
         if (!isProtectionEnabled(event.getPlayer(), SpigotConfig.PROTECTIONS_PLAYER_BUILD_BREAK)) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
+        if (ssPlayer ==  null || !ssPlayer.isFrozen()) return;
         event.setCancelled(true);
 
     }
@@ -128,8 +129,8 @@ public class PlayerProtections implements Listener {
         if (!SpigotConfig.PROTECTIONS_PLAYER_BUILD_BREAK.getBoolean()) return;
         if (!isProtectionEnabled(event.getPlayer(), SpigotConfig.PROTECTIONS_PLAYER_BUILD_BREAK)) return;
 
-        SsPlayer proxyPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
-        if (!proxyPlayer.isFrozen()) return;
+        SsPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
+        if (ssPlayer == null || !ssPlayer.isFrozen()) return;
         event.setCancelled(true);
 
     }

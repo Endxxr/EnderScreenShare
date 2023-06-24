@@ -49,7 +49,8 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
 
     @Override
     public void onDisable() {
-
+        getProxy().unregisterChannel(CHANNEL_NAME);
+        enderSS.shutdown();
     }
 
     @Override
@@ -70,8 +71,7 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
         setListeners();
 
 
-        getProxy().registerChannel("enderss:controls");
-
+        getProxy().registerChannel(CHANNEL_NAME);
 
         Metrics metrics = new Metrics(this, 15533);
         metrics.addCustomChart(new SimplePie("platform", Platform.BUNGEECORD::name));
@@ -123,7 +123,8 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
         generalConfig.load();
         platformConfig.load();
 
-        sendPluginMessage(enderSS.getPlayersManager().getPlayer(ProxyServer.getInstance().getPlayers().iterator().next().getUniqueId()),
+
+        sendPluginMessage(enderSS.getPlayersManager().getRegisteredPlayers().iterator().next(),
                 PluginMessageType.RELOAD);
     }
 

@@ -20,7 +20,7 @@ public class ControlsMessageListener implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(@NotNull String s, @NotNull Player player, byte @NotNull [] bytes) {
 
-        if (!s.equals("enderss:controls")) return;
+        if (!s.equals(plugin.CHANNEL_NAME)) return;
 
         ByteArrayDataInput in = ByteStreams.newDataInput(bytes);
         String subChannel = in.readUTF();

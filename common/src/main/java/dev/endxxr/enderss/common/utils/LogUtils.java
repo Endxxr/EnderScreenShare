@@ -31,16 +31,11 @@ public class LogUtils {
 
         String message = customMessage == null ? exception.getMessage() : customMessage;
         logger.severe("========================");
-        logger.severe("");
         logger.severe("An exception has been thrown:");
         logger.severe(message);
-        logger.severe("");
-        logger.info("Please report this error on the GitHub page of the plugin");
-        logger.info("or on the Discord server");
         logger.info("");
         logger.info("Stacktrace:");
         exception.printStackTrace();
-        logger.info("");
         logger.severe("========================");
     }
 

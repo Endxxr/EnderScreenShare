@@ -1,7 +1,7 @@
 package dev.endxxr.enderss.api.events.spigot;
 
-import net.md_5.bungee.api.plugin.Cancellable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

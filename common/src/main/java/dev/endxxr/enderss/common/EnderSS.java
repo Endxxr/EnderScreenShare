@@ -24,6 +24,7 @@ public class EnderSS implements dev.endxxr.enderss.api.EnderSS {
     private PlayersManager playersManager;
     private ScreenShareManager screenShareManager;
 
+
     @SneakyThrows
     public EnderSS(EnderPlugin plugin, Class<? extends PlayersManager> playersManager, Class<? extends ScreenShareManager> screenShareManager) {
 
@@ -36,9 +37,22 @@ public class EnderSS implements dev.endxxr.enderss.api.EnderSS {
 
         start();
     }
+    @SneakyThrows
+    public EnderSS(EnderPlugin plugin, Class<? extends PlayersManager> playersManager, Class<? extends ScreenShareManager> screenShareManager, Object constructorArgs) {
 
-    @Override
-    public void start() {
+        EnderSSProvider.setApi(this);
+
+        //Ugly way to initialize the classes, to fix in the future
+        Class<?> clazz = this.getClass().getClassLoader().loadClass("com.velocitypowered.api.proxy.ProxyServer");
+
+        this.plugin = plugin;
+        if (playersManager!=null) this.playersManager = playersManager.getDeclaredConstructor(clazz).newInstance(constructorArgs);
+        if (screenShareManager!=null) this.screenShareManager = screenShareManager.getDeclaredConstructor(clazz).newInstance(constructorArgs);
+
+        start();
+    }
+
+    private void start() {
 
         Logger log = plugin.getLog();
 

@@ -25,14 +25,15 @@ teleport-on-start: true
 
 
 fallback:
+  enabled: true
   staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
   suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
 # Teleports you to the frozen player
 
 commands:
   set-spawn:
-    usage: "&fUsage: /enderss setspawn &c<staff|suspect|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
-    set: "&aSpawn set for %TYPE%&f!"
+    usage: "&fUsage: /enderss setspawn &c<staff|suspect> &c<ss|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
+    set: "&a%PHASE% set for %TYPE%&f!"
     invalid-type: "&cInvalid type! &fValid types: &cstaff&f, &csuspect"
     invalid-world: "&cInvalid world!"
     invalid-coordinates: "&cInvalid coordinates!"
@@ -71,8 +72,8 @@ protections:
     remove-effects: true
     adventure-mode: true # If true, the player will be set to adventure mode
 
-placeholders:
+placeholder:
   yes: "&aYes"
   no: "&cNo"
-
+  none: "&cNone"
 

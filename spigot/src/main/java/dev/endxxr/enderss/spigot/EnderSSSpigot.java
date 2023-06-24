@@ -40,7 +40,6 @@ import java.util.logging.Logger;
 
 public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
 
-    private EnderSSSpigot instance;
     private EnderSS enderSS;
     private YamlFile generalConfig;
     private YamlFile platformConfig;
@@ -64,8 +63,6 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
             return;
         }
 
-
-        instance = this;
         checkSoftDependencies();
 
         saveDefaultConfig();
@@ -85,7 +82,7 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
 
         if (proxyMode) {
             getLogger().warning("Proxy mode is enabled. Some features won't work.");
-            Bukkit.getMessenger().registerIncomingPluginChannel(this, "enderss:controls", new ControlsMessageListener());
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, CHANNEL_NAME, new ControlsMessageListener());
         }
 
         registerCommands();
@@ -107,8 +104,9 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     @Override
     public void onDisable() {
         if (SpigotConfig.PROXY_MODE.getBoolean()) {
-            Bukkit.getMessenger().unregisterIncomingPluginChannel(this, "enderss:controls", new ControlsMessageListener());
+            Bukkit.getMessenger().unregisterIncomingPluginChannel(this, CHANNEL_NAME, new ControlsMessageListener());
         }
+        enderSS.shutdown();
     }
 
     private void checkSoftDependencies() {
@@ -249,12 +247,5 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     @Override
     public boolean isLiteBansPresent() {
         return liteBansPresent;
-    }
-    public EnderSSSpigot getInstance() {
-        return instance;
-    }
-
-    public EnderSS getEnderSS() {
-        return enderSS;
     }
 }

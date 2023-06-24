@@ -6,7 +6,7 @@ import dev.endxxr.enderss.api.enums.SSEndCause;
 import dev.endxxr.enderss.api.events.spigot.SsEndEvent;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,14 +34,21 @@ public class CleanCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        final Player staff = (Player) sender;
+        Player staff = (Player) sender;
+        SsPlayer staffSS = api.getPlayersManager().getPlayer(staff.getUniqueId());
+
+        if (staffSS == null) {
+            staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_GENERIC.getMessage()));
+            api.getPlugin().getLog().severe("Wasn't able to get the profile of the player, is it online?");
+            return true;
+        }
 
         if (!staff.hasPermission("enderss.staff") && !staff.hasPermission("enderss.clean")) {
             staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
             return true;
         }
 
-        if (!api.getPlayersManager().getPlayer(staff.getUniqueId()).isStaff()) {
+        if (staffSS.isStaff()) {
             staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
             return true;
         }
@@ -66,10 +73,11 @@ public class CleanCommand implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> players = new ArrayList<>();
+        String prefix = args.length == 0 ? "" : args[0];
         for (SsPlayer player : api.getPlayersManager().getRegisteredPlayers()) {
             if (player.isFrozen()) {
                 String name = Bukkit.getPlayer(player.getUUID()).getName();
-                if (name.toLowerCase().startsWith(args[0].toLowerCase())) {
+                if (name.toLowerCase().startsWith(prefix)) {
                     players.add(name);
                 }
             }

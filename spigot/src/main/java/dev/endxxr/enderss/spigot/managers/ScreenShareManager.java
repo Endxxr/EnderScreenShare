@@ -5,9 +5,10 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.events.spigot.SsStartEvent;
 import dev.endxxr.enderss.api.objects.player.SpigotPlayer;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.SpigotConfig;
+import dev.endxxr.enderss.common.utils.LogUtils;
 import dev.endxxr.enderss.spigot.utils.WorldUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -23,25 +24,6 @@ import java.util.*;
 public class ScreenShareManager implements dev.endxxr.enderss.api.objects.managers.ScreenShareManager {
 
     private final EnderSS api = EnderSSProvider.getApi();
-    private final Map<String, TextComponent> premadeButtons = new HashMap<>();
-
-    public ScreenShareManager() {
-
-
-        TextComponent hack = new TextComponent(ChatUtils.format(GlobalConfig.BUTTONS_HACK.getString()));
-        TextComponent admission = new TextComponent(ChatUtils.format(GlobalConfig.BUTTONS_ADMISSION.getString()));
-        TextComponent refuse = new TextComponent(ChatUtils.format(GlobalConfig.BUTTONS_REFUSE.getString()));
-        TextComponent quit = new TextComponent(ChatUtils.format(GlobalConfig.BUTTONS_QUIT.getString()));
-        TextComponent clean = new TextComponent(ChatUtils.format(GlobalConfig.BUTTONS_CLEAN.getString()));
-
-        premadeButtons.put("hack", hack);
-        premadeButtons.put("refuse", refuse);
-        premadeButtons.put("admission", admission);
-        premadeButtons.put("quit", quit);
-        premadeButtons.put("clean", clean);
-
-
-    }
 
 
     // Freeze the player
@@ -51,7 +33,10 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
         Player staffPlayer = Bukkit.getPlayer(staff);
         Player suspectPlayer = Bukkit.getPlayer(suspect);
 
-        if (staffPlayer == null || suspectPlayer == null) return;
+        if (staffPlayer == null || suspectPlayer == null) {
+            LogUtils.prettyPrintException(new IllegalArgumentException("Staff or suspect is null!"), "Illegal use of API");
+            return;
+        }
 
         if (staff.equals(suspect)) {
             staffPlayer.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_CANNOT_SS_YOURSELF.getMessage()));
@@ -70,6 +55,12 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
 
         SpigotPlayer staffSS = (SpigotPlayer) api.getPlayersManager().getPlayer(staff);
         SpigotPlayer suspectSS = (SpigotPlayer) api.getPlayersManager().getPlayer(suspect);
+
+        if (staffSS == null || suspectSS == null) {
+            LogUtils.prettyPrintException(new IllegalArgumentException("Staff or suspect is null!"), "Illegal use of API");
+            return;
+        }
+
 
         if (SpigotConfig.PROXY_MODE.getBoolean()) {
             startBackEndScreenShare(staffPlayer, suspectPlayer, staffSS, suspectSS);
@@ -144,48 +135,17 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
 
         //BUTTONS
         if (GlobalConfig.START_BUTTONS.getSection().getKeys(false).size() > 0) {
-            List<TextComponent> buttons = new ArrayList<>();
-            ClickEvent.Action action = GlobalConfig.BUTTONS_CONFIRM_BUTTONS.getBoolean() ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
-            for (String button : GlobalConfig.START_BUTTONS_ELEMENTS.getSection().getKeys(false)) {
-                String type = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonType(button).toLowerCase();
-                if (premadeButtons.containsKey(type)) { //Checks if the button is a premade button
-                    TextComponent component = premadeButtons.get(type);
-                    String command;
-                    if (type.equalsIgnoreCase("clean")) {
-                        command = "/clean " + suspectPlayer.getName();
-                    } else {
-                        command = GlobalConfig.valueOf("BAN_COMMAND_" + type.toUpperCase()).getString().replace("%SUSPECT%", suspectPlayer.getName());
-                    }
-                    component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(command)}));
-                    component.setClickEvent(new ClickEvent(action, command));
-                    buttons.add(component);
-
-                } else {
-                    String text = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonText(button);
-                    String command = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonCommand(button).replace("%SUSPECT%", suspectPlayer.getName());
-                    TextComponent component = new TextComponent(ChatUtils.format(text));
-                    component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(command)}));
-                    component.setClickEvent(new ClickEvent(action, command));
-                    buttons.add(component);
-                }
-            }
-            if (buttons.size() > 0) {
-                if (GlobalConfig.START_BUTTONS_IN_LINE.getBoolean()) {
-                    ComponentBuilder builder = new ComponentBuilder("");
-                    for (TextComponent component : buttons) {
-                        builder.append(component);
-                    }
-                    staffPlayer.spigot().sendMessage(builder.create());
-                } else {
-                    for (TextComponent component : buttons) {
-                        staffPlayer.spigot().sendMessage(component);
-                    }
-                }
-            }
+            sendScreenShareButtons(staffPlayer, suspectPlayer);
         }
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (api.getPlayersManager().getPlayer(player.getUniqueId()).isStaff() && api.getPlayersManager().getPlayer(player.getUniqueId()).hasAlerts()) {
+
+            SsPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
+            if (ssPlayer == null) {
+                return;
+            }
+
+            if (ssPlayer.isStaff() && ssPlayer.hasAlerts()) {
                 player.sendMessage(ChatUtils.format(GlobalConfig.START_STAFF_MESSAGE.getMessage(), "%STAFF%", staffPlayer.getName(), "%SUSPECT%", suspectPlayer.getName()));
             }
         }
@@ -207,18 +167,18 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
 
     }
 
-
-    /**
-     * Clears the player from the staff control. Only for target, not staff
-     *
-     * @param target
-     */
-
     @Override
     public void clearPlayer(UUID target) {
 
         SpigotPlayer targetSS = (SpigotPlayer) api.getPlayersManager().getPlayer(target);
         Player targetPlayer = Bukkit.getPlayer(target);
+
+        if (targetSS == null || targetPlayer == null) {
+            LogUtils.prettyPrintException(new IllegalArgumentException("Target or target player is null!"), "Illegal use of API");
+            return;
+        }
+
+
         targetSS.setStaffer(null);
         targetSS.setFrozen(false);
 
@@ -258,11 +218,17 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
     @Override
     public void clearPlayer(UUID staff, UUID suspect) {
 
-
         Player staffPlayer = Bukkit.getPlayer(staff);
         Player suspectPlayer = Bukkit.getPlayer(suspect);
         SsPlayer ssStaff = api.getPlayersManager().getPlayer(staff);
         SpigotPlayer ssSuspect = (SpigotPlayer) api.getPlayersManager().getPlayer(suspect);
+
+        if (staffPlayer == null || suspectPlayer == null || ssStaff == null || ssSuspect == null) {
+            LogUtils.prettyPrintException(new IllegalArgumentException("Staff, suspect, staff ss or suspect ss is null!"), "Illegal use of API");
+            return;
+        }
+
+
 
         if (SpigotConfig.PROXY_MODE.getBoolean()) {
             endBackEndControl(staffPlayer, suspectPlayer, ssStaff, ssSuspect);
@@ -375,5 +341,35 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
         api.getPlugin().getLog().info(staffPlayer.getName()+" has freed "+suspectPlayer.getName());
 
     }
+
+    private void sendScreenShareButtons(Player staffPlayer, Player suspectPlayer) {
+        // Text - Action
+        HashMap<String, String> stringButtons = GlobalConfig.getScreenShareButtons(suspectPlayer.getDisplayName());
+        List<TextComponent> buttons = new ArrayList<>();
+
+        ClickEvent.Action action = GlobalConfig.BUTTONS_CONFIRM_BUTTONS.getBoolean() ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
+        for (String key : stringButtons.keySet()) {
+            TextComponent button = new TextComponent(key);
+            button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(stringButtons.get(key))}));
+            button.setClickEvent(new ClickEvent(action, stringButtons.get(key)));
+            buttons.add(button);
+        }
+
+
+        if (buttons.size() > 0) {
+            if (GlobalConfig.START_BUTTONS_IN_LINE.getBoolean()) {
+                ComponentBuilder builder = new ComponentBuilder("");
+                for (TextComponent component : buttons) {
+                    builder.append(component);
+                }
+                staffPlayer.spigot().sendMessage(builder.create());
+            } else {
+                for (TextComponent component : buttons) {
+                    staffPlayer.spigot().sendMessage(component);
+                }
+            }
+        }
+    }
+
 
 }

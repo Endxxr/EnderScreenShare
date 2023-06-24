@@ -1,7 +1,7 @@
 package dev.endxxr.enderss.spigot.commands.enderss;
 
 import dev.endxxr.enderss.api.EnderSSProvider;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.CommandSender;
 
 public class ReloadCommand implements SpigotSubCommand {

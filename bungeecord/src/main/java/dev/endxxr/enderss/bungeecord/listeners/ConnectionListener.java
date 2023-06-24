@@ -7,9 +7,11 @@ import dev.endxxr.enderss.api.enums.SSEndCause;
 import dev.endxxr.enderss.api.events.bungee.SsEndEvent;
 import dev.endxxr.enderss.api.objects.player.ProxyPlayer;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
+import dev.endxxr.enderss.common.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.LogUtils;
 import litebans.api.Database;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -37,7 +39,7 @@ public class ConnectionListener implements Listener {
         ProxiedPlayer player = e.getPlayer();
         ProxyPlayer session = (ProxyPlayer) api.getPlayersManager().registerPlayer(player.getUniqueId());
         if (player.hasPermission("enderss.admin") && api.isUpdateAvailable()) {
-            player.sendMessage(ChatUtils.formatComponent("&8[&d&lEnder&5&lSS&8]&f You need to &cupdate &fthe plugin!"));
+            player.sendMessage(BungeeChat.formatComponent("&8[&d&lEnder&5&lSS&8]&f You need to &cupdate &fthe plugin!"));
         }
         session.setLastServer(ProxyConfig.FALLBACK_SERVER.getString());
 
@@ -49,9 +51,14 @@ public class ConnectionListener implements Listener {
     public void onProxyQuit(PlayerDisconnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
         ProxyPlayer proxyPlayer = (ProxyPlayer) api.getPlayersManager().getPlayer(player.getUniqueId());
+
+        if (proxyPlayer==null) { //If the player is null, we don't need to do anything else.
+            LogUtils.prettyPrintException(new NullPointerException("Player is null!"), "Couldn't get the profile of the quitting player!");
+            return;
+        }
+
         api.getPlayersManager().unregisterPlayer(proxyPlayer); //Remove player from the list
 
-        if (proxyPlayer==null) return; //If the player is null, we don't need to do anything else.
 
        /*
             SUSPECT QUITS
@@ -74,11 +81,7 @@ public class ConnectionListener implements Listener {
             }
 
             //Send messages
-            for (ProxiedPlayer onlinePlayer : ProxyServer.getInstance().getPlayers()) {
-                if (onlinePlayer.hasPermission("enderss.staff") || api.getPlayersManager().getPlayer(onlinePlayer.getUniqueId()).hasAlerts()) {
-                    onlinePlayer.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_INFO_PLAYER_QUIT.getMessage(), "%SUSPECT%", player.getName(), "%STAFF%", staff.getName()));
-                }
-            }
+            api.getPlayersManager().broadcastStaff(ChatUtils.format(GlobalConfig.MESSAGES_INFO_PLAYER_QUIT.getMessage(), "%SUSPECT%", player.getName(), "%STAFF%", staff.getName()));
 
             //Ban On Quit
             List<String> banOnQuitCommands = GlobalConfig.BAN_ON_QUIT_COMMANDS.getStringList();
@@ -115,7 +118,7 @@ public class ConnectionListener implements Listener {
         if (proxyPlayer.getControlled()!=null) { //If the player was screensharing someone
             ProxiedPlayer suspect = ProxyServer.getInstance().getPlayer(proxyPlayer.getControlled().getUUID());
             api.getScreenShareManager().clearPlayer(suspect.getUniqueId());
-            suspect.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_STAFF_OFFLINE.getMessage()));
+            suspect.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_STAFF_OFFLINE.getMessage()));
             if (ProxyConfig.CONFIG_LAST_CONNECTED_SERVER.getBoolean()){
                 suspect.connect(ProxyServer.getInstance().getServerInfo(proxyPlayer.getLastServer()));
             } else {
@@ -140,20 +143,17 @@ public class ConnectionListener implements Listener {
     @EventHandler
     public void onPlayerKick(ServerKickEvent event) {
 
-        if (event.isCancelled()) return;;
+        if (event.isCancelled()) return;
 
         ServerInfo serverInfo = event.getKickedFrom();
         SsPlayer ssPlayer = api.getPlayersManager().getPlayer(event.getPlayer().getUniqueId());
 
 
         if (ProxyServer.getInstance().getServerInfo(ProxyConfig.FALLBACK_SERVER.getString()).equals(serverInfo)) {
-            if (ssPlayer.isFrozen() || ssPlayer.getControlled()!=null) {
+            if (ssPlayer != null && (ssPlayer.isFrozen() || ssPlayer.getControlled()!=null)) {
                 api.getScreenShareManager().clearPlayer(ssPlayer.getUUID());
-
             }
         }
-
-
     }
 
 }

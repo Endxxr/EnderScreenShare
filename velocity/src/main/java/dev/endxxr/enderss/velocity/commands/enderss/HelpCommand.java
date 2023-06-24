@@ -1,7 +1,7 @@
 package dev.endxxr.enderss.velocity.commands.enderss;
 
 import com.velocitypowered.api.command.CommandSource;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.velocity.utils.VelocityChat;
 import net.kyori.adventure.text.Component;
 
 public class HelpCommand implements VelocitySubCommand {
@@ -17,15 +17,16 @@ public class HelpCommand implements VelocitySubCommand {
 
     @Override
     public void execute(CommandSource sender, String[] args) {
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&d&lHELP"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&d&lHELP"));
         sender.sendMessage(Component.empty());
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&5/ss <player> &7- &fStart a ScreenShare"));
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&5/clean <player> &7- &fTerminate a ScreenShare"));
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&5/blatant <player> &7- &fBan a player for blatant cheating"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/ss <player> &7- &fStart a ScreenShare"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/clean <player> &7- &fTerminate a ScreenShare"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/blatant <player> &7- &fBan a player for blatant cheating"));
         sender.sendMessage(Component.empty());
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&5/enderss help &7- &fShow this help message"));
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&5/enderss reload &7- &fReload the config"));
-        sender.sendMessage(ChatUtils.formatAdventureComponent("&5/enderss version &7- &fShow the version of the plugin"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/enderss alerts &7- &fToggle alerts"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/enderss help &7- &fShow this help message"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/enderss reload &7- &fReload the config"));
+        sender.sendMessage(VelocityChat.formatAdventureComponent("&5/enderss version &7- &fShow the version of the plugin"));
         sender.sendMessage(Component.empty());
     }
 }

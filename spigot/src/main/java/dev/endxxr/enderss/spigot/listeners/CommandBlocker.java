@@ -1,42 +1,36 @@
-package dev.endxxr.enderss.bungeecord.listeners;
+package dev.endxxr.enderss.spigot.listeners;
 
 import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ChatEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
+import dev.endxxr.enderss.common.utils.ChatUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommandBlocker implements Listener {
-
     private final EnderSS api;
 
     public CommandBlocker() {
         this.api = EnderSSProvider.getApi();
     }
 
+    @EventHandler
+    public void onCommand(AsyncPlayerChatEvent event) {
 
-    /**
-     * Blocks commands from players when being controlled
-     *
-     * @param event the event
-     */
+        if (event.isCancelled()) return;
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onCommand(ChatEvent event) {
-        ProxiedPlayer sender = (ProxiedPlayer) event.getSender();
+        Player sender = event.getPlayer();
         SsPlayer senderSession = api.getPlayersManager().getPlayer(sender.getUniqueId());
 
 
-        if (!event.isCommand() || senderSession == null || !senderSession.isFrozen() || senderSession.isStaff()) {
+        if (senderSession == null || !senderSession.isFrozen() || senderSession.isStaff() || !event.getMessage().startsWith("/")) {
             return;
         }
 
@@ -51,11 +45,14 @@ public class CommandBlocker implements Listener {
             });
             if (!slashCommands.contains(message)) {
                 event.setCancelled(true);
-                sender.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_CANT_EXECUTE.getMessage()));
+                sender.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_CANT_EXECUTE.getMessage()));
                 String replacedMessage = GlobalConfig.MESSAGES_INFO_COMMAND_BLOCKED.getMessage().replace("%COMMAND%", message);
-                ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(senderSession.getStaffer().getUUID());
-                receiver.sendMessage(BungeeChat.formatComponent(replacedMessage.replace("%SUSPECT%", sender.getDisplayName())));
+
+                Player receiver = Bukkit.getPlayer(senderSession.getStaffer().getUUID());
+                receiver.sendMessage(ChatUtils.format(replacedMessage.replace("%SUSPECT%", sender.getName())));
+
             }
         }
     }
+
 }

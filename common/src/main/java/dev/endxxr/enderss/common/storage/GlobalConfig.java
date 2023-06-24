@@ -2,9 +2,11 @@ package dev.endxxr.enderss.common.storage;
 
 import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.api.EnderSSProvider;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.simpleyaml.configuration.ConfigurationSection;
 import org.simpleyaml.configuration.file.YamlFile;
 
+import java.util.HashMap;
 import java.util.List;
 
 public enum GlobalConfig {
@@ -50,6 +52,7 @@ public enum GlobalConfig {
     MESSAGES_INFO_COMMAND_BLOCKED("messages.info.command-blocked"),
     MESSAGES_INFO_ALERTS_ENABLED("messages.info.alerts-enabled"),
     MESSAGES_INFO_ALERTS_DISABLED("messages.info.alerts-disabled"),
+    MESSAGES_ERROR_GENERIC("messages.error.generic"),
     MESSAGES_ERROR_NO_PERMISSION("messages.error.no-permission"),
     MESSAGES_ERROR_NO_COMMAND("messages.error.no-command"),
     MESSAGES_ERROR_NO_PLAYER("messages.error.no-player"),
@@ -74,7 +77,6 @@ public enum GlobalConfig {
     REPORTS_MESSAGES_CANNOT_REPORT_YOURSELF("reports.messages.cannot-report-yourself"),
     REPORTS_MESSAGES_CANNOT_REPORT_STAFF("reports.messages.cannot-report-staff"),
     REPORTS_MESSAGES_WAIT("reports.messages.wait"),
-    REPORTS_BUTTONS("reports.buttons"),
     REPORTS_BUTTONS_ELEMENTS("reports.buttons.elements"),
     REPORTS_BUTTONS_IN_LINE("reports.buttons.in-line"),
     REPORTS_NO_STAFF("reports.no-staff"),
@@ -94,19 +96,16 @@ public enum GlobalConfig {
     BAN_COMMAND_HACK("ban-command.hack"),
     BAN_COMMAND_ADMISSION("ban-command.admission"),
     BAN_COMMAND_BLATANT("ban-command.blatant"),
-    VERSION("version");
+    ;
 
-    public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getGeneralConfig();
-    
+    private static final EnderSS api = EnderSSProvider.getApi();
+    public static final YamlFile config = api.getPlugin().getGeneralConfig();
+
+
     GlobalConfig(String path) {
         this.path = path;
     }
     private final String path;
-
-
-    public String getPath() {
-        return path;
-    }
 
     public String getString() {
         String s =config.getString(path);
@@ -123,11 +122,6 @@ public enum GlobalConfig {
 
     public int getInt() {
         return config.getInt(path);
-    }
-
-
-    public double getFloat() {
-        return config.getDouble(path);
     }
 
     public long getLong() {
@@ -152,6 +146,64 @@ public enum GlobalConfig {
 
     public String getButtonCommand(String name) {
         return config.getString(path + "." + name + ".command");
+    }
+
+
+    public static HashMap<String, String> getScreenShareButtons(String suspectName) {
+
+        HashMap<String, String> buttons = new HashMap<>();
+
+        for (String button : GlobalConfig.START_BUTTONS_ELEMENTS.getSection().getKeys(false)) {
+
+            String typeName = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonType(button).toUpperCase();
+            GlobalConfig type;
+            try {
+                type = GlobalConfig.valueOf("BUTTONS_" + typeName);
+            } catch (IllegalArgumentException e) {
+                type = null;
+            }
+
+            if (type!=null) { //Checks if the button is a premade button
+                String text = ChatUtils.format(type.getString());
+                String command;
+                if (typeName.equalsIgnoreCase("clean")) {
+                    command = "/clean "+suspectName;
+                } else {
+                    command = GlobalConfig.valueOf("BAN_COMMAND_" + typeName.toUpperCase()).getString().replace("%SUSPECT%", suspectName);
+                }
+                buttons.put(text, command);
+
+            } else {
+                String text = ChatUtils.format(GlobalConfig.START_BUTTONS_ELEMENTS.getButtonText(ChatUtils.format(button)));
+                String command = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonCommand(button);
+                buttons.put(text, command);
+            }
+        }
+
+        return buttons;
+    }
+
+    public static HashMap<String, String> getReportButtons(String reporterName, String reportedName, String reason, String serverName) {
+        HashMap<String, String> buttons = new HashMap<>();
+        ConfigurationSection section = REPORTS_BUTTONS_ELEMENTS.getSection();
+
+        for (String key : section.getKeys(false)) {
+            String text = ChatUtils.format(REPORTS_BUTTONS_ELEMENTS.getButtonText(key)); //Button text
+            String command = REPORTS_BUTTONS_ELEMENTS.getButtonCommand(key); //Button command
+            if (text == null || command == null) {
+                api.getPlugin().getLog().info("The report button: " + key + " is not configured correctly!");
+                continue;
+            }
+
+            String formattedCommand = "/"+command
+                    .replace("%REPORTER%", reporterName)
+                    .replace("%REPORTED%", reportedName)
+                    .replace("%REASON%", reason)
+                    .replace("%SERVER%", serverName);
+
+            buttons.put(text, formattedCommand);
+        }
+        return buttons;
     }
 
 

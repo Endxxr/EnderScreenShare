@@ -210,8 +210,8 @@ messages:
             - "&cOnly players can run this command"
         already-controlled:
             - "&c%SUSPECT% is already being controlled"
-        cant-execute:
-            - "&cYou can't execute commands while being controlled"
+        cant-executeAsync:
+            - "&cYou can't executeAsync commands while being controlled"
         cant-fallback-suspect:
             - "&cWe can't fallback this player! Did they switch server before the SS?"
         cant-fallback-staff:
@@ -360,7 +360,7 @@ buttons:
     server-tp: "&a[&2&lTP&a]"
     ban: "&4[&c&lBAN&4]"
 
-    #ALL the buttons, even the ones that aren't specified here, will execute the command instead of suggesting it
+    #ALL the buttons, even the ones that aren't specified here, will executeAsync the command instead of suggesting it
     confirm-buttons: false
 
 

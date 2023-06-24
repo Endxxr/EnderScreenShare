@@ -7,7 +7,7 @@ import dev.endxxr.enderss.api.enums.SSEndCause;
 import dev.endxxr.enderss.api.events.spigot.SsEndEvent;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.SpigotConfig;
 import litebans.api.Database;
 import org.bukkit.Bukkit;
@@ -48,6 +48,9 @@ public class ConnectionListener implements Listener {
     public void onProxyQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         SsPlayer ssPlayer = api.getPlayersManager().getPlayer(player.getUniqueId());
+
+        if (ssPlayer == null) return;
+
         api.getPlayersManager().unregisterPlayer(ssPlayer); //Remove player from the list
 
        /*
@@ -62,11 +65,12 @@ public class ConnectionListener implements Listener {
             ssStaff.setControlled(null);
 
             //Send messages
-            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                if (onlinePlayer.hasPermission("enderss.staff") || api.getPlayersManager().getPlayer(onlinePlayer.getUniqueId()).hasAlerts()) {
-                    onlinePlayer.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_INFO_PLAYER_QUIT.getMessage(), "%SUSPECT%", player.getName(), "%STAFF%", staff.getName()));
-                }
-            }
+            EnderSSProvider.getApi().getPlayersManager().broadcastStaff(
+                    ChatUtils.format(GlobalConfig.MESSAGES_INFO_PLAYER_QUIT.getMessage()
+                            .replace("%STAFF%", staff.getName())
+                            .replace("%SUSPECT%", player.getName())
+                    )
+            );
 
             //Ban On Quit
             List<String> banOnQuitCommands = GlobalConfig.BAN_ON_QUIT_COMMANDS.getStringList();

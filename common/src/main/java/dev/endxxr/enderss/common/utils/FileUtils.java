@@ -22,6 +22,9 @@ public class FileUtils {
         File file = new File(folder, fileName);
         if (!file.exists()) {
             try (InputStream in = FileUtils.class.getClassLoader().getResourceAsStream(fileName)) {
+                if (in == null) {
+                    throw new IOException("Could not find " + fileName + " in the jar");
+                }
                 Files.copy(in, file.toPath());
             } catch (IOException e) {
                 LogUtils.prettyPrintException(e, "Could not save "+fileName+" to "+ file);

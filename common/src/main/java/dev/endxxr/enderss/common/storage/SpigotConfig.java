@@ -36,8 +36,9 @@ public enum SpigotConfig {
     PROTECTIONS_PLAYER_HUNGER("protections.player.hunger"),
     PROTECTIONS_PLAYER_REMOVE_EFFECTS("protections.player.remove-effects"),
     PROTECTIONS_PLAYER_ADVENTURE_MODE("protections.player.adventure-mode"),
-    PLACEHOLDER_YES("placeholder.yes"),
-    PLACEHOLDER_NO("placeholder.no"),
+    PLACEHOLDER_YES("placeholder.positive"),
+    PLACEHOLDER_NO("placeholder.negative"),
+    PLACEHOLDER_NONE("placeholder.none"),
     ;
 
     public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();

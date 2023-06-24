@@ -1,20 +1,18 @@
 package dev.endxxr.enderss.bungeecord.commands;
 
+import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.api.utils.ChatUtils;
-import dev.endxxr.enderss.api.EnderSS;
+import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
-import org.simpleyaml.configuration.ConfigurationSection;
 
 import java.util.*;
 
@@ -22,7 +20,7 @@ import java.util.*;
 public class ReportCommand extends Command implements TabExecutor {
 
     private final EnderSS api;
-    private final HashMap<UUID, Long> cooldowns = new HashMap<>();
+    private final HashMap<UUID, Long> coolDowns = new HashMap<>();
     public ReportCommand() {
         super("report", "enderss.report");
         this.api = EnderSSProvider.getApi();
@@ -34,47 +32,54 @@ public class ReportCommand extends Command implements TabExecutor {
 
         //CHECKS
         if (!(sender instanceof ProxiedPlayer)) {
-            sender.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_CONSOLE.getMessage()));
+            sender.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_CONSOLE.getMessage()));
             return;
         }
 
         final ProxiedPlayer player = (ProxiedPlayer) sender;
 
         if (!player.hasPermission("enderss.staff") && !player.hasPermission("enderss.report")) {
-            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
             return;
         }
 
-        if (cooldowns.containsKey(player.getUniqueId())) {
-            if (cooldowns.get(player.getUniqueId()) > System.currentTimeMillis()) {
-                player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_WAIT.getMessage(), "%SECONDS%", String.valueOf((cooldowns.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)));
+        if (coolDowns.containsKey(player.getUniqueId())) {
+            if (coolDowns.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                player.sendMessage(BungeeChat.formatComponent(GlobalConfig.REPORTS_MESSAGES_WAIT.getMessage(), "%SECONDS%", String.valueOf((coolDowns.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)));
                 return;
             }
         }
 
         if (args.length == 0) {
-            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
         }
 
         ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
         if (target==player) {
-            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_YOURSELF.getMessage()));
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_YOURSELF.getMessage()));
             return;
         }
 
         if (target==null){
-            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage()));
             return;
         }
 
-        if (api.getPlayersManager().getPlayer(target.getUniqueId()).isStaff()) {
-            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_STAFF.getMessage()));
+        SsPlayer targetSS = api.getPlayersManager().getPlayer(target.getUniqueId());
+        if (targetSS==null) {
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_GENERIC.getMessage()));
+            api.getPlugin().getLog().severe("Wasn't able to get the profile of the player, is it online?");
+            return;
+        }
+
+        if (targetSS.isStaff()) {
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.REPORTS_MESSAGES_CANNOT_REPORT_STAFF.getMessage()));
             return;
         }
 
         if (args.length == 1) {
-            player.sendMessage(ChatUtils.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_REASON.getMessage()));
+            player.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_REASON.getMessage()));
             return;
         }
 
@@ -85,100 +90,80 @@ public class ReportCommand extends Command implements TabExecutor {
         }
         final String reasonString = reason.toString().trim();
         if (GlobalConfig.REPORTS_NO_STAFF_ENABLED.getBoolean()) {
-            if (!api.getPlayersManager().isStaffOnline()) {
-                player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_NO_STAFF.getMessage()));
+            if (api.getPlayersManager().isStaffOffline()) {
+                player.sendMessage(BungeeChat.formatComponent(GlobalConfig.REPORTS_NO_STAFF.getMessage()));
                 return;
             }
         }
 
         //STAFF
-        Set<UUID> onlineStaff = api.getPlayersManager().getStaffers().keySet();
-        for (UUID uuid : onlineStaff) {
-            SsPlayer staff = api.getPlayersManager().getPlayer(uuid);
-            if (staff.hasAlerts()) {
-                TextComponent message = new TextComponent(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_REPORT_RECEIVED.getMessage()
-                        .replace("%REPORTER%", player.getName())
-                        .replace("%REPORTED%", target.getName())
-                        .replace("%REASON%", reasonString)
-                        .replace("%SERVER%", player.getServer().getInfo().getName())));
-                ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
-                staffPlayer.sendMessage(message);
-            }
-        }
+        api.getPlayersManager().broadcastStaff(ChatUtils.format(GlobalConfig.REPORTS_MESSAGES_REPORT_RECEIVED.getMessage()
+                .replace("%REPORTER%", player.getName())
+                .replace("%REPORTED%", target.getName())
+                .replace("%REASON%", reasonString)
+                .replace("%SERVER%", player.getServer().getInfo().getName())));
 
-        //BUTTONS; //reports.buttons.x.y
+        //BUTTONS;
         if (GlobalConfig.REPORTS_BUTTONS_ELEMENTS.getSection().getKeys(false).size() > 0) {
-
-            List<TextComponent> buttons = getButtons(player.getName(), target.getName(), reasonString, player.getServer().getInfo().getName());
-
-            //Check if inline
-            if (GlobalConfig.REPORTS_BUTTONS_IN_LINE.getBoolean()) {
-                ComponentBuilder cb = new ComponentBuilder("");
-                for (TextComponent component : buttons) {
-                    cb.append(component);
-                }
-                for (UUID uuid : onlineStaff) {
-                    ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
-                    if (api.getPlayersManager().getPlayer(uuid).hasAlerts()) {
-                        staffPlayer.sendMessage(cb.create());
-                    }
-                }
-            } else {
-                for (TextComponent component : buttons) {
-                    for (UUID uuid : onlineStaff) {
-                        ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
-                        if (api.getPlayersManager().getPlayer(uuid).hasAlerts()) {
-                            staffPlayer.sendMessage(component);
-                        }
-                    }
-                }
-            }
+            sendButtons(api.getPlayersManager().getStaffers().keySet(), player, target, reasonString);
         }
 
-        player.sendMessage(ChatUtils.formatComponent(GlobalConfig.REPORTS_MESSAGES_REPORT_SENT.getMessage()
+        player.sendMessage(BungeeChat.formatComponent(GlobalConfig.REPORTS_MESSAGES_REPORT_SENT.getMessage()
                 .replaceAll("%SUSPECT%", target.getName())));
-        cooldowns.put(player.getUniqueId(), System.currentTimeMillis()+ GlobalConfig.REPORTS_COOLDOWN.getLong()*1000);
+        coolDowns.put(player.getUniqueId(), System.currentTimeMillis()+ GlobalConfig.REPORTS_COOLDOWN.getLong()*1000);
     }
 
-    private List<TextComponent> getButtons(String reporterName, String reportedName, String reason, String serverName) {
-        List<TextComponent> buttons = new ArrayList<>();
-        ClickEvent.Action action = GlobalConfig.BUTTONS_CONFIRM_BUTTONS.getBoolean() ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
-        ConfigurationSection section = GlobalConfig.REPORTS_BUTTONS_ELEMENTS.getSection();
-        for (String key : section.getKeys(false)) {
-            String name = GlobalConfig.REPORTS_BUTTONS_ELEMENTS.getButtonText(key); //Button name
-            String command = GlobalConfig.REPORTS_BUTTONS_ELEMENTS.getButtonCommand(key); //Button command
-            if (name == null || command == null) {
-                api.getPlugin().getLog().info("The report button: " + key + " is not configured correctly!");
-                continue;
+    private void sendButtons(Set<UUID> onlineStaff, ProxiedPlayer player, ProxiedPlayer target, String reasonString) {
+
+        HashMap<String, String> stringButtons = GlobalConfig.getReportButtons(player.getName(),
+                target.getName(),
+                reasonString,
+                player.getServer().getInfo().getName());
+
+        List<TextComponent> buttons = BungeeChat.buildButtons(stringButtons, GlobalConfig.BUTTONS_CONFIRM_BUTTONS.getBoolean());
+
+        //Check if inline
+        if (GlobalConfig.REPORTS_BUTTONS_IN_LINE.getBoolean()) {
+            ComponentBuilder cb = new ComponentBuilder();
+            for (TextComponent component : buttons) {
+                cb.append(component);
             }
+            for (UUID uuid : onlineStaff) {
 
-            TextComponent component = new TextComponent(ChatUtils.formatComponent(name));
-            String formattedCommand = "/"+command
-                    .replace("%REPORTER%", reporterName)
-                    .replace("%REPORTED%", reportedName)
-                    .replace("%REASON%", reason)
-                    .replace("%SERVER%", serverName);
+                ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
+                SsPlayer staff = api.getPlayersManager().getPlayer(uuid);
 
-            component.setClickEvent(new ClickEvent(action, formattedCommand));
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{new TextComponent(formattedCommand)}));
-            buttons.add(component);
+                if (staff != null && staff.hasAlerts()) {
+                    staffPlayer.sendMessage(cb.create());
+                }
+            }
+        } else {
+            for (TextComponent component : buttons) {
+                for (UUID uuid : onlineStaff) {
+
+                    ProxiedPlayer staffPlayer = ProxyServer.getInstance().getPlayer(uuid);
+                    SsPlayer staff = api.getPlayersManager().getPlayer(uuid);
+
+                    if (staff != null && staff.hasAlerts()) {
+                        staffPlayer.sendMessage(component);
+                    }
+                }
+            }
         }
-        return buttons;
     }
+
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        if (args.length == 1) {
-            List<String> players = new ArrayList<>();
-            for (SsPlayer ss : api.getPlayersManager().getRegisteredPlayers() ) {
-                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(ss.getUUID());
-                if (player.getName().toLowerCase().startsWith(args[0].toLowerCase()) && !ss.isStaff()) { //If start with that letter and isn't staff
-                    players.add(player.getName());
-                }
+        List<String> players = new ArrayList<>();
+        String prefix = args.length == 0 ? "" : args[0];
+        if (args.length>1) return Collections.emptyList();
+        for (SsPlayer ss : api.getPlayersManager().getRegisteredPlayers() ) {
+            ProxiedPlayer player = ProxyServer.getInstance().getPlayer(ss.getUUID());
+            if (player.getName().toLowerCase().startsWith(prefix) && !ss.isStaff()) { //If start with that letter and isn't staff
+                players.add(player.getName());
             }
-            return players;
-        } else {
-            return Collections.emptyList();
         }
+        return players;
     }
 }

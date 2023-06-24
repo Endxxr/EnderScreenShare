@@ -1,6 +1,7 @@
 package dev.endxxr.enderss.api.objects.managers;
 
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -17,7 +18,7 @@ public abstract class PlayersManager {
      * @param uuid the player to add
      * @return the SsPlayer object
      */
-    public abstract SsPlayer registerPlayer(UUID uuid);
+    public abstract @NotNull SsPlayer registerPlayer(@NotNull UUID uuid);
 
 
     /**
@@ -27,7 +28,7 @@ public abstract class PlayersManager {
      * @param player the player to remove
      */
 
-    public void unregisterPlayer(@Nullable SsPlayer player) {
+    public void unregisterPlayer(@NotNull SsPlayer player) {
         registeredPlayers.remove(player.getUUID());
     }
 
@@ -38,14 +39,13 @@ public abstract class PlayersManager {
      * @param uuid the player to get the SsPlayer object
      * @return the SsPlayer object
      */
-    public SsPlayer getPlayer(UUID uuid) {
-        return registeredPlayers.get(uuid);
+    public @Nullable SsPlayer getPlayer(UUID uuid) {
+        SsPlayer ssPlayer = registeredPlayers.get(uuid);
+        if (ssPlayer == null && getPlatformPlayer(uuid) != null) {
+            ssPlayer = registerPlayer(uuid);
+        }
+        return ssPlayer;
     }
-
-    public SsPlayer getPlayer(SsPlayer SsPlayer) {
-        return getPlayer(SsPlayer.getUUID());
-    }
-
 
     /**
      *
@@ -53,7 +53,6 @@ public abstract class PlayersManager {
      *
      * @return all online staffers
      */
-
     public HashMap<UUID, SsPlayer> getStaffers() {
         HashMap<UUID, SsPlayer> staffers = new HashMap<>();
         for (UUID uuid : registeredPlayers.keySet()) {
@@ -73,14 +72,33 @@ public abstract class PlayersManager {
      * @return true if someone in the staff is online, false otherwise
      */
 
-    public boolean isStaffOnline() {
-        return !getStaffers().isEmpty();
+    public boolean isStaffOffline() {
+        return getStaffers().isEmpty();
     }
-    public abstract boolean hasPermission(UUID uuid, String permission);
-    public abstract List<String> getControllablePlayers(String initialChars);
 
+
+    /**
+     *
+     * Broadcast a message to all online staffers with alerts enabled
+     *
+     * @param formattedMessage the formatted message to broadcast. It has to have the placeholders already replaced
+     */
+
+    public abstract void broadcastStaff(String formattedMessage);
+
+    /**
+     *
+     *  Check if a player has a permission using the API of the running platform
+     *
+     * @param uuid the player to check
+     * @param permission the permission to check
+     * @return true if the player has the permission, false otherwise
+     */
+    public abstract boolean hasPermission(UUID uuid, String permission);
+    public abstract @NotNull List<String> getControllablePlayers(String initialChars);
     public Set<SsPlayer> getRegisteredPlayers() {
         return new HashSet<>(registeredPlayers.values());
     }
+    public abstract Object getPlatformPlayer(UUID uuid);
 
 }

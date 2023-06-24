@@ -1,7 +1,7 @@
 package dev.endxxr.enderss.bungeecord.commands.enderss;
 
 import dev.endxxr.enderss.api.EnderSSProvider;
-import dev.endxxr.enderss.api.utils.ChatUtils;
+import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
 import net.md_5.bungee.api.CommandSender;
 
 public class ReloadCommand implements BungeeSubCommand {
@@ -22,7 +22,7 @@ public class ReloadCommand implements BungeeSubCommand {
         EnderSSProvider.getApi().getPlugin().reload();
         EnderSSProvider.getApi().getPlugin().getLog()
                 .info("Config reloaded in " + (System.currentTimeMillis() - start) + "ms");
-        sender.sendMessage(ChatUtils.formatComponent("Config reloaded in " + (System.currentTimeMillis() - start) + "ms"));
+        sender.sendMessage(BungeeChat.formatComponent("Config reloaded in " + (System.currentTimeMillis() - start) + "ms"));
 
     }
 }
