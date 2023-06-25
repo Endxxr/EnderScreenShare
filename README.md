@@ -4,6 +4,8 @@
 </div>
 
 # EnderScreenShare by Endxxr
+>Supported Minecraft Versions: 1.8.8 - 1.20.1
+
 Powerful and lightweight screenshare plugin for Spigot, Bungeecord and Velocity!
 
 The idea of this plugin was born from the need to have a free screenshare plugin that works on every platform and at the same time be powerful and simple to use. 
@@ -81,6 +83,12 @@ You can pair this plugin with its Spigot version to have a complete experience.
 - Java 11 or higher
 - Velocity 3.x.x or any recent Bungeecord version
 - 2 or more Spigot server connected to the proxy
+
+#### Installation
+- Download the plugin from Spigot or GitHub releases
+- Put the ```.jar``` file in the plugin folder of your Bungeecord/Velocity server and eventually Spigot server
+- Start or restart the proxy and eventually the Spigot server
+- Enjoy!
 
 ## Commands
 ss | screenshare | control | freeze
@@ -178,7 +186,7 @@ The placeholders are only available on the Spigot version of the plugin. They're
 To build the plugin, you need to have Java 11 or higher and Maven installed on your computer.
 Run the following command in the root directory of the project:
 ````
-mvn clean install
+mvn clean package
 ````
 The .jar file will be in the ``\universal\target`` folder.
 
