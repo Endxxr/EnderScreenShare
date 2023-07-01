@@ -32,7 +32,7 @@ public class FileUtils {
         }
 
         YamlFile yamlFile = new YamlFile(file.getAbsolutePath());
-        yamlFile.load();
+        yamlFile.createOrLoad();;
         return yamlFile;
     }
 

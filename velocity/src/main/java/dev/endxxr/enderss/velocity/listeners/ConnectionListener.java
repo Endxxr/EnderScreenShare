@@ -40,7 +40,7 @@ public class ConnectionListener {
         Player player = event.getPlayer();
         ProxyPlayer session = (ProxyPlayer) api.getPlayersManager().registerPlayer(player.getUniqueId());
         if (player.hasPermission("enderss.admin") && api.isUpdateAvailable()) {
-            player.sendMessage(VelocityChat.formatAdventureComponent("&8[&d&lEnder&5&lSS&8]&f You need to &cupdate &fthe plugin!"));
+            player.sendMessage(VelocityChat.formatAdventureComponent("&8[&d&lEnder&5&lSS&8]&f New version available!"));
         }
         session.setLastServer(ProxyConfig.FALLBACK_SERVER.getString());
     }

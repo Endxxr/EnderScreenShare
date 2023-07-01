@@ -92,7 +92,7 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
             staffPlayer.teleport(suspectPlayer);
         }
 
-        if (SpigotConfig.SPAWN_ENABLED.getBoolean()) {
+        if (SpigotConfig.START_ENABLED.getBoolean()) {
             staffPlayer.teleport(WorldUtils.getSpawnLocation(staffSS));
             suspectPlayer.teleport(WorldUtils.getSpawnLocation(suspectSS));
         }
@@ -296,7 +296,7 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
             staff.teleport(suspect);
         }
 
-        if (SpigotConfig.SPAWN_ENABLED.getBoolean()) {
+        if (SpigotConfig.START_ENABLED.getBoolean()) {
             staff.teleport(WorldUtils.getSpawnLocation(staffSS));
             suspect.teleport(WorldUtils.getSpawnLocation(suspectSS));
         }

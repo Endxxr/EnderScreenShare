@@ -1,8 +1,8 @@
 package dev.endxxr.enderss.spigot.commands.enderss;
 
 import dev.endxxr.enderss.api.EnderSSProvider;
-import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.SpigotConfig;
+import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.utils.LogUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,11 +12,14 @@ import org.bukkit.entity.Player;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 enum SpawnType {
     STAFF,
     SUSPECT,
-    SPAWN,
+    START,
     FALLBACK
 }
 
@@ -33,8 +36,7 @@ public class SetSpawnCommand implements SpigotSubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        // /-1          0       1      2     3    4   5   6    7      8
-        // /enderss setspawn STAFF [phase] [world] [x] [y] [z] [yaw] [pitch]
+
 
         if (args.length < 3) {
             sender.sendMessage(ChatUtils.format(SpigotConfig.COMMANDS_SET_SPAWN_USAGE.getString()));
@@ -107,7 +109,70 @@ public class SetSpawnCommand implements SpigotSubCommand {
 
         sender.sendMessage(ChatUtils.format(SpigotConfig.COMMANDS_SET_SPAWN_SET.getString(),
                 "%PHASE%", phaseType.name().toUpperCase(), "%TYPE%", spawnType.name().toUpperCase()));
-
-
     }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        // /-1          0       1      2     3    4   5   6    7      8
+        // /enderss setspawn STAFF [phase] [world] [x] [y] [z] [yaw] [pitch]
+
+        // Gets the world that start with the given string (args[3]) or gets the world of the player
+        String world = "";
+        String x = "x";
+        String y = "y";
+        String z = "z";
+        String yaw = "yaw";
+        String pitch = "pitch";
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            Location location = player.getLocation();
+            world = location.getWorld().getName();
+            x = String.valueOf(location.getX());
+            y = String.valueOf(location.getY());
+            z = String.valueOf(location.getZ());
+            yaw = String.valueOf(location.getYaw());
+            pitch = String.valueOf(location.getPitch());
+        }
+
+
+        if (args.length == 2) {
+            return Arrays.asList("Choose a type", "STAFF", "SUSPECT");
+        }
+
+        if (args.length == 3) {
+            return Arrays.asList("Choose a phase", "START", "FALLBACK");
+        }
+
+        if (args.length == 4) {
+            return Arrays.asList("Choose a world or Run the command", world);
+        }
+
+        if (args.length == 5) {
+            return Arrays.asList("Choose a x", x);
+        }
+
+        if (args.length == 6) {
+            return Arrays.asList("Choose a y", y);
+        }
+
+        if (args.length == 7) {
+            return Arrays.asList("Choose a z", z);
+        }
+
+        if (args.length == 8) {
+            return Arrays.asList("Choose a yaw", yaw);
+        }
+
+        if (args.length == 9) {
+            return Arrays.asList("Choose a pitch", pitch);
+        }
+
+        if (args.length > 9) {
+            return Collections.singletonList("You can run the command");
+        }
+
+        return Collections.emptyList();
+    }
+
+
 }

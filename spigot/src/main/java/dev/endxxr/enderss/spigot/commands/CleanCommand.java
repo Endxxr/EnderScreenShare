@@ -48,11 +48,6 @@ public class CleanCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
-        if (staffSS.isStaff()) {
-            staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
-            return true;
-        }
-
         if (args.length == 0) {
             staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return true;

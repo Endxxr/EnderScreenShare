@@ -11,7 +11,7 @@ import org.bukkit.World;
 public class WorldUtils {
 
     public static Location getSpawnLocation(SsPlayer player) {
-        return getLocation(player, "spawn");
+        return getLocation(player, "start");
     }
 
     public static Location getFallbackLocation(SsPlayer player) {

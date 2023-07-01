@@ -265,16 +265,16 @@ reports:
     elements:
       goto:
         text: "&2[&aGoto&2]"
-        command: "/server %SERVER%"
+        command: "server %SERVER%"
       ban:
         text: "&4[&cBan&4]"
-        command: "/blatant %REPORTED%"
+        command: "blatant %REPORTED%"
       control:
         text: "&d[&5Control&d]"
-        command: "/ss %REPORTED%"
+        command: "ss %REPORTED%"
       example:
         text: "&d[&5Example&d]"
-        command: "/examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
+        command: "examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
 
 
 
@@ -301,11 +301,11 @@ buttons:
 #The only available placeholder here is %SUSPECT%
 #Litebans need to be installed on the proxy in order to work
 ban-command:
-  refuse: "/ban %SUSPECT% 30d SS Refused -s"
-  quit: "/ban %SUSPECT% 30d Quit in SS -s"
-  hack: "/ban %SUSPECT% 30d Cheating (SS) -s"
-  admission: "/ban %SUSPECT% 14d Cheat Admission -s"
-  blatant: "/ban %SUSPECT% 30d Blatant Cheating -s"
+  refuse: "ban %SUSPECT% 30d SS Refused -s"
+  quit: "ban %SUSPECT% 30d Quit in SS -s"
+  hack: "ban %SUSPECT% 30d Cheating (SS) -s"
+  admission: "ban %SUSPECT% 14d Cheat Admission -s"
+  blatant: "ban %SUSPECT% 30d Blatant Cheating -s"
 
 #Don't modify this value(s)! We need it for check updates
 version: 1.1

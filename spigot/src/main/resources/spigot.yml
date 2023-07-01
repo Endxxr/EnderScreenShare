@@ -16,7 +16,7 @@ proxy-mode: false
 
 disabled: "&cThis feature is disabled in proxy mode"
 
-spawn:
+start:
   enabled: true
   staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
   suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
@@ -32,7 +32,7 @@ fallback:
 
 commands:
   set-spawn:
-    usage: "&fUsage: /enderss setspawn &c<staff|suspect> &c<ss|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
+    usage: "&fUsage: /enderss setspawn &c<staff|suspect> &c<start|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
     set: "&a%PHASE% set for %TYPE%&f!"
     invalid-type: "&cInvalid type! &fValid types: &cstaff&f, &csuspect"
     invalid-world: "&cInvalid world!"
@@ -73,7 +73,7 @@ protections:
     adventure-mode: true # If true, the player will be set to adventure mode
 
 placeholder:
-  yes: "&aYes"
-  no: "&cNo"
+  positive: "&aYes"
+  negative: "&cNo"
   none: "&cNone"
 

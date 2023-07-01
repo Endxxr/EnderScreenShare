@@ -8,6 +8,9 @@ import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
+import java.util.List;
+
 public class AlertsCommand implements SpigotSubCommand {
 
     @Override
@@ -47,5 +50,10 @@ public class AlertsCommand implements SpigotSubCommand {
         String messageToSend = proxyPlayer.hasAlerts() ? GlobalConfig.MESSAGES_INFO_ALERTS_ENABLED.getMessage() : GlobalConfig.MESSAGES_INFO_ALERTS_DISABLED.getMessage();
         player.sendMessage(ChatUtils.format(messageToSend));
 
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 }

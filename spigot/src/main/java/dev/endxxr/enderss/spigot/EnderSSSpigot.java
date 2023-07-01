@@ -94,8 +94,8 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
 
     private void loadConfigs() {
         try {
-            generalConfig.load();
-            platformConfig.load();
+            generalConfig.createOrLoad();
+            platformConfig.createOrLoad();
         } catch (IOException e) {
             LogUtils.prettyPrintException(new RuntimeException(e), "Failed to load config files.");
         }
@@ -129,21 +129,31 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     private void registerCommands() {
 
         if (!SpigotConfig.PROXY_MODE.getBoolean()) {
-            getCommand("ss").setExecutor(new ScreenShareCommand());
-            getCommand("ss").setTabCompleter(new ScreenShareCommand());
-            getCommand("clean").setExecutor(new CleanCommand());
-            getCommand("clean").setTabCompleter(new CleanCommand());
+
+            ScreenShareCommand screenShareCommand = new ScreenShareCommand();
+            CleanCommand cleanCommand = new CleanCommand();
+
+            getCommand("ss").setExecutor(screenShareCommand);
+            getCommand("ss").setTabCompleter(screenShareCommand);
+            getCommand("clean").setExecutor(cleanCommand);
+            getCommand("clean").setTabCompleter(cleanCommand);
         }
 
         if (GlobalConfig.REPORTS_ENABLED.getBoolean()) {
-            getCommand("report").setExecutor(new ReportCommand());
-            getCommand("report").setTabCompleter(new ReportCommand());
+
+            ReportCommand reportCommand = new ReportCommand();
+
+            getCommand("report").setExecutor(reportCommand);
+            getCommand("report").setTabCompleter(reportCommand);
         }
 
-        getCommand("senderss").setExecutor(new EnderSSCommand());
-        getCommand("senderss").setTabCompleter(new EnderSSCommand());
-        getCommand("blatant").setExecutor(new BlatantCommand());
-        getCommand("blatant").setTabCompleter(new BlatantCommand());
+        EnderSSCommand enderSSCommand = new EnderSSCommand();
+        BlatantCommand blatantCommand = new BlatantCommand();
+
+        getCommand("senderss").setExecutor(enderSSCommand);
+        getCommand("senderss").setTabCompleter(enderSSCommand);
+        getCommand("blatant").setExecutor(blatantCommand);
+        getCommand("blatant").setTabCompleter(blatantCommand);
 
     }
 
@@ -178,10 +188,8 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
     @Override
     public void reload() {
         reloadConfig();
-        generalConfig = new YamlFile(new File(getDataFolder(), "config.yml"));
-        platformConfig = new YamlFile(new File(getDataFolder(), "spigot.yml"));
-        generalConfig.load();
-        platformConfig.load();
+        generalConfig.createOrLoad();
+        platformConfig.createOrLoad();
         getLogger().info("Reloaded!");
     }
 

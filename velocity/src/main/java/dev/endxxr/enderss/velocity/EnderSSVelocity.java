@@ -180,11 +180,8 @@ public class EnderSSVelocity implements EnderPlugin {
     @SneakyThrows
     @Override
     public void reload() {
-        config = new YamlFile(new File(dataDirectory.toFile(), "config.yml"));
-        platformConfig = new YamlFile(new File(dataDirectory.toFile(), "proxy.yml"));
-
-        config.load();
-        platformConfig.load();
+        config.createOrLoad();
+        platformConfig.createOrLoad();
 
         sendPluginMessage(enderSS.getPlayersManager().getRegisteredPlayers().stream().iterator().next(),
                 PluginMessageType.RELOAD);
@@ -210,7 +207,6 @@ public class EnderSSVelocity implements EnderPlugin {
 
         Optional<Player> optionalPlayer = server.getPlayer(staffer.getUUID());
         if (!optionalPlayer.isPresent()) return;
-        Player player = optionalPlayer.get();
 
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(type.name());

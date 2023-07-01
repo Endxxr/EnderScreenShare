@@ -42,18 +42,12 @@ public class CleanCommand extends Command implements TabExecutor {
         }
 
 
-
-
         if (!staff.hasPermission("enderss.staff") && !staff.hasPermission("enderss.clean")) {
             staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
             return;
         }
 
 
-        if (staffSS.isStaff()) {
-            staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PERMISSION.getMessage()));
-            return;
-        }
 
         if (args.length == 0) {
             staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));

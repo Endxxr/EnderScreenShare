@@ -5,6 +5,9 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
+import java.util.List;
+
 public class VersionCommand implements SpigotSubCommand {
     @Override
     public String getName() {
@@ -25,5 +28,10 @@ public class VersionCommand implements SpigotSubCommand {
         sender.sendMessage(ChatUtils.format("&dhttps://www.spigotmc.org/resources/enderss.93261/"));
         sender.sendMessage(ChatUtils.format("&dhttps://github.com/Endxxr/EnderSS"));
         sender.sendMessage("");
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 }

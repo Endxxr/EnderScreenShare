@@ -4,6 +4,10 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.CommandSender;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class ReloadCommand implements SpigotSubCommand {
 
 
@@ -25,5 +29,10 @@ public class ReloadCommand implements SpigotSubCommand {
                 .info("Config reloaded in " + (System.currentTimeMillis() - start) + "ms");
         sender.sendMessage(ChatUtils.format("Config reloaded in " + (System.currentTimeMillis() - start) + "ms"));
 
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 }

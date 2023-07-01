@@ -99,7 +99,7 @@ public enum GlobalConfig {
     ;
 
     private static final EnderSS api = EnderSSProvider.getApi();
-    public static final YamlFile config = api.getPlugin().getGeneralConfig();
+    public static YamlFile config = api.getPlugin().getGeneralConfig();
 
 
     GlobalConfig(String path) {
@@ -169,13 +169,13 @@ public enum GlobalConfig {
                 if (typeName.equalsIgnoreCase("clean")) {
                     command = "/clean "+suspectName;
                 } else {
-                    command = GlobalConfig.valueOf("BAN_COMMAND_" + typeName.toUpperCase()).getString().replace("%SUSPECT%", suspectName);
+                    command = "/"+GlobalConfig.valueOf("BAN_COMMAND_" + typeName.toUpperCase()).getString().replace("%SUSPECT%", suspectName);
                 }
                 buttons.put(text, command);
 
             } else {
                 String text = ChatUtils.format(GlobalConfig.START_BUTTONS_ELEMENTS.getButtonText(ChatUtils.format(button)));
-                String command = GlobalConfig.START_BUTTONS_ELEMENTS.getButtonCommand(button);
+                String command = "/"+GlobalConfig.START_BUTTONS_ELEMENTS.getButtonCommand(button);
                 buttons.put(text, command);
             }
         }

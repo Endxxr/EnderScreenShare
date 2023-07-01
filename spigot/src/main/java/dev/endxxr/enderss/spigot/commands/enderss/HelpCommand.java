@@ -3,6 +3,9 @@ package dev.endxxr.enderss.spigot.commands.enderss;
 import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.CommandSender;
 
+import java.util.Collections;
+import java.util.List;
+
 public class HelpCommand implements SpigotSubCommand {
     @Override
     public String getName() {
@@ -28,5 +31,10 @@ public class HelpCommand implements SpigotSubCommand {
         sender.sendMessage(ChatUtils.format("&5/senderss setspawn &7- &fSet the spawn location for the ScreenShare"));
         sender.sendMessage(ChatUtils.format("&5/senderss version &7- &fShow the version of the plugin"));
         sender.sendMessage(ChatUtils.format(""));
+    }
+
+    @Override
+    public List<String> tabComplete(CommandSender sender, String[] args) {
+        return Collections.emptyList();
     }
 }

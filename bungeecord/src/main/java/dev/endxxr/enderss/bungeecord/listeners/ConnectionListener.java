@@ -39,7 +39,7 @@ public class ConnectionListener implements Listener {
         ProxiedPlayer player = e.getPlayer();
         ProxyPlayer session = (ProxyPlayer) api.getPlayersManager().registerPlayer(player.getUniqueId());
         if (player.hasPermission("enderss.admin") && api.isUpdateAvailable()) {
-            player.sendMessage(BungeeChat.formatComponent("&8[&d&lEnder&5&lSS&8]&f You need to &cupdate &fthe plugin!"));
+            player.sendMessage(BungeeChat.formatComponent("&&8[&d&lEnder&5&lSS&8]&f New version available!"));
         }
         session.setLastServer(ProxyConfig.FALLBACK_SERVER.getString());
 
@@ -94,6 +94,10 @@ public class ConnectionListener implements Listener {
                 }
 
                 for (String command : banOnQuitCommands) {
+                    if (command.startsWith("/")) {
+                        command = command.substring(1);
+                    }
+
                     command = command.replace("%SUSPECT%", player.getName());
                     api.getPlugin().dispatchCommand(null, command);
                 }

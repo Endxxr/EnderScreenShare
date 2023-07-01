@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,20 @@ public class EnderSSCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        String prefix = args.length == 0 ? "" : args[0];
-        return subCommands.stream().map(SpigotSubCommand::getName).filter(s -> s.startsWith(prefix)).collect(Collectors.toList());
+
+        if (args.length <= 1) {
+            String prefix = args.length == 0 ? "" : args[0];
+            return subCommands.stream().map(SpigotSubCommand::getName).filter(s -> s.startsWith(prefix)).collect(Collectors.toList());
+        }
+
+        for (SpigotSubCommand subCommand : subCommands) {
+            if (subCommand.getName().equalsIgnoreCase(args[0])) {
+                if (sender.hasPermission(subCommand.getPermission()) && sender.hasPermission("enderss.settings")) {
+                    return subCommand.tabComplete(sender, args);
+                }
+            }
+        }
+
+        return Collections.emptyList();
     }
 }

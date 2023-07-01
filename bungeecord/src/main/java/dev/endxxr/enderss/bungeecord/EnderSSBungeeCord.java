@@ -117,12 +117,8 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
     @SneakyThrows
     @Override
     public void reload() {
-        generalConfig = new YamlFile(new File(getDataFolder(), "config.yml"));
-        platformConfig = new YamlFile(new File(getDataFolder(), "proxy.yml"));
-
-        generalConfig.load();
-        platformConfig.load();
-
+        generalConfig.createOrLoad();
+        platformConfig.createOrLoad();
 
         sendPluginMessage(enderSS.getPlayersManager().getRegisteredPlayers().iterator().next(),
                 PluginMessageType.RELOAD);

@@ -10,7 +10,7 @@ public enum SpigotConfig {
     PROXY_MODE("proxy-mode"),
     DISABLED("disabled"),
     TELEPORT_ON_START("teleport-on-start"),
-    SPAWN_ENABLED("spawn.enabled"),
+    START_ENABLED("start.enabled"),
     FALLBACK_ENABLED("fallback.enabled"),
     COMMANDS_SET_SPAWN_USAGE("commands.set-spawn.usage"),
     COMMANDS_SET_SPAWN_SET("commands.set-spawn.set"),
@@ -41,7 +41,7 @@ public enum SpigotConfig {
     PLACEHOLDER_NONE("placeholder.none"),
     ;
 
-    public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();
+    public static YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();
     private final String path;
 
     SpigotConfig(String s) {
