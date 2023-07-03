@@ -1,0 +1,308 @@
+#      ___           ___                         ___           ___           ___           ___
+#     /\__\         /\  \         _____         /\__\         /\  \         /\__\         /\__\
+#    /:/ _/_        \:\  \       /::\  \       /:/ _/_       /::\  \       /:/ _/_       /:/ _/_
+#   /:/ /\__\        \:\  \     /:/\:\  \     /:/ /\__\     /:/\:\__\     /:/ /\  \     /:/ /\  \
+#  /:/ /:/ _/_   _____\:\  \   /:/  \:\__\   /:/ /:/ _/_   /:/ /:/  /    /:/ /::\  \   /:/ /::\  \
+# /:/_/:/ /\__\ /::::::::\__\ /:/__/ \:|__| /:/_/:/ /\__\ /:/_/:/__/___ /:/_/:/\:\__\ /:/_/:/\:\__\
+# \:\/:/ /:/  / \:\~~\~~\/__/ \:\  \ /:/  / \:\/:/ /:/  / \:\/:::::/  / \:\/:/ /:/  / \:\/:/ /:/  /
+#  \::/_/:/  /   \:\  \        \:\  /:/  /   \::/_/:/  /   \::/~~/~~~~   \::/ /:/  /   \::/ /:/  /
+#   \:\/:/  /     \:\  \        \:\/:/  /     \:\/:/  /     \:\~~\        \/_/:/  /     \/_/:/  /
+#    \::/  /       \:\__\        \::/  /       \::/  /       \:\__\         /:/  /        /:/  /
+#     \/__/         \/__/         \/__/         \/__/         \/__/         \/__/         \/__/
+#
+# Scarica l'ultima versione della config da https://github.com/Endxxr/EnderScreenShare/tree/master/lang
+
+# NOTA:
+# La configurazione non si aggiorna da sola. Consiglio di visitare il link sopra per vedere se ci sono aggiornamenti alla config.
+# In ogni caso, il plugin ti avviserà se la tua configurazione è troppo vecchia.
+#
+# Non puoi usare PlaceholderAPI nella configurazione.
+#
+
+
+# Usato per il placeholder %PREFIX%
+prefix: ""
+
+#Lo staff puo' essere controllato?
+staff-controllable: true
+
+# Manda questi messaggi all'inizio di un controllo
+start:
+    # Pulisce la chat quando inizia un controllo
+    clear-chat: true
+    anydesk:
+        send: true
+        message:
+            - "&fDevi scaricare Anydesk per continuare con il controllo: &chttps://anydesk.com/en/downloads" #Link for download AnyDesk
+
+    teamspeak:
+        send: true
+        message:
+            - "&fEntra sul nostro teamspeak per continuare &bhttps://ts.yourserver.example" #Link for join Teamspeak
+
+    discord:
+        send: true
+        message:
+            - "&fEntra sul nostro discord per continuare &dhttps://discord.yourserver.example" #Link for join Discord
+
+    # Puoi usare sia %STAFF% che %SUSPECT%.
+    # Per questi messaggi devi usare una lista, come nell'esempio qui sotto:
+    # message:
+    # - "questo è un messaggio in una lista"
+    # - "devi scrivere i messaggi cosi!"
+    #
+    # Se vuoi usare solo una riga, definisci una lista con un solo elemento!
+    ss-message:
+        - ""
+        - "&cSei sotto controllo hack"
+        - "&cNon uscire e segui le istruzioni dello staff (%STAFF%)"
+        - ""
+    staff-message:
+        - ""
+        - "&c%SUSPECT% sta venendo controllato da %STAFF%"
+        - ""
+
+    title:
+        send: true
+        title: "&4&lControllo Hack"
+        subtitle: "&cNon uscire"
+        #20 = 1 Second
+        fadein: 15
+        stay: 50
+        fadeout: 15
+
+        # Il ritardo in secondi, utile per mandare il titolo quando sei sicuro che il giocatore sia entrato sul server.
+        # In millisecondi, 1000 = 1 secondo
+        delay: 2000
+
+
+
+    # Manda questi bottoni quando inizia un controllo
+    # Puoi usare il placeholder %SUSPECT%
+    # Il comando sarà eseguito dal giocatore che ha fatto il controllo
+    # If you don't want to use buttons, lascia la categoria vuota (buttons: {})
+    buttons:
+        in-line: false
+        elements:
+            hack:
+                type: HACK
+            admission:
+                type: ADMISSION
+            refuse:
+                type: REFUSE
+            quit:
+                type: QUIT
+            clean:
+                type: CLEAN
+            custom1:
+                type: CUSTOM
+                text: "&4[&c&lBottone Personalizzabile&4]"
+                command: "example"
+
+command-blocker:
+
+    # Se abilitato, il giocatore non potrà usare i comandi
+    enabled: true
+
+    # Comandi abilitati
+    whitelisted-commands:
+        - "example1"
+        - "example2"
+
+# Se non vuoi usare questa funzione, lascia la lista vuota (commands: {})
+ban-on-quit:
+
+    # Devi avere LiteBans per usare questa funzione
+    prevent-double-ban: true
+
+    # Puoi usare %SUSPECT%
+    commands:
+        - "ban 30d %SUSPECT% ScreenShare Refused -s"
+
+# Sistema Chat di EnderSS
+# Gli staffer potranno vedere i messaggi di tutti giocatori sotto controllo hack
+# I giocatori sotto controllo hack potranno vedere i messaggi degli staffer
+# I giocatori non coinvolti potranno vedere i messaggi degli altri giocatori
+#
+# Schemino tattico (in inglese):
+#
+# WRITE:
+# - Staffer -> Suspect & Staffers || Staffer -> Suspect
+# - Suspect -> Staffer who is controlling him
+# - Not Involved -> Staffers || Not Involved -> Staffers & Suspects
+# READ:
+# - Staffer -> Suspect & Staffers || Staffer -> Suspect
+# - Suspect -> Staffer who is controlling him
+# - Not Involved -> Staffers || Not Involved -> Suspects & Staffers
+
+chat:
+    # Richiesto il riavvio
+    enabled: true
+    receive-enabled: "&aChat enabled"
+    receive-disabled: "&cChat disabled"
+
+    # Lo staffer può leggere i messaggi degli altri staffer?
+    staffer-reads-staffers: true
+
+    # I giocatori non coinvolti in nessun controllo saranno in grado di leggere i messaggi
+    # di tutti gli staffer e i sospetti.
+    not-involved-everyone: true
+
+    # Puoi usare i placeholder %prefix% e %luckperms%:
+    # Nel primo caso, il prefisso sara' lo stato del giocatore (Staff, Suspect or not involved)
+    # Nel secondo caso, il prefisso sara' il gruppo di LuckPerms del giocatore
+    # Placeholders: %prefix%, %luckperms%, %player%, %message%
+    format:
+        staff: "&r%prefix% &7%player%&7: &r%message%"
+        suspect: "%prefix% &7%player%&7: &r%message%"
+        not-involved: "&7%player%&7: &r%message%"
+
+    # Prefisso per i %prefix% (minuscolo)
+    prefix:
+        staff: "&b&lSTAFF"
+        suspect: "&c&lFROZEN"
+        not-involved: "&d"
+
+
+    # Consiglio di lasciare questa opzione attiva, altrimenti il messaggio potrebbe essere inviato due volte, sia nella chat di EnderSS che nella chat di spigot
+    cancel-event: true
+
+
+#Messages
+messages:
+    info:
+        # Per questi messaggi puoi usare il placeholder %SUSPECT%
+        player-quit:
+            - "&c%SUSPECT% è uscito mentre era sotto controllo hack"
+        clean-player:
+            - "&2Controllo finito. Grazie per la pazienza"
+        player-cleaned:
+            - "&aIl controllo su %SUSPECT% è finito"
+        command-blocked:
+            - "&c%SUSPECT% ha provato ed eseguire %COMMAND%"
+        alerts-enabled:
+            - "&aAvvisi abilitati"
+        alerts-disabled:
+            - "&cAvvisi disabilitati"
+
+
+    error:
+        generic:
+            - "&cSi è verificato un errore"
+        no-permission:
+            - "&cPermessi Insufficienti"
+        no-command:
+            - "&cQuesto comando non esiste!"
+        no-player:
+            - "&cSpecifica un giocatore"
+        no-reason:
+            - "&cSpecifica un motivo"
+        console:
+            - "&cSolo i giocatori possono eseguire questo comando"
+        already-controlled:
+            - "&c%SUSPECT% è già sotto controllo"
+        cant-execute:
+            - "&cNon puoi eseguire comandi mentre sei sotto controllo"
+        cannot-ss-yourself:
+            - "&cNon puoi controllare te stesso, bannati direttamente, no?"
+        cant-connect-to-ss: # PROXY
+            - "&c?"
+
+        #For these strings you can use the placeholder %SUSPECT%
+        exempt:
+            - "&cNon puoi controllare questo giocatore!"
+        player-offline:
+            - "&cQuesto giocatore è offline"
+        already-in-ss:
+            - "&cQuesto giocatore è già sotto controllo"
+        staff-in-ss:
+            - "&cPuoi controllare solo un giocatore alla volta"
+        already-ss-player:
+            - "&cSei già controllando questo giocatore"
+        suspect-not-in-ss:
+            - "&cIl giocatore non è sotto controllo"
+        cannot-ss-staff:
+            - "&cNon puoi controllare un membro dello staff"
+        not-controlling:
+            - "&cNon stia controllando questo giocatore"
+        staff-offline:
+            - "&cLo staffer che ti stava controllando è andato offline"
+
+
+
+reports:
+    #Richiesto il riavvio
+    enabled: true
+    cooldown: 60 #Valore in secondo, -1 per disabilitare
+    messages:
+        report-sent: #Puoi usare %SUSPECT% e %REASON%
+            - ""
+            - "&aYou successfully reported %SUSPECT%"
+            - ""
+
+        report-received:
+            - ""
+            - "&5&lNEW REPORT"
+            - "&dReporter&8: &f%REPORTER%"
+            - "&dReported&8: &f%REPORTED%"
+            - "&dServer: &f%SERVER%"
+            - "&dReason&8: &f%REASON%"
+            - ""
+            #I bottoni verranno aggiunti alla fine del messaggio
+
+        cannot-report-yourself:
+            - "&cNon puoi segnalare te stesso"
+        cannot-report-staff:
+            - "&cNon puoi segnalare un membro dello staff"
+        wait:
+            - "&cAspetta %SECONDS% secondi prima di segnalare di nuovo"
+
+
+    # I bottoni devono avere una struttura del genere. Devono avere un testo e un comando, sennò non saranno aggiunti.
+    # Puoi usare %REPORTER%, %REPORTED%, %SERVER% e %REASON%
+    # Se non vuoi i bottoni, lascia vuota la categoria (buttons: {})
+    buttons:
+        in-line: false
+        elements:
+            goto:
+                text: "&2[&aGoto&2]"
+                command: "server %SERVER%"
+            ban:
+                text: "&4[&cBan&4]"
+                command: "blatant %REPORTED%"
+            control:
+                text: "&d[&5Controlla&d]"
+                command: "ss %REPORTED%"
+            example:
+                text: "&d[&5Esempio&d]"
+                command: "comando %REPORTER% %REPORTED% %SERVER% %REASON%"
+
+    no-staff:
+        - "&cNessun dello staff è online! Ricevi supporto sul nostro discord: https://discord.example.com/"
+    no-staff-enabled: false
+
+buttons:
+    hack: "&4[&c&lHACK&4]"
+    admission: "&a[&2&lAMMISSIONE&a]"
+    refuse: "&e[&6&lRIFIUTO&e]"
+    quit: "&d[&5&lUSCITO&d]"
+    clean: "&a[&2&lPULITO&a]"
+    confirm: "&2[&a&lCONFERMA&a]"
+    ss: "&4[&c&lSS&4]"
+    server-tp: "&a[&2&lTP&a]"
+    ban: "&4[&c&lBAN&4]"
+
+    # Tutti i bottoni, anche quelli non specificati qua, eseguiranno direttamente il comando invece di suggerirlo
+    confirm-buttons: false
+
+
+# Puoi usare solo %SUSPECT%
+ban-command:
+    refuse: "ban %SUSPECT% 30d SS Rifiutato -s"
+    quit: "ban %SUSPECT% 30d Uscito in SS -s"
+    hack: "ban %SUSPECT% 30d Cheating (SS) -s"
+    admission: "ban %SUSPECT% 14d Ammissione Cheat -s"
+    blatant: "ban %SUSPECT% 30d Cheating -s"
+
+# NON MODIFICARE QUESTO VALORE. SERVE PER VERIFICARE CHE IL PLUGIN SIA AGGIORNATO
+version: 1.1

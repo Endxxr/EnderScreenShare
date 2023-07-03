@@ -1,0 +1,101 @@
+name: EnderSS
+version: '${project.version}'
+main: dev.endxxr.enderss.bungeecord.EnderSSBungeeCord
+description: A simple and customizable ScreenShare plugin for Spigot, BungeeCord and Velocity
+author: Endxxr
+softDepends:
+  - 'LiteBans'
+  - 'LuckPerms'
+commands:
+  ss:
+    aliases: [control, screenshare, freeze]
+    description: Freeze a person and start an Hack Control
+    usage: '&c/ss <player>'
+    permission: enderss.ss
+  enderss:
+    aliases: [ssplugin, endersettings ]
+    description: Main command
+    usage: '&c/enderss <alerts|help|reload|version>'
+    permission: enderss.settings
+  clean:
+    aliases: [legit]
+    description: Does what the button "clean" does, easy
+    permission: enderss.clean
+  blatant:
+    description: Directly ban a player for Blatant Cheating
+    permission: enderss.blatant
+  report:
+    description: Report a player
+    permission: enderss.report
+
+permissions:
+  enderss.admin:
+    description: Gives access to all EnderSS commands
+    children:
+      enderss.staff: true
+      enderss.settings.reload: true
+      enderss.settings.setspawn: true
+      enderss.settings.version: true
+      enderss.protections: true
+  enderss.staff:
+    description: Gives access to all EnderSS staff commands
+    children:
+      enderss.ss: true
+      enderss.protections.world: true
+      enderss.settings: true
+      enderss.settings.help: true
+      enderss.settings.alerts: true
+      enderss.clean: true
+      enderss.blatant: true
+
+  enderss.settings.help:
+    description: Gives access to the help subcommand, to show all the commands available
+  enderss.settings.alerts:
+    description: Gives access to the alerts subcommand, to toggle alerts
+  enderss.settings.setspawn:
+    description: Gives access to the setspawn subcommand, to set the spawn location(s)
+  enderss.blatant:
+    description: Gives access to the blatant command, directly ban a player for blatant cheating
+  enderss.report:
+    description: Gives access to the report command, report a player
+    default: true
+
+  enderss.protections:
+    description: Bypass all EnderSS protections
+    children:
+      enderss.protections.world: true
+      enderss.protections.world.build-break: true
+      enderss.protections.world.pvp: true
+      enderss.protections.world.invulnerability: true
+      enderss.protections.world.hunger: true
+      enderss.protections.world.void: true
+      enderss.protections.player.pvp: true
+      enderss.protections.player.build-break: true
+      enderss.protections.player.pick-drop-items: true
+      enderss.protections.player.hunger: true
+      enderss.protections.player.damage: true
+      enderss.protections.player.remove-effects: true
+      enderss.protections.player.adventure-mode: true
+
+  enderss.protections.world:
+    description: Bypass all EnderSS world protections
+    children:
+      enderss.protections.world: true
+      enderss.protections.world.build-break: true
+      enderss.protections.world.pvp: true
+      enderss.protections.world.invulnerability: true
+      enderss.protections.world.hunger: true
+      enderss.protections.world.void: true
+
+  enderss.protections.player:
+    description: Bypass all EnderSS player protections
+    children:
+      enderss.protections.player.pvp: true
+      enderss.protections.player.build-break: true
+      enderss.protections.player.pick-drop-items: true
+      enderss.protections.player.hunger: true
+      enderss.protections.player.damage: true
+      enderss.protections.player.remove-effects: true
+      enderss.protections.player.adventure-mode: true
+
+

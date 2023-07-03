@@ -4,14 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.endxxr</groupId>
+    <groupId>dev.endxxr</groupId>
     <artifactId>enderss</artifactId>
-    <version>1.0</version>
-    <packaging>jar</packaging>
+    <version>1.1.0</version>
+    <packaging>pom</packaging>
 
     <name>EnderSS</name>
 
     <description>Free and Open Source ScreenShare plugin</description>
+    <modules>
+        <module>spigot</module>
+        <module>bungeecord</module>
+        <module>velocity</module>
+        <module>api</module>
+        <module>common</module>
+        <module>universal</module>
+    </modules>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,7 +27,6 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>EnderSS-1.0</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -33,12 +40,22 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>me.endxxr.enderss</shadedPattern>
+                            <shadedPattern>dev.endxxr.enderss.bstats</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -72,16 +89,40 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
+        <repository>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <!-- UTILS -->
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>me.carleslc.Simple-YAML</groupId>
+            <artifactId>Simple-Yaml</artifactId>
+            <version>1.8.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+
+        <!-- SOFT-DEPENDENCIES -->
+
         <dependency>
             <groupId>com.gitlab.ruany</groupId>
             <artifactId>LiteBansAPI</artifactId>
@@ -94,17 +135,25 @@
             <version>5.4</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- BSTATS -->
         <dependency>
             <groupId>org.bstats</groupId>
-            <artifactId>bstats-bungeecord</artifactId>
-            <version>3.0.0</version>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
-            <scope>provided</scope>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bungeecord</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-velocity</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
