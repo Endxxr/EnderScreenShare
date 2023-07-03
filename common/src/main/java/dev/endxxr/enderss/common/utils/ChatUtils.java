@@ -9,7 +9,7 @@ public class ChatUtils {
 
     /**
      *
-     * Formats the text (with hex color if starts with "&#" and set the placeholders
+     * Formats the text with the placeholders
      *
      * @param message the message
      * @param placeholders the placeholders, must be in pairs (placeholder, value)
