@@ -45,7 +45,6 @@ import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.simpleyaml.configuration.file.YamlFile;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -70,7 +69,6 @@ public class EnderSSVelocity implements EnderPlugin {
     private EnderSS enderSS;
     private final Logger logger;
     private final Metrics.Factory metricsFactory;
-    private final Path dataDirectory;
     private LuckPerms luckPerms;
     private YamlFile config;
     private YamlFile platformConfig;
@@ -79,10 +77,9 @@ public class EnderSSVelocity implements EnderPlugin {
     private final ChannelIdentifier CHANNEL_IDENTIFIER = MinecraftChannelIdentifier.create("enderss", "controls");
 
     @Inject
-    public EnderSSVelocity(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory, Metrics.Factory metrics) {
+    public EnderSSVelocity(ProxyServer server, Logger logger, Metrics.Factory metrics) {
         this.server = server;
         this.logger = logger;
-        this.dataDirectory = dataDirectory;
         this.metricsFactory = metrics;
     }
 

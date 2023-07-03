@@ -4,7 +4,6 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.common.utils.ChatUtils;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

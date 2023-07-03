@@ -41,7 +41,7 @@ public enum SpigotConfig {
     PLACEHOLDER_NONE("placeholder.none"),
     ;
 
-    public static YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();
+    public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();
     private final String path;
 
     SpigotConfig(String s) {

@@ -1,6 +1,6 @@
 
 <div align="center">
-    <img height="300" src="images/enderss.png" width="300" alt="EnderSS logo"/>
+    <img height="512" src="images/enderss.png" width="512" alt="EnderSS logo"/>
 </div>
 
 # EnderScreenShare by Endxxr

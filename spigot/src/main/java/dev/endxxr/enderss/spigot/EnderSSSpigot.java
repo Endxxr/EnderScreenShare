@@ -162,7 +162,6 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerProtections(), this);
         Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
     }
-
     @Override
     public void runTaskAsync(Runnable runnable) {
         Bukkit.getScheduler().runTaskAsynchronously(this, runnable);

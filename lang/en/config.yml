@@ -16,30 +16,19 @@
 # The config will NOT automatically update by itself. I suggest to visit the plugin's GitHub repository to get the latest when updating the .jar.
 # However, the plugin will still alert you when there's the need to update
 #
-# Any placeholderAPI placeholder isn't supported, PAPI isn't a BungeeCord plugin, so I can't hook in it
-#
+# Any placeholderAPI placeholder isn't supported
 
-prefix: "" #This string will be used for %PREFIX% placeholder
 
-#Server Configuration
-config:
-    screenshare-server: SS
-    fallback-server: Lobby
+# Used for the %PREFIX% placeholder
+prefix: ""
 
-    #Should we fall back the player in the lobby or in the last connected server they were on?
-    last-connected-server: true
+#Can staff be controlled ?
+staff-controllable: true
 
-    #Fall back the staff when the control ends
-    fallback-staff: true
-
+#Send these messages when the screenshare starts
+start:
     #Clears the chat when the player joins
     clear-chat: true
-
-    #Can staff be controlled ?
-    staff-controllable: true
-
-#Send these messages when the suspect joins the SS Server
-start:
     anydesk:
         send: true
         message:
@@ -109,8 +98,6 @@ start:
                 text: "&4[&c&lCustom Button&4]"
                 command: "example"
 
-
-
 command-blocker:
     #Should we block the ability to run commands when the player is frozen?
     enabled: true
@@ -161,7 +148,7 @@ chat:
 
     # You can use both %prefix% and %luckperms% placeholders:
     # In the first case, the prefix is the state of the player (Staff, Suspect or not involved)
-    # In the second case, the prefix is taken from LuckPerms BungeeCord
+    # In the second case, the prefix is taken from LuckPerms
     # Available placeholders: %prefix%, %luckperms%, %player%, %message%
     format:
         staff: "&r%prefix% &7%player%&7: &r%message%"
@@ -186,7 +173,7 @@ messages:
         #For these strings you can use the placeholder %SUSPECT%
         player-quit:
             - "&c%SUSPECT% logged out while being controlled"
-        clean-player:
+        control-ended:
             - "&2Control ended. Thank you for your patience"
         player-cleaned:
             - "&aThe control on %SUSPECT% ended"
@@ -198,6 +185,8 @@ messages:
             - "&cAlerts disabled"
 
     error:
+        generic:
+            - "&cAn error occurred while executing this command"
         no-permission:
             - "&cInsufficient Permissions"
         no-command:
@@ -210,18 +199,12 @@ messages:
             - "&cOnly players can run this command"
         already-controlled:
             - "&c%SUSPECT% is already being controlled"
-        cant-executeAsync:
-            - "&cYou can't executeAsync commands while being controlled"
-        cant-fallback-suspect:
-            - "&cWe can't fallback this player! Did they switch server before the SS?"
-        cant-fallback-staff:
-            - "&cWe can't fallback you! Did you switch server before the SS?"
+        cant-execute:
+            - "&cYou can't execute commands while being controlled"
         cannot-ss-yourself:
             - "&cYou can't control yourself. Just ban yourself directly, no?"
-        cant-connect-to-ss:
+        cant-connect-to-ss: # PROXY
             - "&cWe can't connect you or the suspect to the SS server. Is it online?"
-        cant-connect-suspect:
-            - "&cWe can't connect the suspect to the SS server. Is it online?"
 
         #For these strings you can use the placeholder %SUSPECT%
         exempt:
@@ -243,56 +226,6 @@ messages:
         staff-offline:
             - "&cThe staffer who was controlling you went offline..."
 
-scoreboard:
-    enabled: true
-    not-controlling-placeholder: "&cNot Controlling"
-    alerts-enabled-placeholder: "&aYes"
-    alerts-disabled-placeholder: "&cNo"
-
-    #
-    # This will be shown to the staffer when he's controlling a player
-    #
-
-    staff:
-        title: "&c&lScreenShare"
-        lines:
-            - " "
-            - "&dName: &f%STAFFER%"
-            - " "
-            - "&dTime: &f%TIME%"
-            - "&dSuspect: &f%SUSPECT%"
-            - "&dAlerts: &f%ALERTS%"
-            - " "
-            - "&dendxxr.yourserver.example"
-
-    #
-    # This will be shown to the suspect
-    #
-
-    suspect:
-        title: "&c&lScreenShare"
-        lines:
-            - " "
-            - "&dName: &f%SUSPECT%"
-            - " "
-            - "&dTime: &f%TIME%"
-            - "&dStaffer: &f%STAFFER%"
-            - " "
-            - "&dendxxr.yourserver.example"
-
-    #
-    # This will be shown to everyone who's in the ss server
-    #
-
-    idling:
-        title: "&c&lScreenShare"
-        lines:
-            - " "
-            - "&dName: &f%STAFFER%"
-            - " "
-            - "&dSuspect: &f%SUSPECT%"
-            - " "
-            - "&dendxxr.yourserver.example"
 
 
 reports:
@@ -331,7 +264,7 @@ reports:
         elements:
             goto:
                 text: "&2[&aGoto&2]"
-                command: "server %REASON%"
+                command: "server %SERVER%"
             ban:
                 text: "&4[&cBan&4]"
                 command: "blatant %REPORTED%"
@@ -339,7 +272,7 @@ reports:
                 text: "&d[&5Control&d]"
                 command: "ss %REPORTED%"
             example:
-                text: "Example"
+                text: "&d[&5Example&d]"
                 command: "examplecommand %REPORTER% %REPORTED% %SERVER% %REASON%"
 
 
@@ -360,21 +293,18 @@ buttons:
     server-tp: "&a[&2&lTP&a]"
     ban: "&4[&c&lBAN&4]"
 
-    #ALL the buttons, even the ones that aren't specified here, will executeAsync the command instead of suggesting it
+    #ALL the buttons, even the ones that aren't specified here, will execute the command instead of suggesting it
     confirm-buttons: false
 
 
 #The only available placeholder here is %SUSPECT%
 #Litebans need to be installed on the proxy in order to work
 ban-command:
-    refuse: "/ban %SUSPECT% 30d SS Refused -s"
-    quit: "/ban %SUSPECT% 30d Quit in SS -s"
-    hack: "/ban %SUSPECT% 30d Cheating (SS) -s"
-    admission: "/ban %SUSPECT% 14d Cheat Admission -s"
-    blatant: "/ban %SUSPECT% 30d Blatant Cheating -s"
-
-
-
+    refuse: "ban %SUSPECT% 30d SS Refused -s"
+    quit: "ban %SUSPECT% 30d Quit in SS -s"
+    hack: "ban %SUSPECT% 30d Cheating (SS) -s"
+    admission: "ban %SUSPECT% 14d Cheat Admission -s"
+    blatant: "ban %SUSPECT% 30d Blatant Cheating -s"
 
 #Don't modify this value(s)! We need it for check updates
-version: 1.0
+version: 1.1

@@ -33,7 +33,6 @@ import org.bstats.charts.SimplePie;
 import org.jetbrains.annotations.NotNull;
 import org.simpleyaml.configuration.file.YamlFile;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 

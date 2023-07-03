@@ -1,6 +1,5 @@
 package dev.endxxr.enderss.spigot.utils;
 
-import dev.endxxr.enderss.common.utils.ChatUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -21,14 +20,6 @@ public class SpigotChat {
             buttons.add(button);
         }
         return buttons;
-    }
-
-    public static TextComponent formatComponent(String message) {
-        return new TextComponent(ChatUtils.format(message));
-    }
-
-    public static TextComponent formatComponent(String message, String... placeholders) {
-        return new TextComponent(ChatUtils.format(message, placeholders));
     }
 
 

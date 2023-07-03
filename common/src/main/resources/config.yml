@@ -16,7 +16,7 @@
 # The config will NOT automatically update by itself. I suggest to visit the plugin's GitHub repository to get the latest when updating the .jar.
 # However, the plugin will still alert you when there's the need to update
 #
-# Any placeholderAPI placeholder isn't supported, PAPI isn't a BungeeCord plugin, so I can't hook in it
+# You can't use PlaceholderAPI placeholders
 #
 
 
@@ -149,7 +149,7 @@ chat:
 
   # You can use both %prefix% and %luckperms% placeholders:
   # In the first case, the prefix is the state of the player (Staff, Suspect or not involved)
-  # In the second case, the prefix is taken from LuckPerms BungeeCord
+  # In the second case, the prefix is taken from LuckPerms
   # Available placeholders: %prefix%, %luckperms%, %player%, %message%
   format:
     staff: "&r%prefix% &7%player%&7: &r%message%"

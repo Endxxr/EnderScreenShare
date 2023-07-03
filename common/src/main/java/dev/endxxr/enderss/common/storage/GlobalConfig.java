@@ -99,7 +99,7 @@ public enum GlobalConfig {
     ;
 
     private static final EnderSS api = EnderSSProvider.getApi();
-    public static YamlFile config = api.getPlugin().getGeneralConfig();
+    public static final YamlFile config = api.getPlugin().getGeneralConfig();
 
 
     GlobalConfig(String path) {
