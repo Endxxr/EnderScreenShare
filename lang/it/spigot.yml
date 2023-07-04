@@ -40,15 +40,15 @@ commands:
 
 
 protections:
-  bypass-permission: "enderss.protections" # Root permission to bypass all protections, recommended to leave it as it is
+  bypass-permission: "enderss.protections" # Permesso base per bypassare tutte le protezioni. Consiglio di lasciarlo così
   staff-bypass: true
 
-  # True means that the player won't be able to do that action (the protection is enabled)
+  # Mettendo "true" significa che il giocatore non potrà fare quell'azione (la protezione è attiva).
   world:
-    white-listed-worlds: # List of worlds where the protections are disabled
-      - "example" # Bypass permission: enderss.protections.example
+    white-listed-worlds: # Lista di mondi dove le protezioni non saranno attivate
+      - "example" # Bypass: enderss.protections.example
 
-    # Bypass permission: enderss.protections.world.protectionName
+    # Bypass: enderss.protections.world.protectionName
     build-break: true
     pvp: true
     invulnerability: true
@@ -59,19 +59,20 @@ protections:
     fire-spread: true
     void: true
 
-  #  True means that the player won't be able to do that action (the protection is enabled). Protections are activated only if the player is under control
+  # Mettendo "true" significa che il giocatore non potrà fare quell'azione (la protezione è attiva).
+  # Queste protezioni si applicano solo quando il giocatore è in controllo
   player:
-    # Bypass permission: enderss.protections.player.protectionName
+    # Bypass: enderss.protections.player.protectionName
     pvp: true
     build-break: true
     pick-drop-items: true
     hunger: true
     damage: true
     remove-effects: true
-    adventure-mode: true # If true, the player will be set to adventure mode
+    adventure-mode: true # Se attivato, il giocatore verrà messo in modalità avventura
 
 placeholder:
-  positive: "&aYes"
+  positive: "&aSi"
   negative: "&cNo"
-  none: "&cNone"
+  none: "&cNessuno"
 
