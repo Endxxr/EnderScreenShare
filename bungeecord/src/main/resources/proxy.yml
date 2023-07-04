@@ -8,10 +8,9 @@
 #
 # Proxy Configuration of EnderSS
 
-screenshare-server: "ss"
-fallback-server: "lobby"
-last-connected-server: true
-fallback-staff: true
-reload-ss: true
+screenshare-server: "ss" # The name of the server where the screenshare will be executed
+fallback-server: "lobby" # The name of the server where the player will be sent after the screenshare
+last-connected-server: true # If the player will be sent to the last server he was connected or the fallback-server
+fallback-staff: true # If the staffer should be sent to the fallback server or the last server he was connected
 
 

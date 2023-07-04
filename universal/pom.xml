@@ -11,10 +11,6 @@
 
     <artifactId>universal</artifactId>
 
-    <build>
-        <finalName>EnderSS-Universal-1.1.0</finalName>
-    </build>
-
 
     <dependencies>
         <dependency>

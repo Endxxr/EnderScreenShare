@@ -6,39 +6,37 @@
 # ███████║██║     ██║╚██████╔╝╚██████╔╝   ██║
 # ╚══════╝╚═╝     ╚═╝ ╚═════╝  ╚═════╝    ╚═╝
 #
-# Spigot Configuration of EnderSS
+# Configurazione Spigot di EnderSS
 
 
-# If enabled, the plugin will act as "helper" of the proxy version and its presence is mandatory.
-# If disabled, the plugin will act as a standalone plugin and will work without the proxy version.
-# Requires FULL RESTART to be applied
+# Se abilitato, il plugin avrà la funzione di aiutante del proxy e la sua presenza è facoltativa.
+# Se disabilitato, il plugin sarà indipendente dal proxy.
+# Richiede un RIAVVIO COMPLETO del server per essere applicato.
 proxy-mode: false
 
-disabled: "&cThis feature is disabled in proxy mode"
+disabled: "&cQuesta funzione è disabilitata!"
 
 start:
   enabled: true
   staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
   suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
 
-teleport-on-start: true
-
+teleport-on-start: true # Teletrasporta lo staffer al sospettato all'avvio dello screenshare
 
 fallback:
   enabled: true
   staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
   suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
-# Teleports you to the frozen player
 
 commands:
   set-spawn:
-    usage: "&fUsage: /enderss setspawn &c<staff|suspect> &c<start|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
-    set: "&a%PHASE% set for %TYPE%&f!"
-    invalid-type: "&cInvalid type! &fValid types: &cstaff&f, &csuspect"
-    invalid-world: "&cInvalid world!"
-    invalid-coordinates: "&cInvalid coordinates!"
-    invalid-rotation: "&cInvalid rotation!"
-    error: "&cAn error occurred while setting the spawn! Check the console for more info."
+    usage: "&fUtilizzo: /enderss setspawn &c<staff|suspect> &c<start|fallback> &4[world] [x] [y] [z] [yaw] [pitch]"
+    set: "&a%PHASE% impostato per %TYPE%&f!"
+    invalid-type: "&cTipo non valido! &fUsa: &cstaff&f, &csuspect"
+    invalid-world: "&cMondo non valido!"
+    invalid-coordinates: "&cCoordinate non valide!"
+    invalid-rotation: "&cRotazione non valida!"
+    error: "&cSi è verificato un errore! Controlla la console per più informazioni."
 
 
 protections:

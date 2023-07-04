@@ -59,7 +59,6 @@
     </dependencies>
 
     <build>
-        <finalName>EnderSS-Spigot-1.1.0</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -9,7 +9,7 @@ public enum ProxyConfig {
     FALLBACK_SERVER("fallback-server"),
     CONFIG_LAST_CONNECTED_SERVER("last-connected-server"),
     CONFIG_FALLBACK_STAFF("fallback-staff"),
-    RELOAD_SS("reload-ss");
+    ;
     public static final YamlFile config = EnderSSProvider.getApi().getPlugin().getPlatformConfig();
     private final String path;
     ProxyConfig(String s) {

@@ -6,12 +6,11 @@
 #  ██║     ██║  ██║╚██████╔╝██╔╝ ██╗   ██║
 #  ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝
 #
-# Proxy Configuration of EnderSS
+# Configurazione Proxy di EnderSS
 
-screenshare-server: "ss"
-fallback-server: "lobby"
-last-connected-server: true
-fallback-staff: true
-reload-ss: true
+screenshare-server: "ss" # Nome del server dove verrà eseguito lo screenshare
+fallback-server: "lobby" # Nome del server dove il giocatore verrà inviato dopo lo screenshare
+last-connected-server: true # Se il giocatore verrà inviato all'ultimo server a cui era connesso o al fallback-server
+fallback-staff: true # Se lo staffer verrà inviato al fallback-server o all'ultimo server a cui era connesso
 
 

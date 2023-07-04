@@ -10,7 +10,7 @@
 
 
 # If enabled, the plugin will act as "helper" of the proxy version and its presence is mandatory.
-# If disabled, the plugin will act as a standalone plugin and will work without the proxy version.
+# If disabled, the plugin will be standalone and will work without the proxy version.
 # Requires FULL RESTART to be applied
 proxy-mode: false
 
@@ -21,14 +21,13 @@ start:
   staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
   suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
 
-teleport-on-start: true
-
+teleport-on-start: true # Teleports you to the frozen player
 
 fallback:
   enabled: true
   staff: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
   suspect: "world,0,0,0,0,0" # world,x,y,z,yaw,pitch
-# Teleports you to the frozen player
+
 
 commands:
   set-spawn:
