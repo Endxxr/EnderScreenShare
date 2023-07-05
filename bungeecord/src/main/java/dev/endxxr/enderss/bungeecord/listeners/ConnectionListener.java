@@ -110,8 +110,6 @@ public class ConnectionListener implements Listener {
             );
 
             ProxyServer.getInstance().getPluginManager().callEvent(new SsEndEvent(staff, player, SSEndCause.SUSPECT_QUIT));
-
-
             return;
         }
 

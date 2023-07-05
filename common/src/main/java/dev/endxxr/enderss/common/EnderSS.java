@@ -71,6 +71,8 @@ public class EnderSS implements dev.endxxr.enderss.api.EnderSS {
     @Override
     public void shutdown() {
 
+        EnderSSProvider.removeApi();
+
         Logger log = plugin.getLog();
 
         log.info("§8§l§m------------------");
