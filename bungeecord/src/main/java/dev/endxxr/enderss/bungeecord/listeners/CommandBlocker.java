@@ -54,7 +54,7 @@ public class CommandBlocker implements Listener {
                 sender.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_CANT_EXECUTE.getMessage()));
                 String replacedMessage = GlobalConfig.MESSAGES_INFO_COMMAND_BLOCKED.getMessage().replace("%COMMAND%", message);
                 ProxiedPlayer receiver = ProxyServer.getInstance().getPlayer(senderSession.getStaffer().getUUID());
-                receiver.sendMessage(BungeeChat.formatComponent(replacedMessage.replace("%SUSPECT%", sender.getDisplayName())));
+                receiver.sendMessage(BungeeChat.formatComponent(replacedMessage.replace("%SUSPECT%", sender.getName())));
             }
         }
     }

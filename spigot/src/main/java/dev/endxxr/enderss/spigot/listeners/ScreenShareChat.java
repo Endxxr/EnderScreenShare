@@ -63,7 +63,7 @@ public class ScreenShareChat implements Listener {
             String formattedMessage = baseFormat
                     .replace("%prefix%", normalPrefix)
                     .replace("%luckperms%", luckPermsPrefix)
-                    .replace("%player%", sender.getDisplayName())
+                    .replace("%player%", sender.getName())
                     .replace("%message%", originalMessage);
 
             SsChatEvent ssChatEvent = new SsChatEvent(originalMessage, formattedMessage, sender);

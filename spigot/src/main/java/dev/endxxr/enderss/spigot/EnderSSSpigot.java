@@ -28,6 +28,7 @@ import net.luckperms.api.LuckPermsProvider;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -179,7 +180,8 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
 
     @Override
     public void dispatchCommand(SsPlayer sender, String command) {
-        Bukkit.dispatchCommand(Objects.requireNonNull(Bukkit.getPlayer(sender.getUUID())), command);
+        CommandSender finalSender = sender == null ? Bukkit.getConsoleSender() : Bukkit.getPlayer(sender.getUUID());
+        Bukkit.dispatchCommand(finalSender, command);
     }
 
 

@@ -41,6 +41,7 @@ public abstract class SsPlayer {
      */
 
     public SsPlayer getStaffer() {
+        if (staffer == null) return null;
         return EnderSSProvider.getApi().getPlayersManager().getPlayer(staffer);
     }
 
@@ -69,6 +70,7 @@ public abstract class SsPlayer {
      */
 
     public SsPlayer getControlled() {
+        if (controlled == null) return null;
         return EnderSSProvider.getApi().getPlayersManager().getPlayer(controlled);
     }
 

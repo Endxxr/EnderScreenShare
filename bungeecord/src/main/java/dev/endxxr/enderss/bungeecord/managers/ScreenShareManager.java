@@ -296,7 +296,7 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
 
     private void sendScreenShareButtons(ProxiedPlayer staffPlayer, ProxiedPlayer suspectPlayer) {
         // Text - Action
-        HashMap<String, String> stringButtons = GlobalConfig.getScreenShareButtons(suspectPlayer.getDisplayName());
+        HashMap<String, String> stringButtons = GlobalConfig.getScreenShareButtons(suspectPlayer.getName());
         List<TextComponent> buttons = new ArrayList<>();
 
         ClickEvent.Action action = GlobalConfig.BUTTONS_CONFIRM_BUTTONS.getBoolean() ? ClickEvent.Action.RUN_COMMAND : ClickEvent.Action.SUGGEST_COMMAND;
