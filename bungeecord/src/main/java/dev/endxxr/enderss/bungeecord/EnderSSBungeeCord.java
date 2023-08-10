@@ -16,8 +16,8 @@ import dev.endxxr.enderss.bungeecord.listeners.CommandBlocker;
 import dev.endxxr.enderss.bungeecord.listeners.ConnectionListener;
 import dev.endxxr.enderss.bungeecord.listeners.ScreenShareChat;
 import dev.endxxr.enderss.bungeecord.listeners.SwitchListener;
-import dev.endxxr.enderss.bungeecord.managers.PlayersManager;
-import dev.endxxr.enderss.bungeecord.managers.ScreenShareManager;
+import dev.endxxr.enderss.bungeecord.managers.BungeePlayersManager;
+import dev.endxxr.enderss.bungeecord.managers.BungeeScreenShareManager;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
 import dev.endxxr.enderss.common.utils.FileUtils;
@@ -62,8 +62,8 @@ public final class EnderSSBungeeCord extends Plugin implements EnderPlugin {
         checkSoftDependencies();
 
         enderSS = new dev.endxxr.enderss.common.EnderSS(this,
-                PlayersManager.class,
-                ScreenShareManager.class
+                BungeePlayersManager.class,
+                BungeeScreenShareManager.class
         );
 
         setCommands();

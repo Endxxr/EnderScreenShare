@@ -6,7 +6,7 @@
     <parent>
         <groupId>dev.endxxr</groupId>
         <artifactId>enderss</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.2</version>
     </parent>
 
     <artifactId>common</artifactId>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>dev.endxxr</groupId>
             <artifactId>api</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

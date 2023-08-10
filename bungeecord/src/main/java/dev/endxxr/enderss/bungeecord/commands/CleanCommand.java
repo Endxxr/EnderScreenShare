@@ -3,8 +3,8 @@ package dev.endxxr.enderss.bungeecord.commands;
 import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.bungeecord.utils.BungeeChat;
+import dev.endxxr.enderss.common.storage.GlobalConfig;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -48,7 +48,6 @@ public class CleanCommand extends Command implements TabExecutor {
         }
 
 
-
         if (args.length == 0) {
             staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NO_PLAYER.getMessage()));
             return;
@@ -59,6 +58,22 @@ public class CleanCommand extends Command implements TabExecutor {
         if (target == null) {
             staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage(), "%SUSPECT%", args[0]));
             return;
+        }
+
+        final SsPlayer targetSS = api.getPlayersManager().getPlayer(target.getUniqueId());
+        if (targetSS==null) return;
+        if (staffSS.getControlled() != targetSS) {
+            if (sender.hasPermission("enderss.admin")) {
+                ProxiedPlayer realStaffer = ProxyServer.getInstance().getPlayer(targetSS.getStaffer().getUUID());
+                if (realStaffer == null) {
+                    staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", target.getName()));
+                    return;
+                }
+                staff = realStaffer;
+            } else {
+                staff.sendMessage(BungeeChat.formatComponent(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", target.getName()));
+                return;
+            }
         }
 
         api.getScreenShareManager().clearPlayer(staff.getUniqueId(), target.getUniqueId());

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PlayerManager extends PlayersManager {
+public class SpigotPlayersManager extends PlayersManager {
     @Override
     public @NotNull SsPlayer registerPlayer(@NotNull UUID uuid) {
         return registeredPlayers.computeIfAbsent(uuid, SpigotPlayer::new);

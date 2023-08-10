@@ -13,7 +13,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
-import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
@@ -35,8 +34,8 @@ import dev.endxxr.enderss.velocity.listeners.CommandBlocker;
 import dev.endxxr.enderss.velocity.listeners.ConnectionListener;
 import dev.endxxr.enderss.velocity.listeners.ScreenShareChat;
 import dev.endxxr.enderss.velocity.listeners.SwitchListener;
-import dev.endxxr.enderss.velocity.manager.PlayerManager;
-import dev.endxxr.enderss.velocity.manager.ScreenShareManager;
+import dev.endxxr.enderss.velocity.manager.VelocityPlayersManager;
+import dev.endxxr.enderss.velocity.manager.VelocityScreenShareManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.luckperms.api.LuckPerms;
@@ -45,7 +44,6 @@ import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.simpleyaml.configuration.file.YamlFile;
 
-import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -93,8 +91,8 @@ public class EnderSSVelocity implements EnderPlugin {
         checkSoftDependencies();
 
         enderSS = new EnderSS(this,
-            PlayerManager.class,
-            ScreenShareManager.class,
+            VelocityPlayersManager.class,
+            VelocityScreenShareManager.class,
             server
         );
 

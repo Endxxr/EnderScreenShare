@@ -16,11 +16,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class PlayerManager extends PlayersManager {
+public class VelocityPlayersManager extends PlayersManager {
 
     private final ProxyServer server;
 
-    public PlayerManager(ProxyServer server) {
+    public VelocityPlayersManager(ProxyServer server) {
         this.server = server;
     }
 

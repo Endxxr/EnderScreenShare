@@ -5,8 +5,10 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.ChatSender;
 import dev.endxxr.enderss.api.events.spigot.SsChatEvent;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
+import dev.endxxr.enderss.common.storage.ProxyConfig;
 import dev.endxxr.enderss.common.utils.ChatUtils;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -120,8 +122,21 @@ public class ScreenShareChat implements Listener {
 
     private void sendSuspectMessage(SsPlayer sender, String message) {
         String formattedMessage = ChatUtils.format(message);
-        Bukkit.getPlayer(sender.getUUID()).sendMessage(formattedMessage);
-        Bukkit.getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
+        Player suspectSender = Bukkit.getPlayer(sender.getUUID());
+        Player staffReceiver = Bukkit.getPlayer(sender.getStaffer().getUUID());
+
+        suspectSender.sendMessage(formattedMessage);
+        staffReceiver.sendMessage(formattedMessage);
+
+        if (GlobalConfig.CHAT_NOT_INVOLVED_EVERYONE.getBoolean()) {
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
+                if (playerSS!=null && playerSS.isStaff() && playerSS.getControlled()==null) {
+                    player.sendMessage(formattedMessage);
+                }
+            }
+        }
     }
 
 }

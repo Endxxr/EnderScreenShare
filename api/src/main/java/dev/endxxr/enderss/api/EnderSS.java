@@ -6,7 +6,7 @@ import dev.endxxr.enderss.api.objects.managers.ScreenShareManager;
 
 public interface EnderSS {
 
-    String VERSION = "1.1.0";
+    String VERSION = "1.1.1";
     double VERSION_NUMBER = 1.1;
 
     PlayersManager getPlayersManager();

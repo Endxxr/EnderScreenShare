@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
 
-public class ScreenShareManager implements dev.endxxr.enderss.api.objects.managers.ScreenShareManager {
+public class SpigotScreenShareManager implements dev.endxxr.enderss.api.objects.managers.ScreenShareManager {
 
     private final EnderSS api = EnderSSProvider.getApi();
 
@@ -240,11 +240,6 @@ public class ScreenShareManager implements dev.endxxr.enderss.api.objects.manage
             return;
         }
 
-        // If the staff is trying to clear a player that is not controlled by him
-        if (!staffPlayer.hasPermission("enderss.admin") && !ssStaff.getControlled().equals(ssSuspect)) {
-            staffPlayer.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", suspectPlayer.getName()));
-            return;
-        }
         ssStaff.setControlled(null);
         ssSuspect.setStaffer(null);
         ssSuspect.setFrozen(false);

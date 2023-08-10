@@ -60,6 +60,22 @@ public class CleanCommand implements CommandExecutor, TabExecutor {
             return true;
         }
 
+        final SsPlayer targetSS = api.getPlayersManager().getPlayer(target.getUniqueId());
+        if (staffSS.getControlled() != targetSS) {
+            if (staff.hasPermission("enderss.admin")) {
+                Player realStaffer = Bukkit.getPlayer(targetSS.getStaffer().getUUID());
+                if (realStaffer == null) {
+                    staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", target.getName()));
+                    return true;
+                }
+                staff = realStaffer;
+            } else {
+                staff.sendMessage(ChatUtils.format(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", target.getName()));
+                return true;
+            }
+        }
+
+
         api.getScreenShareManager().clearPlayer(staff.getUniqueId(), target.getUniqueId());
         Bukkit.getPluginManager().callEvent(new SsEndEvent(staff, target, SSEndCause.SUSPECT_CLEAN));
         return true;

@@ -20,8 +20,8 @@ import dev.endxxr.enderss.spigot.listeners.ControlsMessageListener;
 import dev.endxxr.enderss.spigot.listeners.ConnectionListener;
 import dev.endxxr.enderss.spigot.listeners.protections.PlayerProtections;
 import dev.endxxr.enderss.spigot.listeners.protections.WorldProtections;
-import dev.endxxr.enderss.spigot.managers.PlayerManager;
-import dev.endxxr.enderss.spigot.managers.ScreenShareManager;
+import dev.endxxr.enderss.spigot.managers.SpigotPlayersManager;
+import dev.endxxr.enderss.spigot.managers.SpigotScreenShareManager;
 import lombok.SneakyThrows;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
@@ -36,7 +36,6 @@ import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
@@ -75,8 +74,8 @@ public final class EnderSSSpigot extends JavaPlugin implements EnderPlugin {
 
 
         enderSS = new EnderSS(this,
-                PlayerManager.class,
-                ScreenShareManager.class
+                SpigotPlayersManager.class,
+                SpigotScreenShareManager.class
                 );
 
         boolean proxyMode = SpigotConfig.PROXY_MODE.getBoolean();

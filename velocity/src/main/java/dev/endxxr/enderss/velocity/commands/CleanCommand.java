@@ -2,13 +2,13 @@ package dev.endxxr.enderss.velocity.commands;
 
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.SimpleCommand;
-import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import dev.endxxr.enderss.api.EnderSS;
 import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.velocity.utils.VelocityChat;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
+import dev.endxxr.enderss.velocity.utils.VelocityChat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,24 @@ public class CleanCommand implements SimpleCommand {
             staff.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_PLAYER_OFFLINE.getMessage(), "%SUSPECT%", args[0]));
             return;
         }
+
         Player target = optionalTarget.get();
+
+        final SsPlayer targetSS = api.getPlayersManager().getPlayer(target.getUniqueId());
+        if (staffSS.getControlled() != targetSS) {
+            if (staff.hasPermission("enderss.admin")) {
+                Optional<Player> optionalRealStaffer = server.getPlayer(targetSS.getStaffer().getUUID());
+                if (!optionalRealStaffer.isPresent()) {
+                    staff.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", target.getUsername()));
+                    return;
+                }
+                staff = optionalRealStaffer.get();
+            } else {
+                staff.sendMessage(VelocityChat.formatAdventureComponent(GlobalConfig.MESSAGES_ERROR_NOT_CONTROLLING.getMessage(), "%SUSPECT%", target.getUsername()));
+                return;
+            }
+        }
+
 
         api.getScreenShareManager().clearPlayer(staff.getUniqueId(), target.getUniqueId());
     }

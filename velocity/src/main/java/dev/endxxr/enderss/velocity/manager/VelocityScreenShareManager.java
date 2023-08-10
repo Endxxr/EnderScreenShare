@@ -27,11 +27,11 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-public class ScreenShareManager implements dev.endxxr.enderss.api.objects.managers.ScreenShareManager {
+public class VelocityScreenShareManager implements dev.endxxr.enderss.api.objects.managers.ScreenShareManager {
     private final EnderSS api = EnderSSProvider.getApi();
     private final ProxyServer server;
 
-    public ScreenShareManager(ProxyServer server) {
+    public VelocityScreenShareManager(ProxyServer server) {
         this.server = server;
     }
 

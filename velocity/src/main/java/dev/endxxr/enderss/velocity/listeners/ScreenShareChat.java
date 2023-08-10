@@ -12,10 +12,10 @@ import dev.endxxr.enderss.api.EnderSSProvider;
 import dev.endxxr.enderss.api.enums.ChatSender;
 import dev.endxxr.enderss.api.events.velocity.SsChatEvent;
 import dev.endxxr.enderss.api.objects.player.SsPlayer;
-import dev.endxxr.enderss.velocity.utils.VelocityChat;
 import dev.endxxr.enderss.common.storage.GlobalConfig;
 import dev.endxxr.enderss.common.storage.ProxyConfig;
 import dev.endxxr.enderss.common.utils.LogUtils;
+import dev.endxxr.enderss.velocity.utils.VelocityChat;
 import net.kyori.adventure.text.TextComponent;
 
 import java.util.Collection;
@@ -149,8 +149,27 @@ public class ScreenShareChat {
 
     private void sendSuspectMessage(SsPlayer sender, String message) {
         TextComponent formattedMessage = VelocityChat.formatAdventureComponent(message);
-        server.getPlayer(sender.getUUID()).ifPresent(player -> player.sendMessage(formattedMessage));
-        server.getPlayer(sender.getStaffer().getUUID()).ifPresent(player -> player.sendMessage(formattedMessage));
+        Optional<Player> optionalSender = server.getPlayer(sender.getUUID());
+        Optional<Player> optionalReceiver = server.getPlayer(sender.getStaffer().getUUID());
+
+        if (!optionalSender.isPresent() || !optionalReceiver.isPresent()) return;
+
+        Player suspectSender = optionalSender.get();
+        Player staffReceiver = optionalReceiver.get();
+
+
+        suspectSender.sendMessage(formattedMessage);
+        staffReceiver.sendMessage(formattedMessage);
+
+       Collection<Player> connectedPlayers = server.getServer(ProxyConfig.SS_SERVER.getString()).map(RegisteredServer::getPlayersConnected).orElse(Collections.emptyList());
+        if (GlobalConfig.CHAT_NOT_INVOLVED_EVERYONE.getBoolean()) {
+            for (Player player : connectedPlayers) {
+                SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
+                if (playerSS!=null && playerSS.isStaff() && playerSS.getControlled()==null) {
+                    player.sendMessage(formattedMessage);
+                }
+            }
+        }
     }
 
 

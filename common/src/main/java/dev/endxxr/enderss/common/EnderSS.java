@@ -78,7 +78,6 @@ public class EnderSS implements dev.endxxr.enderss.api.EnderSS {
         log.info("§8§l§m------------------");
         log.info("");
         log.info("§5§lEnderSS §8§l» §d§l"+VERSION+" §5by Endxxr");
-        log.info("§d§l! Ender#0069 for support");
         log.info("");
         log.info("Shutdown complete.");
         log.info("");

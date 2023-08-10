@@ -42,7 +42,7 @@ public class ScreenShareChat implements Listener {
             senderType = ChatSender.STAFF;
         } else if (ssSender.isFrozen()) {
             senderType = ChatSender.SUSPECT;
-        } else if (sender.getServer().getInfo().getName().equalsIgnoreCase(ProxyConfig.SS_SERVER.getString()) && ssSender.isStaff()) {
+        } else if (sender.getServer().getInfo().getName().equalsIgnoreCase(ProxyConfig.SS_SERVER.getString()) && notInvolved(ssSender)) {
             senderType = ChatSender.NOT_INVOLVED;
         }
 
@@ -108,8 +108,24 @@ public class ScreenShareChat implements Listener {
 
     private void sendSuspectMessage(SsPlayer sender, String message) {
         TextComponent formattedMessage = BungeeChat.formatComponent(message);
-        ProxyServer.getInstance().getPlayer(sender.getUUID()).sendMessage(formattedMessage);
-        ProxyServer.getInstance().getPlayer(sender.getStaffer().getUUID()).sendMessage(formattedMessage);
+        ProxiedPlayer suspectSender = ProxyServer.getInstance().getPlayer(sender.getUUID());
+        ProxiedPlayer staffReceiver = ProxyServer.getInstance().getPlayer(sender.getStaffer().getUUID());
+
+        suspectSender.sendMessage(formattedMessage);
+        staffReceiver.sendMessage(formattedMessage);
+
+        if (GlobalConfig.CHAT_NOT_INVOLVED_EVERYONE.getBoolean()) {
+
+            for (ProxiedPlayer player : ProxyServer.getInstance().getServerInfo(ProxyConfig.SS_SERVER.getString()).getPlayers()) {
+                SsPlayer playerSS = api.getPlayersManager().getPlayer(player.getUniqueId());
+                if (playerSS!=null && notInvolved(playerSS)) {
+                    player.sendMessage(formattedMessage);
+                }
+            }
+
+
+        }
+
     }
 
     private void sendNotInvolvedMessage(String message) {
@@ -127,6 +143,12 @@ public class ScreenShareChat implements Listener {
         }
 
 
+    }
+
+    private boolean notInvolved(SsPlayer ssPlayer) {
+        return
+            ssPlayer.isStaff()
+            && ssPlayer.getControlled()==null;
     }
 
 }

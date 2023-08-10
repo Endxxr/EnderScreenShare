@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class PlayersManager extends dev.endxxr.enderss.api.objects.managers.PlayersManager {
+public class BungeePlayersManager extends dev.endxxr.enderss.api.objects.managers.PlayersManager {
 
     @Override
     public @NotNull SsPlayer registerPlayer(@NotNull UUID uuid) {
